@@ -1,0 +1,18 @@
+{
+  "name": "Minerva",
+  "version": "1.0",
+  "description": "Better Education",
+  "permissions": ["tabs", "https://classroom.google.com/*", "https://*.youtube.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://classroom.google.com/*"],
+      "js": ["src/GoogleClassroom.js"]
+    },
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["src/StudyModeLocker.js"]
+    }
+  ],
+  "web_accessible_resources": ["style.css"],
+  "manifest_version": 2
+}
