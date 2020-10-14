@@ -27,13 +27,13 @@
 }
 
 #exitButton {
-    width: 10%;
-    height: 10%;
+    width: 7%;
+    height: 7%;
     color: aliceblue;
 }
 
 #videoWrapper {
     margin-top: 5%;
-    width: 50%;
-    height: 50%;
+    width: 70%;
+    height: 60%;
 }
