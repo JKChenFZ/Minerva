@@ -1,13 +1,6 @@
 function addStudyModeOverlay() {
     console.log("DOM is fully loaded yes");
     let siteBody = document.getElementsByTagName("BODY")[0];
-    
-    // Add the style sheet
-    let style = document.createElement('link');
-    style.rel = 'stylesheet';
-    style.type = 'text/css';
-    style.href = chrome.extension.getURL('style.css');
-    (document.head||document.documentElement).appendChild(style);
 
     // Overlay
     let overlay = document.createElement('div');
