@@ -1,7 +1,7 @@
 #studyModeLocker {
     z-index: 10000;
     background-color: black;
-    opacity: 0.85;
+    opacity: 0.93;
     position: fixed;
     top: 0;
     display: flex;
@@ -26,3 +26,14 @@
     top: 5%;
 }
 
+#exitButton {
+    width: 10%;
+    height: 10%;
+    color: aliceblue;
+}
+
+#videoWrapper {
+    margin-top: 5%;
+    width: 50%;
+    height: 50%;
+}
