@@ -6,11 +6,11 @@
   "content_scripts": [
     {
       "matches": ["https://classroom.google.com/*"],
-      "js": ["src/GoogleClassroom.js"]
+      "js": ["src/comm.js", "src/GoogleClassroom.js"]
     },
     {
       "matches": ["https://*.youtube.com/*"],
-      "js": ["src/StudyModeLocker.js"]
+      "js": ["src/comm.js", "src/StudyModeLocker.js"]
     }
   ],
   "web_accessible_resources": ["style.css"],
