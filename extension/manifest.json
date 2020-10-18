@@ -4,7 +4,7 @@
   "description": "Better Education",
   "permissions": ["tabs", "https://classroom.google.com/*", "https://*.youtube.com/*", "declarativeContent", "storage"],
   "page_action": {
-    "default_icon": "brain.jpg",
+    "default_icon": "images/brain.jpg",
     "default_title": "Minerva",
     "default_popup": "src/MinervaMenu.html"
   },
