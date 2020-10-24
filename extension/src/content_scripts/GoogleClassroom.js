@@ -53,7 +53,7 @@ function hijackYoutubeLinkClicks(e) {
 }
 
 // eslint-disable-next-line no-unused-vars
-window.addEventListener("load", function (_) {
+window.addEventListener("load", (_) => {
     window.addEventListener("click", hijackYoutubeLinkClicks);
     console.log("Google Classroom Handler registered");
 });

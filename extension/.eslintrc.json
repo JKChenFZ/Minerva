@@ -28,6 +28,8 @@
         "camelcase": "error",
         "no-tabs": "error",
         "no-empty-function": "error",
-        "no-undef": "error"
+        "no-undef": "error",
+        "comma-spacing": ["error", { "before": false, "after": true }],
+        "space-before-function-paren": ["error", "never"]
     }
 }
