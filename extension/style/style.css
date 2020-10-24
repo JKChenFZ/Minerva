@@ -63,6 +63,10 @@
     margin-left: 3px;
 }
 
+#extensionBody {
+    min-width: 300px;
+}
+
 #videoWrapper {
     margin-top: 5%;
     width: 70%;
