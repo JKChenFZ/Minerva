@@ -3,7 +3,7 @@ function addStyleSheet() {
     let style = document.createElement('link');
     style.rel = 'stylesheet';
     style.type = 'text/css';
-    style.href = chrome.extension.getURL('style.css');
+    style.href = chrome.extension.getURL('style/style.css');
     (document.head||document.documentElement).appendChild(style);
 
     console.log("Added common stylesheet");
