@@ -6,13 +6,13 @@
   "content_scripts": [
     {
       "matches": ["https://classroom.google.com/*"],
-      "js": ["src/comm.js", "src/GoogleClassroom.js"]
+      "js": ["src/content_scripts/comm.js", "src/content_scripts/GoogleClassroom.js"]
     },
     {
       "matches": ["https://*.youtube.com/*"],
-      "js": ["src/comm.js", "src/StudyModeLocker.js"]
+      "js": ["src/content_scripts/comm.js", "src/content_scripts/StudyModeLocker.js"]
     }
   ],
-  "web_accessible_resources": ["style.css"],
+  "web_accessible_resources": ["style/style.css"],
   "manifest_version": 2
 }
