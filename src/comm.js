@@ -5,7 +5,6 @@ function addStyleSheet() {
     style.type = 'text/css';
     style.href = chrome.extension.getURL('style.css');
     (document.head||document.documentElement).appendChild(style);
-
     console.log("Added common stylesheet");
 }
 
