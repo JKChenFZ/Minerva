@@ -38,6 +38,7 @@ function addYoutubeIFrame(rawDestination) {
     wrapperDiv.id = "videoWrapper";
     iframe.setAttribute("width", "100%");
     iframe.setAttribute("height", "100%");
+    iframe.setAttribute("class", "youtubeIFrame");
     iframe.src = formattedUrl;
 
     wrapperDiv.appendChild(iframe);
