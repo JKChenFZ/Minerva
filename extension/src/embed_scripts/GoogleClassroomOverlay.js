@@ -11,20 +11,38 @@ function addControlButtons() {
     let overlay = document.getElementById("studyModeLocker");
     
     // Create nodes first
+    let buttonContainer = document.createElement("DIV");
     let exitButton = document.createElement("BUTTON");
     let exitIcon = document.createElement("I");
+    let questionButton = document.createElement("BUTTON");
+    let questionIcon = document.createElement("I");
 
-    // Program the button logic
-    exitIcon.setAttribute("class", "far fa-times-circle icon-left-padding");
-    exitButton.setAttribute("class", "button");
+    // Exit button logic
+    exitIcon.setAttribute("class", "fas fa-times-circle icon-left-padding");
+    exitButton.setAttribute("class", "button exit-button");
     exitButton.innerText = "Leave";
     exitButton.addEventListener("click", (e) => {
         e.stopPropagation();
         exitButtonOnclick();
     });
 
+    // Question button logic
+    questionIcon.setAttribute("class", "fas fa-question icon-left-padding");
+    questionButton.setAttribute("class", "button question-button");
+    questionButton.innerText = "Question";
+    questionButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        console.log("Question Pressed");
+    });
+
+    // Put everything together
     exitButton.appendChild(exitIcon);
-    overlay.appendChild(exitButton);
+    questionButton.appendChild(questionIcon);
+
+    buttonContainer.setAttribute("class", "button-container");
+    buttonContainer.appendChild(exitButton);
+    buttonContainer.appendChild(questionButton);
+    overlay.appendChild(buttonContainer);
 }
 
 function addYoutubeIFrame(rawDestination) {

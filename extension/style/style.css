@@ -26,8 +26,12 @@
     top: 5%;
 }
 
+.button-container {
+    display: flex;
+    flex-direction: row;
+}
+
 .button {
-    background-color: dodgerblue;
     color: white;
     padding: 12px 16px;
     font-size: 18px;
@@ -36,9 +40,23 @@
     border-radius: 6%;
 }
 
+.exit-button {
+    background-color: dodgerblue;
+}
+
 /* Darker background on mouse-over */
-.button:hover {
+.exit-button:hover {
     background-color: rgb(15, 41, 121);
+}
+
+.question-button {
+    background-color: rgb(230, 15, 97);
+    margin-left: 10px;
+}
+
+/* Darker background on mouse-over */
+.question-button:hover {
+    background-color: rgb(93, 0, 50);
 }
 
 .icon-left-padding {
