@@ -33,6 +33,7 @@
         "space-before-function-paren": ["error", "never"]
     },
     "globals": {
-        "chrome": false
+        "chrome": false,
+        "$": false
     }
 }
