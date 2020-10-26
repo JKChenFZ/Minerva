@@ -1,3 +1,6 @@
+///////////////////////////////////////////
+/////////// Button Logic
+///////////////////////////////////////////
 function exitButtonOnclick() {
     let overlay = document.getElementById("studyModeLocker");
     if (overlay) {
@@ -45,6 +48,9 @@ function addControlButtons() {
     overlay.appendChild(buttonContainer);
 }
 
+///////////////////////////////////////////
+/////////// Embeded Youtube Logic
+///////////////////////////////////////////
 function addYoutubeIFrame(rawDestination) {
     let formattedUrl = rawDestination.replace("youtube.com/watch?v=", "youtube.com/embed/");
     let overlay = document.getElementById("studyModeLocker");
@@ -63,6 +69,9 @@ function addYoutubeIFrame(rawDestination) {
     overlay.appendChild(wrapperDiv);
 }
 
+///////////////////////////////////////////
+/////////// Entry point event handler 
+///////////////////////////////////////////
 function hijackYoutubeLinkClicks(e) {
     console.log("Detected a click");
 
