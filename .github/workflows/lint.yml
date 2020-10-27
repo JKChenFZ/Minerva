@@ -3,8 +3,8 @@ name: Lint
 on: push
 
 jobs:
-  run-linters:
-    name: Run linters
+  run-linters-extension:
+    name: Run linters on extension
     runs-on: ubuntu-latest
 
     steps:
@@ -27,4 +27,29 @@ jobs:
           github_token: ${{ secrets.github_token }}
           # Enable linters
           eslint_dir: ./extension
+          eslint: true
+  run-linters-backend:
+    name: Run linters on backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      # ESLint must be in `package.json`
+      - name: Install Node.js dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          # Enable linters
+          eslint_dir: ./backend
           eslint: true
