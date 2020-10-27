@@ -1,7 +1,10 @@
 import express from "express";
+import { VideoRouter } from "./src/routers/VideoRouter.js";
 
 const app = express();
 const port = 3000;
+
+app.use("/video", VideoRouter);
 
 app.get("/", (req, res) => {
     res.setHeader("Content-Type", "application/json");
