@@ -4,7 +4,7 @@
 function questionBUttonOnclick(event) {
     event.stopPropagation();
 
-    console.debug("Question ButtonPressed");
+    console.debug(`Question ButtonPressed at ${player.getCurrentTime()}`);
     Snackbar.show({
         pos: "bottom-center",
         text: "Got it. We will let your teacher know.",
