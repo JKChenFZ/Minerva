@@ -51,22 +51,63 @@ function addControlButtons() {
 ///////////////////////////////////////////
 /////////// Embeded Youtube Logic
 ///////////////////////////////////////////
+
+// The traditional approach is to add the Youtube API script programtically
+// and implement the "onYouTubePlayerAPIReady" function which is invoked right
+// after. Our usecase is slightly different; we have Youtube iFrame being
+// loaded and unloaded dynamically. Consequently, we need to keep track of the fact
+// on whether the Youtube API has been loaded previously and invoke the
+// "onYouTubePlayerAPIReady" API manually. Instead, we are loading the Youtube iFrame API
+// on content script load. Afterward, we directly interact with the iFrame API
+const YOUTUBE_WATCH_KEYWORD = "youtube.com/watch?v=";
+var player;
+
 function addYoutubeIFrame(rawDestination) {
-    let formattedUrl = rawDestination.replace("youtube.com/watch?v=", "youtube.com/embed/");
     let overlay = document.getElementById("studyModeLocker");
+
+    // TODO: we might need better extraction mechanism
+    let splittedUrl = rawDestination.split(YOUTUBE_WATCH_KEYWORD);
+    let videoID = "hXDiv7f73H0";
+    if (splittedUrl.length == 2) {
+        videoID = splittedUrl[1];
+    } else {
+        videoID = splittedUrl[0];
+    }
 
     // Create nodes first
     let wrapperDiv = document.createElement("div");
     let iframe = document.createElement("iframe");
 
     wrapperDiv.id = "videoWrapper";
+    iframe.id = "videoIFrame";
+    iframe.origin = "youtube.com";
     iframe.setAttribute("width", "100%");
     iframe.setAttribute("height", "100%");
     iframe.setAttribute("class", "youtubeIFrame");
-    iframe.src = formattedUrl;
+    iframe.src = `https://www.youtube.com/embed/${videoID}?enablejsapi=1`;
 
     wrapperDiv.appendChild(iframe);
     overlay.appendChild(wrapperDiv);
+
+    // Add event handlers to capture various iFrame events
+    // eslint-disable-next-line no-unused-vars
+    player = new YT.Player("videoIFrame", {
+        events: {
+            "onReady": (event) =>  {
+                console.debug("Embedded Youtube Player is ready");
+
+                // Save the video id and the video title to local storage
+                window.localStorage.setItem("youtube_video_id", videoID);
+                window.localStorage.setItem(
+                    "youtube_video_title",
+                    event.target.getVideoData().title
+                );
+            },
+            "onStateChange": () => {
+                console.debug("Embedded Youtube Player has a new change");
+            }
+        }
+    });
 }
 
 ///////////////////////////////////////////
