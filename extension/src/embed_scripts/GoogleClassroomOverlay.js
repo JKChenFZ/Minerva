@@ -99,6 +99,9 @@ function addYoutubeIFrame(rawDestination) {
                 // Save the video id and the video title to local storage
                 window.localStorage.setItem("youtube_video_id", videoID);
                 window.localStorage.setItem(
+                    "youtube_video_duration",
+                    event.target.getDuration());
+                window.localStorage.setItem(
                     "youtube_video_title",
                     event.target.getVideoData().title
                 );
