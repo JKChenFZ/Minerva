@@ -21,7 +21,7 @@ jobs:
         working-directory: ./extension
         run: npm install
 
-      - name: Run linters
+      - name: Execute Eslint on extension
         uses: wearerequired/lint-action@v1
         with:
           github_token: ${{ secrets.github_token }}
@@ -46,7 +46,7 @@ jobs:
         working-directory: ./backend
         run: npm install
 
-      - name: Run linters
+      - name: Execute Eslint on backend
         uses: wearerequired/lint-action@v1
         with:
           github_token: ${{ secrets.github_token }}
