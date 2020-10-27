@@ -35,6 +35,7 @@
     "globals": {
         "chrome": false,
         "$": false,
-        "YT": false
+        "YT": false,
+        "Snackbar": false
     }
 }

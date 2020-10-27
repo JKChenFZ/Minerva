@@ -1,7 +1,19 @@
 ///////////////////////////////////////////
 /////////// Button Logic
 ///////////////////////////////////////////
-function exitButtonOnclick() {
+function questionBUttonOnclick(event) {
+    event.stopPropagation();
+
+    console.debug(`Question ButtonPressed at ${player.getCurrentTime()}`);
+    Snackbar.show({
+        pos: "bottom-center",
+        text: "Got it. We will let your teacher know.",
+    });
+}
+
+function exitButtonOnclick(event) {
+    event.stopPropagation();
+
     let overlay = document.getElementById("studyModeLocker");
     if (overlay) {
         overlay.remove();
@@ -24,19 +36,13 @@ function addControlButtons() {
     exitIcon.setAttribute("class", "fas fa-times-circle icon-left-padding");
     exitButton.setAttribute("class", "button exit-button");
     exitButton.innerText = "Leave";
-    exitButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        exitButtonOnclick();
-    });
+    exitButton.addEventListener("click", (e) => exitButtonOnclick(e));
 
     // Question button logic
     questionIcon.setAttribute("class", "fas fa-question icon-left-padding");
     questionButton.setAttribute("class", "button question-button");
     questionButton.innerText = "Question";
-    questionButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        console.log("Question Pressed");
-    });
+    questionButton.addEventListener("click", (e) => questionBUttonOnclick(e));
 
     // Put everything together
     exitButton.appendChild(exitIcon);
@@ -98,6 +104,9 @@ function addYoutubeIFrame(rawDestination) {
 
                 // Save the video id and the video title to local storage
                 window.localStorage.setItem("youtube_video_id", videoID);
+                window.localStorage.setItem(
+                    "youtube_video_duration",
+                    event.target.getDuration());
                 window.localStorage.setItem(
                     "youtube_video_title",
                     event.target.getVideoData().title
