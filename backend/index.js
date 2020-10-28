@@ -1,10 +1,20 @@
 import express from "express";
+import bodyParser from "body-parser";
+
+import { StudentRouter } from "./src/routers/StudentRouter.js";
 import { VideoRouter } from "./src/routers/VideoRouter.js";
 
 const app = express();
 const port = 3000;
 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
+
 app.use("/video", VideoRouter);
+app.use("/student", StudentRouter);
 
 app.get("/", (req, res) => {
     res.setHeader("Content-Type", "application/json");
