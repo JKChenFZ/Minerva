@@ -1,0 +1,22 @@
+/* Webcam CSS */
+#overlayVideoCam {
+    z-index: 2000;
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    /* width: 15vw; */
+    /* height: 15vh; */
+    width: 640px;
+    height: 480px;
+}
+
+#overlayVideoCanvas {
+    z-index: 3000;
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    /* width: 15vw; */
+    /* height: 15vh; */
+    width: 640px;
+    height: 480px;
+}

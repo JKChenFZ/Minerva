@@ -120,6 +120,36 @@ function addYoutubeIFrame(rawDestination) {
 }
 
 ///////////////////////////////////////////
+/////////// Webcam feed logic 
+///////////////////////////////////////////
+function addWebcamFeed() {
+    // let videoContainerDiv = document.createElement("DIV");
+    // videoContainerDiv.id = "videoContainer";
+
+    let video = document.createElement("VIDEO");
+    video.id = "overlayVideoCam";
+    video.setAttribute("autoplay", "");
+
+    let canvas = document.createElement("CANVAS");
+    canvas.id = "overlayVideoCanvas";
+    // canvas.setAttribute("autoplay", "");
+
+    // videoEmbedDiv.innerHTML  += `
+    // <div id="videoContainer">
+    // <video id="webcam" width="640" height="480" autoplay style="display:none" ></video>    
+    // <canvas id="canvas" width="640" height="480"></canvas>
+    // </div>`;
+    // videoContainerDiv.appendChild(video);
+    // videoContainerDiv.appendChild(canvas);
+
+    let siteBody = document.getElementsByTagName("BODY")[0];
+    siteBody.appendChild(video);
+    siteBody.appendChild(canvas);
+
+}
+
+
+///////////////////////////////////////////
 /////////// Entry point event handler 
 ///////////////////////////////////////////
 function hijackYoutubeLinkClicks(e) {
@@ -154,6 +184,9 @@ function hijackYoutubeLinkClicks(e) {
 
             // Embed the Video
             addYoutubeIFrame(destination);
+
+            // // Add the webcam feed
+            // addWebcamFeed();
         }
     }
 }
@@ -161,3 +194,81 @@ function hijackYoutubeLinkClicks(e) {
 // This file is guaranteed to be injected after "load" event is fired
 window.addEventListener("click", hijackYoutubeLinkClicks);
 console.log("Google Classroom Overlay registered");
+
+// Add the webcam feed
+setTimeout(() => {
+    
+    console.log("about time");
+    console.log(blazeface);
+    console.log("check this");
+    console.log(blazeface.load());
+    // console.log()
+    addWebcamFeed();
+    temp();
+    
+}, 25000);
+// temp();
+
+function temp() {
+    (function() {
+        console.log("right after timeout");
+        var canvas = document.getElementById("overlayVideoCanvas"),
+            context = canvas.getContext("2d"),
+            video = document.getElementById("overlayVideoCam");
+
+        navigator.getMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+        navigator.getMedia({
+            video:true,
+            audio:false
+        }, function(stream){
+            video.srcObject = stream;
+            video.play();
+        }, function(error){
+            //error.code
+        }
+        );
+        setTimeout(
+            video.addEventListener("play", function()
+            {
+                console.log("calling async draw");
+                draw(this, context, 640, 480);
+            }, false), 10000);
+
+    })();
+}
+
+async function draw(video, context, width, height)
+{
+    console.log(blazeface);
+    context.drawImage(video, 0, 0, width, height);
+    // const blazeface = await tfconv.loadGraphModel('https://cdn.hansuku.com/tensorflow/model.json');
+    // const model = new face_1.BlazeFaceModel(blazeface, width, height, 10);
+    const model = await blazeface.load();
+    console.log("right after load blazeface");
+    const returnTensors = false;
+    const predictions = await model.estimateFaces(video, returnTensors);
+    if (predictions.length > 0)
+    {
+        console.log(predictions);
+        for (let i = 0; i < predictions.length; i++) {
+            const start = predictions[i].topLeft;
+            const end = predictions[i].bottomRight;
+            var probability = predictions[i].probability;
+            const size = [end[0] - start[0], end[1] - start[1]];
+            // Render a rectangle over each detected face.
+            context.beginPath();
+            context.strokeStyle="green";
+            context.lineWidth = "4";
+            context.rect(start[0], start[1], size[0], size[1]);
+            context.stroke();
+            var prob = (probability[0]*100).toPrecision(5).toString();
+            var text = prob+"%";
+            context.fillStyle = "red";
+            context.font = "13pt sans-serif";
+            context.fillText(text, start[0] + 5, start[1] + 20);
+        }
+    }
+    // eslint-disable-next-line no-unused-vars
+    setTimeout(draw, 250, video, context, width, height);
+}

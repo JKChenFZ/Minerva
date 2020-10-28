@@ -6,6 +6,12 @@ const IFRAME_API = "https://www.youtube.com/iframe_api";
 const SNACKBAR_JS = "https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.min.js";
 const SNACKBAR_CSS = "https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.css";
 
+// Webcam vendor scripts
+const TFJS = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs";
+const BLAZE_FACE = "https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface";
+const TF_CONV = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter";
+const TFJS_NODE = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-node";
+
 function addScript(url) {
     let script = document.createElement("script");
     script.src = url;
@@ -31,3 +37,8 @@ addStyleSheet(SNACKBAR_CSS);
 addScript(SNACKBAR_JS);
 addScript(chrome.runtime.getURL(GOOGLE_CLASSROOM_OVERLAY_SCRIPT));
 addScript(IFRAME_API);
+// addScript(TFJS_NODE);
+// addScript(BLAZE_FACE);
+addScript(chrome.runtime.getURL("src/embed_scripts/blazeface.js"));
+addScript(chrome.runtime.getURL("src/embed_scripts/tfjs.js"));
+addScript(TF_CONV);
