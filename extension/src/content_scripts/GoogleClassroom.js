@@ -15,6 +15,7 @@ const TFJS_NODE = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-node";
 function addScript(url) {
     let script = document.createElement("script");
     script.src = url;
+    script.type = "text/javascript";
 
     (document.head || document.documentElement).appendChild(script);
 }
@@ -39,6 +40,14 @@ addScript(chrome.runtime.getURL(GOOGLE_CLASSROOM_OVERLAY_SCRIPT));
 addScript(IFRAME_API);
 // addScript(TFJS_NODE);
 // addScript(BLAZE_FACE);
-addScript(chrome.runtime.getURL("src/embed_scripts/blazeface.js"));
-addScript(chrome.runtime.getURL("src/embed_scripts/tfjs.js"));
-addScript(TF_CONV);
+// addScript(chrome.runtime.getURL("src/embed_scripts/blazeface.js"));
+// addScript(chrome.runtime.getURL("src/embed_scripts/tfjs.js"));
+
+addScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core");
+addScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter");
+
+addScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js");
+addScript("https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface");
+
+
+addScript("https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js");

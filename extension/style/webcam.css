@@ -4,10 +4,12 @@
     position: fixed;
     top: 5px;
     right: 5px;
-    /* width: 15vw; */
-    /* height: 15vh; */
-    width: 640px;
-    height: 480px;
+    /* width: 75vw; */
+    /* height: 75vh; */
+    width: 740px;
+    height: 580px;
+    /* -webkit-transform: scaleX(-1); */
+    /* transform: scaleX(-1); */
 }
 
 #overlayVideoCanvas {
@@ -15,8 +17,10 @@
     position: fixed;
     top: 5px;
     right: 5px;
-    /* width: 15vw; */
-    /* height: 15vh; */
-    width: 640px;
-    height: 480px;
+    /* width: 75vw; */
+    /* height: 75vh; */
+    width: 740px;
+    height: 580px;
+    /* -webkit-transform: scaleX(-1);/ */
+    /* transform: scaleX(-1); */
 }

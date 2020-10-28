@@ -195,80 +195,84 @@ function hijackYoutubeLinkClicks(e) {
 window.addEventListener("click", hijackYoutubeLinkClicks);
 console.log("Google Classroom Overlay registered");
 
-// Add the webcam feed
-setTimeout(() => {
-    
-    console.log("about time");
-    console.log(blazeface);
-    console.log("check this");
-    console.log(blazeface.load());
-    // console.log()
-    addWebcamFeed();
-    temp();
-    
-}, 25000);
-// temp();
+let video, canvas, ctx, model;
 
-function temp() {
-    (function() {
-        console.log("right after timeout");
-        var canvas = document.getElementById("overlayVideoCanvas"),
-            context = canvas.getContext("2d"),
-            video = document.getElementById("overlayVideoCam");
-
-        navigator.getMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-
-        navigator.getMedia({
-            video:true,
-            audio:false
-        }, function(stream){
-            video.srcObject = stream;
-            video.play();
-        }, function(error){
-            //error.code
-        }
-        );
-        setTimeout(
-            video.addEventListener("play", function()
-            {
-                console.log("calling async draw");
-                draw(this, context, 640, 480);
-            }, false), 10000);
-
-    })();
+async function setupCamera() {
+    video = document.getElementById("overlayVideoCam");
+  
+    const stream = await navigator.mediaDevices.getUserMedia({
+        "audio": false,
+        "video": { facingMode: "user" },
+    });
+    video.srcObject = stream;
+  
+    return new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+            resolve(video);
+        };
+    });
 }
 
-async function draw(video, context, width, height)
-{
-    console.log(blazeface);
-    context.drawImage(video, 0, 0, width, height);
-    // const blazeface = await tfconv.loadGraphModel('https://cdn.hansuku.com/tensorflow/model.json');
-    // const model = new face_1.BlazeFaceModel(blazeface, width, height, 10);
-    const model = await blazeface.load();
-    console.log("right after load blazeface");
+// Add the webcam feed
+async function theNewWay() {
+    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm");
+    await tf.setBackend("wasm");
+    addWebcamFeed();
+    await setupCamera();
+
+    canvas = document.getElementById("overlayVideoCanvas");
+    ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    model = await blazeface.load();
+
+    renderPrediction();
+}
+
+async function renderPrediction() {
     const returnTensors = false;
-    const predictions = await model.estimateFaces(video, returnTensors);
-    if (predictions.length > 0)
-    {
-        console.log(predictions);
+    const flipHorizontal = true;
+    const annotateBoxes = true;
+    const predictions = await model.estimateFaces(
+        video, returnTensors, flipHorizontal, annotateBoxes);
+
+    if (predictions.length > 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
         for (let i = 0; i < predictions.length; i++) {
+            console.log("inside 2");
+            if (returnTensors) {
+                predictions[i].topLeft = predictions[i].topLeft.arraySync();
+                predictions[i].bottomRight = predictions[i].bottomRight.arraySync();
+                if (annotateBoxes) {
+                    predictions[i].landmarks = predictions[i].landmarks.arraySync();
+                }
+            }
+  
             const start = predictions[i].topLeft;
             const end = predictions[i].bottomRight;
-            var probability = predictions[i].probability;
-            const size = [end[0] - start[0], end[1] - start[1]];
-            // Render a rectangle over each detected face.
-            context.beginPath();
-            context.strokeStyle="green";
-            context.lineWidth = "4";
-            context.rect(start[0], start[1], size[0], size[1]);
-            context.stroke();
-            var prob = (probability[0]*100).toPrecision(5).toString();
-            var text = prob+"%";
-            context.fillStyle = "red";
-            context.font = "13pt sans-serif";
-            context.fillText(text, start[0] + 5, start[1] + 20);
+            const size = [Math.abs(end[0] - start[0]), end[1] - start[1]];
+            ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+            ctx.fillRect(start[0] * -1, start[1], size[0], size[1]);
+            console.log(`${start[0] * -1} ${start[1]} ${size[0]} ${size[1]}`);
+  
+            if (annotateBoxes) {
+                const landmarks = predictions[i].landmarks;
+  
+                ctx.fillStyle = "blue";
+                for (let j = 0; j < landmarks.length; j++) {
+                    const x = landmarks[j][0] * -1;
+                    const y = landmarks[j][1];
+                    ctx.fillRect(x, y, 5, 5);
+                    console.log(`${x} ${y} ${5} ${5}`);
+
+                }
+            }
         }
     }
-    // eslint-disable-next-line no-unused-vars
-    setTimeout(draw, 250, video, context, width, height);
-}
+  
+    requestAnimationFrame(renderPrediction);
+};
+
+setTimeout(theNewWay, 50000);
+// temp();
+// var model;
