@@ -19,7 +19,7 @@ function exitButtonOnclick(event) {
         overlay.remove();
         stream.getTracks().forEach(function(track) {
             track.stop();
-          });
+        });
         video = null;
 
         // Add the handler back
@@ -130,9 +130,9 @@ function addYoutubeIFrame(rawDestination) {
 let video, canvas, ctx, model, stream;
 
 async function settingUpModel() {
-    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm");
-    await tf.setBackend("wasm");
-    model = await blazeface.load();
+    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm"); // eslint-disable-line no-undef
+    await tf.setBackend("wasm"); // eslint-disable-line no-undef
+    model = await blazeface.load(); // eslint-disable-line no-undef
     console.log("finish loading model");
 }
 

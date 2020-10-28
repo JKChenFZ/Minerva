@@ -10,7 +10,6 @@ const SNACKBAR_CSS = "https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.1
 const TFJS_CORE = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core";
 const TFJS_WASM = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js";
 const BLAZE_FACE = "https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface";
-const DAT_GUI= "https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js";
 const TFJS_CONV = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter";
 
 function addScript(url, func=null) {
