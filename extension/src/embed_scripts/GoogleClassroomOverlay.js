@@ -194,7 +194,7 @@ async function renderPrediction() {
             const end = predictions[i].bottomRight;
             const size = [end[0] - start[0], end[1] - start[1]];
             ctx.strokeStyle = "white";
-            ctx.strokeRect(start[0] , start[1], size[0], size[1]);
+            ctx.strokeRect(start[0], start[1], size[0], size[1]);
   
             if (annotateBoxes) {
                 const landmarks = predictions[i].landmarks;
