@@ -7,15 +7,21 @@ const SNACKBAR_JS = "https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16
 const SNACKBAR_CSS = "https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.css";
 
 // Webcam vendor scripts
-const TFJS = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs";
+const TFJS_CORE = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core";
+const TFJS_WASM = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js";
 const BLAZE_FACE = "https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface";
-const TF_CONV = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter";
-const TFJS_NODE = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-node";
+const DAT_GUI= "https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js";
+const TFJS_CONV = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter";
 
-function addScript(url) {
+function addScript(url, func=null) {
     let script = document.createElement("script");
     script.src = url;
     script.type = "text/javascript";
+    if(func != null) {
+        script.onload = ()=>{
+            func();
+        };
+    }
 
     (document.head || document.documentElement).appendChild(script);
 }
@@ -36,18 +42,15 @@ function addStyleSheet(url) {
 addStyleSheet(FONT_AWESOME_URL);
 addStyleSheet(SNACKBAR_CSS);
 addScript(SNACKBAR_JS);
-addScript(chrome.runtime.getURL(GOOGLE_CLASSROOM_OVERLAY_SCRIPT));
 addScript(IFRAME_API);
-// addScript(TFJS_NODE);
-// addScript(BLAZE_FACE);
-// addScript(chrome.runtime.getURL("src/embed_scripts/blazeface.js"));
-// addScript(chrome.runtime.getURL("src/embed_scripts/tfjs.js"));
 
-addScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core");
-addScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter");
-
-addScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js");
-addScript("https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface");
-
-
-addScript("https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js");
+// ML scripts
+addScript(TFJS_CORE, ()=> {
+    addScript(TFJS_WASM, ()=> {
+        addScript(TFJS_CONV, ()=> {
+            addScript(BLAZE_FACE, ()=> {
+                addScript(chrome.runtime.getURL(GOOGLE_CLASSROOM_OVERLAY_SCRIPT));
+            });
+        });
+    });
+});

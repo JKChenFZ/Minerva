@@ -17,9 +17,15 @@ function exitButtonOnclick(event) {
     let overlay = document.getElementById("studyModeLocker");
     if (overlay) {
         overlay.remove();
+        stream.getTracks().forEach(function(track) {
+            track.stop();
+          });
+        video = null;
+
         // Add the handler back
         window.addEventListener("click", hijackYoutubeLinkClicks);
     }
+
 }
 
 function addControlButtons() {
@@ -57,7 +63,6 @@ function addControlButtons() {
 ///////////////////////////////////////////
 /////////// Embeded Youtube Logic
 ///////////////////////////////////////////
-
 // The traditional approach is to add the Youtube API script programtically
 // and implement the "onYouTubePlayerAPIReady" function which is invoked right
 // after. Our usecase is slightly different; we have Youtube iFrame being
@@ -122,32 +127,101 @@ function addYoutubeIFrame(rawDestination) {
 ///////////////////////////////////////////
 /////////// Webcam feed logic 
 ///////////////////////////////////////////
-function addWebcamFeed() {
-    // let videoContainerDiv = document.createElement("DIV");
-    // videoContainerDiv.id = "videoContainer";
+let video, canvas, ctx, model, stream;
 
-    let video = document.createElement("VIDEO");
-    video.id = "overlayVideoCam";
-    video.setAttribute("autoplay", "");
+async function settingUpModel() {
+    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm");
+    await tf.setBackend("wasm");
+    model = await blazeface.load();
+    console.log("finish loading model");
+}
+
+function setupWebcam() {
+    let videoFeed = document.createElement("VIDEO");
+    videoFeed.id = "overlayVideoCam";
+    videoFeed.setAttribute("autoplay", "");
 
     let canvas = document.createElement("CANVAS");
     canvas.id = "overlayVideoCanvas";
-    // canvas.setAttribute("autoplay", "");
+    canvas.width = 640;
+    canvas.height = 480;
 
-    // videoEmbedDiv.innerHTML  += `
-    // <div id="videoContainer">
-    // <video id="webcam" width="640" height="480" autoplay style="display:none" ></video>    
-    // <canvas id="canvas" width="640" height="480"></canvas>
-    // </div>`;
-    // videoContainerDiv.appendChild(video);
-    // videoContainerDiv.appendChild(canvas);
-
-    let siteBody = document.getElementsByTagName("BODY")[0];
-    siteBody.appendChild(video);
-    siteBody.appendChild(canvas);
-
+    let overlay = document.getElementById("studyModeLocker");
+    overlay.appendChild(videoFeed);
+    overlay.appendChild(canvas);
 }
 
+async function enableCamera() {
+    video = document.getElementById("overlayVideoCam");
+  
+    stream = await navigator.mediaDevices.getUserMedia({
+        "audio": false,
+        "video": { facingMode: "user" },
+    });
+    video.srcObject = stream;
+  
+    return new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+            resolve(video);
+        };
+    });
+}
+
+async function renderPrediction() {
+    if(!video)  {
+        return;
+    }
+    const returnTensors = false;
+    const annotateBoxes = true;
+    const predictions = await model.estimateFaces(
+        video, returnTensors);
+
+    if (predictions.length > 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+        for (let i = 0; i < predictions.length; i++) {
+            if (returnTensors) {
+                console.log(predictions[i].topLeft.arraySync());
+                
+                predictions[i].topLeft = predictions[i].topLeft.arraySync();
+                predictions[i].bottomRight = predictions[i].bottomRight.arraySync();
+                if (annotateBoxes) {
+                    predictions[i].landmarks = predictions[i].landmarks.arraySync();
+                }
+            }
+  
+            const start = predictions[i].topLeft;
+            const end = predictions[i].bottomRight;
+            const size = [end[0] - start[0], end[1] - start[1]];
+            ctx.strokeStyle = "white";
+            ctx.strokeRect(start[0] , start[1], size[0], size[1]);
+  
+            if (annotateBoxes) {
+                const landmarks = predictions[i].landmarks;
+                ctx.fillStyle = "white";
+                for (let j = 0; j < landmarks.length; j++) {
+                    const x = landmarks[j][0];
+                    const y = landmarks[j][1];
+                    ctx.fillRect(x, y, 5, 5);
+                }
+            }
+        }
+    }
+
+    requestAnimationFrame(renderPrediction);
+};
+
+// Add the webcam feed
+async function integrateWebcam() {
+    setupWebcam();
+    await enableCamera();
+
+    canvas = document.getElementById("overlayVideoCanvas");
+    ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+
+    renderPrediction();
+}
 
 ///////////////////////////////////////////
 /////////// Entry point event handler 
@@ -185,94 +259,18 @@ function hijackYoutubeLinkClicks(e) {
             // Embed the Video
             addYoutubeIFrame(destination);
 
-            // // Add the webcam feed
-            // addWebcamFeed();
+            // Add the webcam feed
+            integrateWebcam();
         }
     }
 }
 
+///////////////////////////////////////////
+/////////// Main Logic
+///////////////////////////////////////////
 // This file is guaranteed to be injected after "load" event is fired
+settingUpModel();
+
 window.addEventListener("click", hijackYoutubeLinkClicks);
 console.log("Google Classroom Overlay registered");
 
-let video, canvas, ctx, model;
-
-async function setupCamera() {
-    video = document.getElementById("overlayVideoCam");
-  
-    const stream = await navigator.mediaDevices.getUserMedia({
-        "audio": false,
-        "video": { facingMode: "user" },
-    });
-    video.srcObject = stream;
-  
-    return new Promise((resolve) => {
-        video.onloadedmetadata = () => {
-            resolve(video);
-        };
-    });
-}
-
-// Add the webcam feed
-async function theNewWay() {
-    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm");
-    await tf.setBackend("wasm");
-    addWebcamFeed();
-    await setupCamera();
-
-    canvas = document.getElementById("overlayVideoCanvas");
-    ctx = canvas.getContext("2d");
-    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-    model = await blazeface.load();
-
-    renderPrediction();
-}
-
-async function renderPrediction() {
-    const returnTensors = false;
-    const flipHorizontal = true;
-    const annotateBoxes = true;
-    const predictions = await model.estimateFaces(
-        video, returnTensors, flipHorizontal, annotateBoxes);
-
-    if (predictions.length > 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-        for (let i = 0; i < predictions.length; i++) {
-            console.log("inside 2");
-            if (returnTensors) {
-                predictions[i].topLeft = predictions[i].topLeft.arraySync();
-                predictions[i].bottomRight = predictions[i].bottomRight.arraySync();
-                if (annotateBoxes) {
-                    predictions[i].landmarks = predictions[i].landmarks.arraySync();
-                }
-            }
-  
-            const start = predictions[i].topLeft;
-            const end = predictions[i].bottomRight;
-            const size = [Math.abs(end[0] - start[0]), end[1] - start[1]];
-            ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-            ctx.fillRect(start[0] * -1, start[1], size[0], size[1]);
-            console.log(`${start[0] * -1} ${start[1]} ${size[0]} ${size[1]}`);
-  
-            if (annotateBoxes) {
-                const landmarks = predictions[i].landmarks;
-  
-                ctx.fillStyle = "blue";
-                for (let j = 0; j < landmarks.length; j++) {
-                    const x = landmarks[j][0] * -1;
-                    const y = landmarks[j][1];
-                    ctx.fillRect(x, y, 5, 5);
-                    console.log(`${x} ${y} ${5} ${5}`);
-
-                }
-            }
-        }
-    }
-  
-    requestAnimationFrame(renderPrediction);
-};
-
-setTimeout(theNewWay, 50000);
-// temp();
-// var model;

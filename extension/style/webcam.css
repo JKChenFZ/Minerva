@@ -4,12 +4,8 @@
     position: fixed;
     top: 5px;
     right: 5px;
-    /* width: 75vw; */
-    /* height: 75vh; */
-    width: 740px;
-    height: 580px;
-    /* -webkit-transform: scaleX(-1); */
-    /* transform: scaleX(-1); */
+    width: 15vw; 
+    height: 15vh;
 }
 
 #overlayVideoCanvas {
@@ -17,10 +13,6 @@
     position: fixed;
     top: 5px;
     right: 5px;
-    /* width: 75vw; */
-    /* height: 75vh; */
-    width: 740px;
-    height: 580px;
-    /* -webkit-transform: scaleX(-1);/ */
-    /* transform: scaleX(-1); */
+    width: 15vw; 
+    height: 15vh;
 }
