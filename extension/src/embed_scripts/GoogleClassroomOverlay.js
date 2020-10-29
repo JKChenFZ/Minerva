@@ -7,7 +7,7 @@ const YOUTUBE_VIDEO_ID = "youtube_video_id";
 const YOUTUBE_VIDEO_DURATION = "youtube_video_duration";
 const YOUTUBE_VIDEO_TITLE = "youtube_video_title";
 const QUESTION_CONFIRMATION = "Got it. We will let your teacher know.";
-const STUDENT_NAME = "STUDENT_NAME";
+const STUDENT_NAME = "student_name";
 
 function getBaselineFetchOptions() {
     return {
