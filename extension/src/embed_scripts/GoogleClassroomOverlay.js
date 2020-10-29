@@ -17,6 +17,11 @@ function exitButtonOnclick(event) {
     let overlay = document.getElementById("studyModeLocker");
     if (overlay) {
         overlay.remove();
+        stream.getTracks().forEach(function(track) {
+            track.stop();
+        });
+        video = null;
+
         // Add the handler back
         window.addEventListener("click", hijackYoutubeLinkClicks);
     }
@@ -57,7 +62,6 @@ function addControlButtons() {
 ///////////////////////////////////////////
 /////////// Embeded Youtube Logic
 ///////////////////////////////////////////
-
 // The traditional approach is to add the Youtube API script programtically
 // and implement the "onYouTubePlayerAPIReady" function which is invoked right
 // after. Our usecase is slightly different; we have Youtube iFrame being
@@ -120,6 +124,105 @@ function addYoutubeIFrame(rawDestination) {
 }
 
 ///////////////////////////////////////////
+/////////// Webcam feed logic 
+///////////////////////////////////////////
+let video, canvas, ctx, model, stream;
+
+async function settingUpModel() {
+    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm"); 
+    await tf.setBackend("wasm"); 
+    model = await blazeface.load(); 
+    console.log("finish loading model");
+}
+
+function setupWebcam() {
+    let videoFeed = document.createElement("VIDEO");
+    videoFeed.id = "overlayVideoCam";
+    videoFeed.setAttribute("autoplay", "");
+
+    let canvas = document.createElement("CANVAS");
+    canvas.id = "overlayVideoCanvas";
+    canvas.width = 640;
+    canvas.height = 480;
+
+    let overlay = document.getElementById("studyModeLocker");
+    overlay.appendChild(videoFeed);
+    overlay.appendChild(canvas);
+}
+
+async function enableCamera() {
+    video = document.getElementById("overlayVideoCam");
+  
+    stream = await navigator.mediaDevices.getUserMedia({
+        "audio": false,
+        "video": { facingMode: "user" },
+    });
+    video.srcObject = stream;
+  
+    return new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+            resolve(video);
+        };
+    });
+}
+
+async function renderPrediction() {
+    if(!video)  {
+        return;
+    }
+    const returnTensors = false;
+    const annotateBoxes = true;
+    const predictions = await model.estimateFaces(
+        video, returnTensors);
+
+    if (predictions.length > 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+        for (let i = 0; i < predictions.length; i++) {
+            if (returnTensors) {
+                console.log(predictions[i].topLeft.arraySync());
+                
+                predictions[i].topLeft = predictions[i].topLeft.arraySync();
+                predictions[i].bottomRight = predictions[i].bottomRight.arraySync();
+                if (annotateBoxes) {
+                    predictions[i].landmarks = predictions[i].landmarks.arraySync();
+                }
+            }
+  
+            const start = predictions[i].topLeft;
+            const end = predictions[i].bottomRight;
+            const size = [end[0] - start[0], end[1] - start[1]];
+            ctx.strokeStyle = "white";
+            ctx.strokeRect(start[0], start[1], size[0], size[1]);
+  
+            if (annotateBoxes) {
+                const landmarks = predictions[i].landmarks;
+                ctx.fillStyle = "white";
+                for (let j = 0; j < landmarks.length; j++) {
+                    const x = landmarks[j][0];
+                    const y = landmarks[j][1];
+                    ctx.fillRect(x, y, 5, 5);
+                }
+            }
+        }
+    }
+
+    requestAnimationFrame(renderPrediction);
+};
+
+// Add the webcam feed
+async function integrateWebcam() {
+    setupWebcam();
+    await enableCamera();
+
+    canvas = document.getElementById("overlayVideoCanvas");
+    ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+
+    renderPrediction();
+}
+
+///////////////////////////////////////////
 /////////// Entry point event handler 
 ///////////////////////////////////////////
 function hijackYoutubeLinkClicks(e) {
@@ -154,10 +257,19 @@ function hijackYoutubeLinkClicks(e) {
 
             // Embed the Video
             addYoutubeIFrame(destination);
+
+            // Add the webcam feed
+            integrateWebcam();
         }
     }
 }
 
+///////////////////////////////////////////
+/////////// Main Logic
+///////////////////////////////////////////
 // This file is guaranteed to be injected after "load" event is fired
+settingUpModel();
+
 window.addEventListener("click", hijackYoutubeLinkClicks);
 console.log("Google Classroom Overlay registered");
+
