@@ -1,14 +1,51 @@
 ///////////////////////////////////////////
-/////////// Button Logic
+/////////// Global Constants
 ///////////////////////////////////////////
-function questionBUttonOnclick(event) {
-    event.stopPropagation();
+const API_HOST = "localhost:3000";
+const POST_REQUEST = "POST";
+const YOUTUBE_VIDEO_ID = "youtube_video_id";
+const YOUTUBE_VIDEO_DURATION = "youtube_video_duration";
+const YOUTUBE_VIDEO_TITLE = "youtube_video_title";
+const QUESTION_CONFIRMATION = "Got it. We will let your teacher know.";
 
-    console.debug(`Question ButtonPressed at ${player.getCurrentTime()}`);
+function getBaselineFetchOptions() {
+    return {
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    };
+}
+
+function showSnackbarWithMsg(message) {
     Snackbar.show({
         pos: "bottom-center",
-        text: "Got it. We will let your teacher know.",
+        text: message,
     });
+}
+
+///////////////////////////////////////////
+/////////// Button Logic
+///////////////////////////////////////////
+async function questionBUttonOnclick(event) {
+    event.stopPropagation();
+    console.debug(`Question ButtonPressed at ${player.getCurrentTime()}`);
+
+    try {
+        let requestOption = getBaselineFetchOptions();
+        requestOption.method = POST_REQUEST;
+        requestOption.body = JSON.stringify({
+            "videoID": window.localStorage.getItem(YOUTUBE_VIDEO_ID),
+            "timestamp": Math.trunc(player.getCurrentTime()),
+            "type": "active"
+        });
+
+        await fetch(`http://${API_HOST}/video/addQuestion`, requestOption);
+        showSnackbarWithMsg(QUESTION_CONFIRMATION);
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function exitButtonOnclick(event) {
@@ -68,6 +105,27 @@ function addControlButtons() {
 const YOUTUBE_WATCH_KEYWORD = "youtube.com/watch?v=";
 var player;
 
+async function videoFinishedHandler() {
+    try {
+        let requestOption = getBaselineFetchOptions();
+        requestOption.method = POST_REQUEST;
+        requestOption.body = JSON.stringify({
+            "student_name": window.localStorage.getItem(YOUTUBE_VIDEO_ID),
+            "increment": window.localStorage.getItem(YOUTUBE_VIDEO_DURATION)
+        });
+
+        let result = await fetch(`http://${API_HOST}/student/finishVideo`, requestOption);
+        let parsed = await result.json();
+        if (!parsed.status) {
+            throw new Error("Finish Video API Error");
+        }
+
+        showSnackbarWithMsg(`Great, you just earned new coins. New balance is ${parsed.newBalance}`);
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 function addYoutubeIFrame(rawDestination) {
     let overlay = document.getElementById("studyModeLocker");
 
@@ -103,17 +161,20 @@ function addYoutubeIFrame(rawDestination) {
                 console.debug("Embedded Youtube Player is ready");
 
                 // Save the video id and the video title to local storage
-                window.localStorage.setItem("youtube_video_id", videoID);
+                window.localStorage.setItem(YOUTUBE_VIDEO_ID, videoID);
                 window.localStorage.setItem(
-                    "youtube_video_duration",
+                    YOUTUBE_VIDEO_DURATION,
                     event.target.getDuration());
                 window.localStorage.setItem(
-                    "youtube_video_title",
+                    YOUTUBE_VIDEO_TITLE,
                     event.target.getVideoData().title
                 );
             },
-            "onStateChange": () => {
+            "onStateChange": (event) => {
                 console.debug("Embedded Youtube Player has a new change");
+                if (event.data == YT.PlayerState.ENDED) {
+                    videoFinishedHandler();
+                }
             }
         }
     });

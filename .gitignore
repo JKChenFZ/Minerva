@@ -3,5 +3,8 @@ node_modules/
 # Optional npm cache directory
 .npm
 
+# backend environment variables
+.env
+
 # Optional eslint cache
 .eslintcache

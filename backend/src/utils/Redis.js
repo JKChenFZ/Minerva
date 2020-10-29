@@ -2,7 +2,7 @@ import redis from "redis";
 import { promisify } from "util";
 
 const client = redis.createClient({
-    host: "127.0.0.1"
+    host: process.env.REDIS
 });
 
 const rpushAsync = promisify(client.rpush).bind(client);
