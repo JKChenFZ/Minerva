@@ -1,7 +1,34 @@
 import express from "express";
-import { incrByAsync, mgetAsync } from "../utils/Redis.js";
+import { incrAsync, incrByAsync, keysAsync, mgetAsync } from "../utils/Redis.js";
+import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
 
 const router = express.Router();
+
+router.get("/getAllStudentTime", async function (req, res) {
+    let status = true;
+    let studentInfo = null;
+
+    try {
+        let searchPattern = "*-time";
+        let foundKeys = await keysAsync(searchPattern);
+        let studentTimes = await mgetAsync(foundKeys);
+
+        studentInfo = studentTimes.map((time, index) => {
+            let correspondingKey = foundKeys[index];
+            let name = correspondingKey.replace("-time", "");
+
+            return {
+                time,
+                name
+            };
+        });
+    } catch (e) {
+        console.error(`[Endpoint] getAllStudentTime failed, ${e}`);
+        status = false;
+    }
+
+    res.json({status, studentInfo});
+});
 
 router.get("/getStudentBalance", async function (req, res) {
     let status = true;
@@ -9,7 +36,7 @@ router.get("/getStudentBalance", async function (req, res) {
     let studentName = req.query["student_name"];
 
     try {
-        if (!studentName) {
+        if (isNullOrUndefined(studentName)) {
             throw new Error("Incomplete parameters");
         }
 
@@ -30,7 +57,7 @@ router.get("/getStudentTime", async function (req, res) {
     let studentName = req.query["student_name"];
 
     try {
-        if (!studentName) {
+        if (isNullOrUndefined(studentName)) {
             throw new Error("Incomplete parameters");
         }
 
@@ -51,16 +78,20 @@ router.post("/finishVideo", async function (req, res) {
     let newTime = null;
     let studentName = req.body["student_name"];
     let newIncrement = req.body["increment"];
+    let videoID = req.body["videoID"];
 
     try {
-        if (!studentName || !newIncrement) {
+        if (includesNullOrUndefined([studentName, newIncrement, videoID])) {
             throw new Error("Incomplete parameters");
         }
 
+        let watchTimesKey = `${videoID}-${studentName}-watch-times`;
+        let newWatchTimes = await incrAsync(watchTimesKey);
+        let discountedIncrement = Math.trunc(newIncrement / newWatchTimes);
         let balanceKey = `${studentName}-balance`;
         let timeKey = `${studentName}-time`;
-        newBalance = await incrByAsync(balanceKey, newIncrement);
-        newTime = await incrByAsync(timeKey, newIncrement);
+        newBalance = await incrByAsync(balanceKey, discountedIncrement);
+        newTime = await incrByAsync(timeKey, discountedIncrement);
     } catch (e) {
         console.error(`[Endpoint] addStudentBalance failed, ${e}`);
         status = false;
