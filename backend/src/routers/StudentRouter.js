@@ -1,5 +1,6 @@
 import express from "express";
 import { incrAsync, incrByAsync, mgetAsync } from "../utils/Redis.js";
+import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.get("/getStudentBalance", async function (req, res) {
     let studentName = req.query["student_name"];
 
     try {
-        if (!studentName) {
+        if (isNullOrUndefined(studentName)) {
             throw new Error("Incomplete parameters");
         }
 
@@ -30,7 +31,7 @@ router.get("/getStudentTime", async function (req, res) {
     let studentName = req.query["student_name"];
 
     try {
-        if (!studentName) {
+        if (isNullOrUndefined(studentName)) {
             throw new Error("Incomplete parameters");
         }
 
@@ -54,7 +55,7 @@ router.post("/finishVideo", async function (req, res) {
     let videoID = req.body["videoID"];
 
     try {
-        if (!studentName || !newIncrement || !videoID) {
+        if (includesNullOrUndefined([studentName, newIncrement, videoID])) {
             throw new Error("Incomplete parameters");
         }
 
