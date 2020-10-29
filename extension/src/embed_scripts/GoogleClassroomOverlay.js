@@ -25,7 +25,6 @@ function exitButtonOnclick(event) {
         // Add the handler back
         window.addEventListener("click", hijackYoutubeLinkClicks);
     }
-
 }
 
 function addControlButtons() {
@@ -130,9 +129,9 @@ function addYoutubeIFrame(rawDestination) {
 let video, canvas, ctx, model, stream;
 
 async function settingUpModel() {
-    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm"); // eslint-disable-line no-undef
-    await tf.setBackend("wasm"); // eslint-disable-line no-undef
-    model = await blazeface.load(); // eslint-disable-line no-undef
+    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm"); 
+    await tf.setBackend("wasm"); 
+    model = await blazeface.load(); 
     console.log("finish loading model");
 }
 

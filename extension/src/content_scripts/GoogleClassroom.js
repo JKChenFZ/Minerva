@@ -17,7 +17,7 @@ function addScript(url, func=null) {
     script.src = url;
     script.type = "text/javascript";
     if(func != null) {
-        script.onload = ()=>{
+        script.onload = () => {
             func();
         };
     }
@@ -44,10 +44,10 @@ addScript(SNACKBAR_JS);
 addScript(IFRAME_API);
 
 // ML scripts
-addScript(TFJS_CORE, ()=> {
-    addScript(TFJS_WASM, ()=> {
-        addScript(TFJS_CONV, ()=> {
-            addScript(BLAZE_FACE, ()=> {
+addScript(TFJS_CORE, () => {
+    addScript(TFJS_WASM, () => {
+        addScript(TFJS_CONV, () => {
+            addScript(BLAZE_FACE, () => {
                 addScript(chrome.runtime.getURL(GOOGLE_CLASSROOM_OVERLAY_SCRIPT));
             });
         });
