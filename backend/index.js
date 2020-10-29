@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 import { StudentRouter } from "./src/routers/StudentRouter.js";
 import { VideoRouter } from "./src/routers/VideoRouter.js";
@@ -12,6 +13,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+// CORS setting
+app.use(cors());
 
 app.use("/video", VideoRouter);
 app.use("/student", StudentRouter);
