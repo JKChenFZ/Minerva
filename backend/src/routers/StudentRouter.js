@@ -1,8 +1,34 @@
 import express from "express";
-import { incrAsync, incrByAsync, mgetAsync } from "../utils/Redis.js";
+import { incrAsync, incrByAsync, keysAsync, mgetAsync } from "../utils/Redis.js";
 import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
 
 const router = express.Router();
+
+router.get("/getAllStudentTime", async function (req, res) {
+    let status = true;
+    let studentInfo = null;
+
+    try {
+        let searchPattern = "*-time";
+        let foundKeys = await keysAsync(searchPattern);
+        let studentTimes = await mgetAsync(foundKeys);
+
+        studentInfo = studentTimes.map((time, index) => {
+            let correspondingKey = foundKeys[index];
+            let name = correspondingKey.replace("-time", "");
+
+            return {
+                time,
+                name
+            };
+        });
+    } catch (e) {
+        console.error(`[Endpoint] getAllStudentTime failed, ${e}`);
+        status = false;
+    }
+
+    res.json({status, studentInfo});
+});
 
 router.get("/getStudentBalance", async function (req, res) {
     let status = true;
