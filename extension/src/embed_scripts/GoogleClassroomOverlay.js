@@ -153,7 +153,7 @@ function addYoutubeIFrame(rawDestination) {
     iframe.setAttribute("width", "100%");
     iframe.setAttribute("height", "100%");
     iframe.setAttribute("class", "youtubeIFrame");
-    iframe.src = `https://www.youtube-nocookie.com/embed/${videoID}?enablejsapi=1`;
+    iframe.src = `https://www.youtube-nocookie.com/embed/${videoID}?enablejsapi=1&controls=0`;
 
     wrapperDiv.appendChild(iframe);
     overlay.appendChild(wrapperDiv);
