@@ -1,5 +1,5 @@
 import express from "express";
-import { incrByAsync, mgetAsync } from "../utils/Redis.js";
+import { incrAsync, incrByAsync, mgetAsync } from "../utils/Redis.js";
 
 const router = express.Router();
 
@@ -51,16 +51,20 @@ router.post("/finishVideo", async function (req, res) {
     let newTime = null;
     let studentName = req.body["student_name"];
     let newIncrement = req.body["increment"];
+    let videoID = req.body["videoID"];
 
     try {
-        if (!studentName || !newIncrement) {
+        if (!studentName || !newIncrement || !videoID) {
             throw new Error("Incomplete parameters");
         }
 
+        let watchTimesKey = `${videoID}-${studentName}-watch-times`;
+        let newWatchTimes = await incrAsync(watchTimesKey);
+        let discountedIncrement = Math.trunc(newIncrement / newWatchTimes);
         let balanceKey = `${studentName}-balance`;
         let timeKey = `${studentName}-time`;
-        newBalance = await incrByAsync(balanceKey, newIncrement);
-        newTime = await incrByAsync(timeKey, newIncrement);
+        newBalance = await incrByAsync(balanceKey, discountedIncrement);
+        newTime = await incrByAsync(timeKey, discountedIncrement);
     } catch (e) {
         console.error(`[Endpoint] addStudentBalance failed, ${e}`);
         status = false;

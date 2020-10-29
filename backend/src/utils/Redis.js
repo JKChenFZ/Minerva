@@ -8,6 +8,7 @@ const client = redis.createClient({
 const rpushAsync = promisify(client.rpush).bind(client);
 const getAllKeys = promisify(client.lrange).bind(client);
 const mgetAsync = promisify(client.mget).bind(client);
+const incrAsync = promisify(client.incr).bind(client);
 const incrByAsync = promisify(client.incrby).bind(client);
 
-export { getAllKeys, incrByAsync, mgetAsync, rpushAsync };
+export { getAllKeys, incrAsync, incrByAsync, mgetAsync, rpushAsync };
