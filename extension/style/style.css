@@ -77,6 +77,26 @@
 }
 
 /* Popup CSS */
-#extensionBody {
+
+#studentCollapseCard {
     min-width: 300px;
+}
+
+#registerStudentCard {
+    width: 300px;
+}
+
+.tab-pane {
+    width: 300px;
+    height: 200px;
+}
+
+
+/* Generic CSS */
+
+.centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
