@@ -38,6 +38,7 @@
         "YT": false,
         "Snackbar": false,
         "tf": false,
-        "blazeface": false
+        "blazeface": false,
+        "faceapi": false
     }
 }

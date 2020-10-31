@@ -11,6 +11,7 @@ const TFJS_CORE = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core";
 const TFJS_WASM = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js";
 const BLAZE_FACE = "https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface";
 const TFJS_CONV = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter";
+const FACE_API = "src/models/face-api.min.js";
 
 function addScript(url, func=null) {
     let script = document.createElement("script");
@@ -48,7 +49,9 @@ addScript(TFJS_CORE, () => {
     addScript(TFJS_WASM, () => {
         addScript(TFJS_CONV, () => {
             addScript(BLAZE_FACE, () => {
-                addScript(chrome.runtime.getURL(GOOGLE_CLASSROOM_OVERLAY_SCRIPT));
+                addScript(chrome.runtime.getURL(GOOGLE_CLASSROOM_OVERLAY_SCRIPT),  ()=> {
+                    addScript(chrome.runtime.getURL(FACE_API));
+                });
             });
         });
     });

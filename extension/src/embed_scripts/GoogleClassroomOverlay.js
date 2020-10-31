@@ -188,12 +188,22 @@ function addYoutubeIFrame(rawDestination) {
 ///////////////////////////////////////////
 /////////// Webcam feed logic 
 ///////////////////////////////////////////
-let video, canvas, ctx, model, stream;
+let video, canvas, ctx, model, stream, ferModel, faceCanvas, faceCtx;
 
 async function settingUpModel() {
     await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm"); 
     await tf.setBackend("wasm"); 
     model = await blazeface.load(); 
+    // ferModel = await faceapi.loadFaceExpressionModel("src/models");
+    await faceapi.nets.faceExpressionNet.loadFromUri("src/models");
+    await faceapi.nets.tinyFaceDetector.loadFromUri("src/models");
+    await faceapi.nets.faceLandmark68Net.loadFromUri("src/models");
+    await faceapi.nets.faceRecognitionNet.loadFromUri("src/models");
+    await faceapi.nets.faceExpressionNet.loadFromUri("src/models");
+
+    // let ferPath = "../../../../models/pretrained_models/tensorflow/model.json";
+    // ferModel = await tf.loadLayersModel(chrome.runtime.getURL(ferPath));
+    console.log(ferModel);
     console.log("finish loading model");
 }
 
@@ -206,6 +216,10 @@ function setupWebcam() {
     canvas.id = "overlayVideoCanvas";
     canvas.width = 640;
     canvas.height = 480;
+
+    faceCanvas = document.createElement("CANVAS");
+    faceCanvas.id = "faceCaptureCanvas";
+
 
     let overlay = document.getElementById("studyModeLocker");
     overlay.appendChild(videoFeed);
@@ -254,6 +268,15 @@ async function renderPrediction() {
             const start = predictions[i].topLeft;
             const end = predictions[i].bottomRight;
             const size = [end[0] - start[0], end[1] - start[1]];
+            faceCanvas.height = size[0];
+            faceCanvas.width = size[1];
+            faceCtx = faceCanvas.getContext("2d");
+            faceCtx.drawImage(video, start, end, canvas.width, canvas.height);
+            var img = new Image();
+            img.src = canvas.toDataURL();
+            const detectionWithExpressions = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+            console.log(detectionWithExpressions);
+
             ctx.strokeStyle = "white";
             ctx.strokeRect(start[0], start[1], size[0], size[1]);
   
@@ -274,7 +297,7 @@ async function renderPrediction() {
 
 // Add the webcam feed
 async function integrateWebcam() {
-    setupWebcam();
+    await setupWebcam();
     await enableCamera();
 
     canvas = document.getElementById("overlayVideoCanvas");

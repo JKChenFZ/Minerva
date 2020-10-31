@@ -30,7 +30,8 @@
   "web_accessible_resources": [
     "style/*.css",
     "src/embed_scripts/*.js",
-    "src/images/*"
+    "src/images/*",
+    "src/models/*"
   ],
   "manifest_version": 2
 }
