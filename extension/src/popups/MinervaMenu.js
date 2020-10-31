@@ -6,11 +6,10 @@ function transitionToMainMenu(studentName) {
 }
 window.onload = function() {
     chrome.storage.local.get(["studentName"], (result) => {
-        console.log(result);
         if (result.hasOwnProperty("studentName")) {
             transitionToMainMenu(result.studentName);
         } else {
-            chrome.tabs.create({url: chrome.extension.getURL('src/webpages/registerStudent.html')});
+            chrome.tabs.create({url: chrome.extension.getURL("src/StudentRegistration/StudentRegistration.html")});
         }
     });
     let images = ["golden_star.jpg", "pencil.jpg", "ruler.jpg"];

@@ -5,7 +5,7 @@ window.onload = function() {
             $("#studentCollapseCard").collapse("hide");
             $("#loginConfirmationCollapseCard").collapse("show");
             chrome.storage.local.set({"studentName": studentNameField.value}, function() {
-                chrome.storage.local.get(console.log);
+                console.debug("Student name has been set", studentNameField.value);
             });
         }
     };
