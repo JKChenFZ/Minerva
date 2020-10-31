@@ -36,6 +36,8 @@
         "chrome": false,
         "$": false,
         "YT": false,
-        "Snackbar": false
+        "Snackbar": false,
+        "tf": false,
+        "blazeface": false
     }
 }

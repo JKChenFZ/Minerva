@@ -1,14 +1,52 @@
 ///////////////////////////////////////////
-/////////// Button Logic
+/////////// Global Constants
 ///////////////////////////////////////////
-function questionBUttonOnclick(event) {
-    event.stopPropagation();
+const API_HOST = "localhost:3000";
+const POST_REQUEST = "POST";
+const YOUTUBE_VIDEO_ID = "youtube_video_id";
+const YOUTUBE_VIDEO_DURATION = "youtube_video_duration";
+const YOUTUBE_VIDEO_TITLE = "youtube_video_title";
+const QUESTION_CONFIRMATION = "Got it. We will let your teacher know.";
+const STUDENT_NAME = "student_name";
 
-    console.debug(`Question ButtonPressed at ${player.getCurrentTime()}`);
+function getBaselineFetchOptions() {
+    return {
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    };
+}
+
+function showSnackbarWithMsg(message) {
     Snackbar.show({
         pos: "bottom-center",
-        text: "Got it. We will let your teacher know.",
+        text: message,
     });
+}
+
+///////////////////////////////////////////
+/////////// Button Logic
+///////////////////////////////////////////
+async function questionBUttonOnclick(event) {
+    event.stopPropagation();
+    console.debug(`Question ButtonPressed at ${player.getCurrentTime()}`);
+
+    try {
+        let requestOption = getBaselineFetchOptions();
+        requestOption.method = POST_REQUEST;
+        requestOption.body = JSON.stringify({
+            "videoID": window.localStorage.getItem(YOUTUBE_VIDEO_ID),
+            "timestamp": Math.trunc(player.getCurrentTime()),
+            "type": "active"
+        });
+
+        await fetch(`http://${API_HOST}/video/addQuestion`, requestOption);
+        showSnackbarWithMsg(QUESTION_CONFIRMATION);
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function exitButtonOnclick(event) {
@@ -17,6 +55,11 @@ function exitButtonOnclick(event) {
     let overlay = document.getElementById("studyModeLocker");
     if (overlay) {
         overlay.remove();
+        stream.getTracks().forEach(function(track) {
+            track.stop();
+        });
+        video = null;
+
         // Add the handler back
         window.addEventListener("click", hijackYoutubeLinkClicks);
     }
@@ -57,7 +100,6 @@ function addControlButtons() {
 ///////////////////////////////////////////
 /////////// Embeded Youtube Logic
 ///////////////////////////////////////////
-
 // The traditional approach is to add the Youtube API script programtically
 // and implement the "onYouTubePlayerAPIReady" function which is invoked right
 // after. Our usecase is slightly different; we have Youtube iFrame being
@@ -67,6 +109,27 @@ function addControlButtons() {
 // on content script load. Afterward, we directly interact with the iFrame API
 const YOUTUBE_WATCH_KEYWORD = "youtube.com/watch?v=";
 var player;
+
+async function videoFinishedHandler() {
+    try {
+        let requestOption = getBaselineFetchOptions();
+        requestOption.method = POST_REQUEST;
+        requestOption.body = JSON.stringify({
+            "student_name": window.localStorage.getItem(STUDENT_NAME),
+            "increment": window.localStorage.getItem(YOUTUBE_VIDEO_DURATION)
+        });
+
+        let result = await fetch(`http://${API_HOST}/student/finishVideo`, requestOption);
+        let parsed = await result.json();
+        if (!parsed.status) {
+            throw new Error("Finish Video API Error");
+        }
+
+        showSnackbarWithMsg(`Great, you just earned new coins. New balance is ${parsed.newBalance}`);
+    } catch (e) {
+        console.error(e);
+    }
+}
 
 function addYoutubeIFrame(rawDestination) {
     let overlay = document.getElementById("studyModeLocker");
@@ -90,7 +153,7 @@ function addYoutubeIFrame(rawDestination) {
     iframe.setAttribute("width", "100%");
     iframe.setAttribute("height", "100%");
     iframe.setAttribute("class", "youtubeIFrame");
-    iframe.src = `https://www.youtube.com/embed/${videoID}?enablejsapi=1`;
+    iframe.src = `https://www.youtube-nocookie.com/embed/${videoID}?enablejsapi=1&controls=0`;
 
     wrapperDiv.appendChild(iframe);
     overlay.appendChild(wrapperDiv);
@@ -103,20 +166,122 @@ function addYoutubeIFrame(rawDestination) {
                 console.debug("Embedded Youtube Player is ready");
 
                 // Save the video id and the video title to local storage
-                window.localStorage.setItem("youtube_video_id", videoID);
+                window.localStorage.setItem(YOUTUBE_VIDEO_ID, videoID);
                 window.localStorage.setItem(
-                    "youtube_video_duration",
+                    YOUTUBE_VIDEO_DURATION,
                     event.target.getDuration());
                 window.localStorage.setItem(
-                    "youtube_video_title",
+                    YOUTUBE_VIDEO_TITLE,
                     event.target.getVideoData().title
                 );
             },
-            "onStateChange": () => {
+            "onStateChange": (event) => {
                 console.debug("Embedded Youtube Player has a new change");
+                if (event.data == YT.PlayerState.ENDED) {
+                    videoFinishedHandler();
+                }
             }
         }
     });
+}
+
+///////////////////////////////////////////
+/////////// Webcam feed logic 
+///////////////////////////////////////////
+let video, canvas, ctx, model, stream;
+
+async function settingUpModel() {
+    await tf.wasm.setWasmPath("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm"); 
+    await tf.setBackend("wasm"); 
+    model = await blazeface.load(); 
+    console.log("finish loading model");
+}
+
+function setupWebcam() {
+    let videoFeed = document.createElement("VIDEO");
+    videoFeed.id = "overlayVideoCam";
+    videoFeed.setAttribute("autoplay", "");
+
+    let canvas = document.createElement("CANVAS");
+    canvas.id = "overlayVideoCanvas";
+    canvas.width = 640;
+    canvas.height = 480;
+
+    let overlay = document.getElementById("studyModeLocker");
+    overlay.appendChild(videoFeed);
+    overlay.appendChild(canvas);
+}
+
+async function enableCamera() {
+    video = document.getElementById("overlayVideoCam");
+  
+    stream = await navigator.mediaDevices.getUserMedia({
+        "audio": false,
+        "video": { facingMode: "user" },
+    });
+    video.srcObject = stream;
+  
+    return new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+            resolve(video);
+        };
+    });
+}
+
+async function renderPrediction() {
+    if(!video)  {
+        return;
+    }
+    const returnTensors = false;
+    const annotateBoxes = true;
+    const predictions = await model.estimateFaces(
+        video, returnTensors);
+
+    if (predictions.length > 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+        for (let i = 0; i < predictions.length; i++) {
+            if (returnTensors) {
+                console.log(predictions[i].topLeft.arraySync());
+                
+                predictions[i].topLeft = predictions[i].topLeft.arraySync();
+                predictions[i].bottomRight = predictions[i].bottomRight.arraySync();
+                if (annotateBoxes) {
+                    predictions[i].landmarks = predictions[i].landmarks.arraySync();
+                }
+            }
+  
+            const start = predictions[i].topLeft;
+            const end = predictions[i].bottomRight;
+            const size = [end[0] - start[0], end[1] - start[1]];
+            ctx.strokeStyle = "white";
+            ctx.strokeRect(start[0], start[1], size[0], size[1]);
+  
+            if (annotateBoxes) {
+                const landmarks = predictions[i].landmarks;
+                ctx.fillStyle = "white";
+                for (let j = 0; j < landmarks.length; j++) {
+                    const x = landmarks[j][0];
+                    const y = landmarks[j][1];
+                    ctx.fillRect(x, y, 5, 5);
+                }
+            }
+        }
+    }
+
+    requestAnimationFrame(renderPrediction);
+};
+
+// Add the webcam feed
+async function integrateWebcam() {
+    setupWebcam();
+    await enableCamera();
+
+    canvas = document.getElementById("overlayVideoCanvas");
+    ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+
+    renderPrediction();
 }
 
 ///////////////////////////////////////////
@@ -154,10 +319,19 @@ function hijackYoutubeLinkClicks(e) {
 
             // Embed the Video
             addYoutubeIFrame(destination);
+
+            // Add the webcam feed
+            integrateWebcam();
         }
     }
 }
 
+///////////////////////////////////////////
+/////////// Main Logic
+///////////////////////////////////////////
 // This file is guaranteed to be injected after "load" event is fired
+settingUpModel();
+
 window.addEventListener("click", hijackYoutubeLinkClicks);
 console.log("Google Classroom Overlay registered");
+
