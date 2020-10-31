@@ -9,8 +9,3 @@ chrome.runtime.onInstalled.addListener(function() {
         }]);
     });
 });
-chrome.runtime.onInstalled.addListener(function (object) {
-    chrome.tabs.create({url: "chrome"}, function (tab) {
-        console.log("New tab launched with http://yoursite.com/");
-    });
-});
