@@ -3,17 +3,19 @@ const path = require("path");
 
 module.exports = {
     entry: {
-        background: "./src/background_scripts/background.js"
+        Background: "./src/background_scripts/background.js",
+        StudentRegistration: "./src/standalone_pages/StudentRegistration.js"
     },
     output: {
-        filename: "[entry].js",
+        filename: "[name].js",
         path: path.resolve(__dirname, "dist"),
     },
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
                 { from: "style", to: "style" },
-                { from: "images", to: "images"}
+                { from: "images", to: "images" },
+                { from: "src/standalone_pages/*.html", to: "" }
             ],
         }),
     ]
