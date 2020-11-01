@@ -195,17 +195,53 @@ async function settingUpModel() {
     await tf.setBackend("wasm"); 
     model = await blazeface.load(); 
     // ferModel = await faceapi.loadFaceExpressionModel("src/models");
-    await faceapi.nets.faceExpressionNet.loadFromUri("src/models");
-    await faceapi.nets.tinyFaceDetector.loadFromUri("src/models");
-    await faceapi.nets.faceLandmark68Net.loadFromUri("src/models");
-    await faceapi.nets.faceRecognitionNet.loadFromUri("src/models");
-    await faceapi.nets.faceExpressionNet.loadFromUri("src/models");
-
+    // await faceapi.nets.faceExpressionNet.loadFromUri("../models");
+    // await faceapi.nets.tinyFaceDetector.loadFromUri("../models");
+    // await faceapi.nets.faceLandmark68Net.loadFromUri("../models");
+    // await faceapi.nets.faceRecognitionNet.loadFromUri("../models");
+    // await faceapi.nets.faceExpressionNet.loadFromUri("../models");
+    await downloadModel();
     // let ferPath = "../../../../models/pretrained_models/tensorflow/model.json";
     // ferModel = await tf.loadLayersModel(chrome.runtime.getURL(ferPath));
     console.log(ferModel);
     console.log("finish loading model");
 }
+async function downloadModel() {
+    // if (!faceapi.nets.tinyFaceDetector.params) {
+    console.log("download tiny face models");
+    const net = await faceapi.createTinyFaceDetector(await faceapi.fetchNetWeights("https://gitcdn.xyz/repo/justadudewhohacks/face-api.js/master/weights/tiny_face_detector_model-weights_manifest.json"));
+    faceapi.nets.tinyFaceDetector = net;
+    console.log("tiny face models ready", faceapi.nets.tinyFaceDetector.params);
+    // } else {
+    //     console.log("tiny face models ready", faceapi.nets.tinyFaceDetector.params);
+    // };
+    // if (!faceapi.nets.faceLandmark68Net.params) {
+    console.log("download face recognition models");
+    const lnet = await faceapi.createfaceLandmark68Net(await faceapi.fetchNetWeights("https://gitcdn.xyz/repo/justadudewhohacks/face-api.js/master/weights/face_landmark_68_tiny_model-weights_manifest.json"));
+    faceapi.nets.faceLandmark68Net = lnet;
+    console.log("face landmark models ready", faceapi.nets.faceLandmark68Net.params);
+    // } else {
+    //     console.log("face landmark models ready", faceapi.nets.faceLandmark68Net.params);
+    // };
+    // if (!faceapi.nets.faceRecognitionNet.params) {
+    console.log("download face recognition models");
+    const rnet = await faceapi.createFaceRecognitionNet(await faceapi.fetchNetWeights("https://gitcdn.xyz/repo/justadudewhohacks/face-api.js/master/weights/face_recognition_model-weights_manifest.json"));
+    faceapi.nets.faceRecognitionNet = rnet;
+    console.log("face recognition models ready", faceapi.nets.faceRecognitionNet.params);
+    // } else {
+    //     console.log("face recognition models ready", faceapi.nets.faceRecognitionNet.params);
+    // };
+    // if (!faceapi.nets.faceExpressionNet.params) {
+    console.log("download face expression models");
+    const enet = await faceapi.createFaceExpressionNet(await faceapi.fetchNetWeights("https://gitcdn.xyz/repo/justadudewhohacks/face-api.js/master/weights/face_expression_model-weights_manifest.json"));
+    faceapi.nets.faceExpressionNet = enet;
+    console.log("face expression models ready", faceapi.nets.faceExpressionNet.params);
+    // } else {
+    //     console.log("face expression models ready", faceapi.nets.faceExpressionNet.params);
+    // };
+
+
+};
 
 function setupWebcam() {
     let videoFeed = document.createElement("VIDEO");
@@ -274,12 +310,14 @@ async function renderPrediction() {
             faceCtx.drawImage(video, start, end, canvas.width, canvas.height);
             var img = new Image();
             img.src = canvas.toDataURL();
+            // const results = faceapi.nets.faceExpressionNet.predictions();
+
             const detectionWithExpressions = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
             console.log(detectionWithExpressions);
 
             ctx.strokeStyle = "white";
             ctx.strokeRect(start[0], start[1], size[0], size[1]);
-  
+            // ctx.fillText(detectionWithExpressions, );
             if (annotateBoxes) {
                 const landmarks = predictions[i].landmarks;
                 ctx.fillStyle = "white";

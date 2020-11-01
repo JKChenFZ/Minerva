@@ -31,7 +31,7 @@
     "style/*.css",
     "src/embed_scripts/*.js",
     "src/images/*",
-    "src/models/*"
+    "models/*"
   ],
   "manifest_version": 2
 }
