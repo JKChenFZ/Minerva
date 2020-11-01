@@ -1,6 +1,8 @@
+import { GVars } from "./GlobalVariablesAndConstants.js";
+
 async function questionBUttonOnclick(event) {
     event.stopPropagation();
-    console.debug(`Question ButtonPressed at ${player.getCurrentTime()}`);
+    console.debug(`Question ButtonPressed at ${GVars.player.getCurrentTime()}`);
 
     // try {
     //     let requestOption = getBaselineFetchOptions();

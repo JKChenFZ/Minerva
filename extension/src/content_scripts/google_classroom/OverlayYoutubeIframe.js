@@ -1,19 +1,11 @@
-const API_HOST = "localhost:3000";
-const POST_REQUEST = "POST";
-const YOUTUBE_VIDEO_ID = "youtube_video_id";
-const YOUTUBE_VIDEO_DURATION = "youtube_video_duration";
-const YOUTUBE_VIDEO_TITLE = "youtube_video_title";
-const QUESTION_CONFIRMATION = "Got it. We will let your teacher know.";
-const STUDENT_NAME = "student_name";
+import { GVars, CONSTANTS } from "./GlobalVariablesAndConstants.js";
 
-const YOUTUBE_WATCH_KEYWORD = "youtube.com/watch?v=";
-var player;
 function addYoutubeIframe(rawDestination) {
     let overlay = document.getElementById("studyModeLocker");
 
     // TODO: we might need better extraction mechanism
-    let splittedUrl = rawDestination.split(YOUTUBE_WATCH_KEYWORD);
-    let videoID = "hXDiv7f73H0";
+    let splittedUrl = rawDestination.split(CONSTANTS.YOUTUBE_WATCH_KEYWORD);
+    let videoID = CONSTANTS.DEFAULT_VIDEO_ID;
     if (splittedUrl.length == 2) {
         videoID = splittedUrl[1];
     } else {
@@ -35,25 +27,23 @@ function addYoutubeIframe(rawDestination) {
     wrapperDiv.appendChild(iframe);
     overlay.appendChild(wrapperDiv);
 
-    // Add event handlers to capture various iFrame events
-    // player = YouTubeAPI("videoIFrame");
-    // player.on("ready", () => {
-    //     console.log("player ready");
-    // });
-    console.log("trying to register12");
-    // console.log(player);
-    player = new YT.Player("videoIFrame", {
+    // Add event handlers to capture various iframe events
+    // eslint-disable-next-line no-unused-vars
+    GVars.player = new YT.Player("videoIFrame", {
         events: {
             "onReady": (event) =>  {
                 console.debug("Embedded Youtube Player is ready");
 
                 // Save the video id and the video title to local storage
-                window.localStorage.setItem(YOUTUBE_VIDEO_ID, videoID);
                 window.localStorage.setItem(
-                    YOUTUBE_VIDEO_DURATION,
+                    CONSTANTS.YOUTUBE_VIDEO_ID,
+                    videoID
+                );
+                window.localStorage.setItem(
+                    CONSTANTS.YOUTUBE_VIDEO_DURATION,
                     event.target.getDuration());
                 window.localStorage.setItem(
-                    YOUTUBE_VIDEO_TITLE,
+                    CONSTANTS.YOUTUBE_VIDEO_TITLE,
                     event.target.getVideoData().title
                 );
             },
