@@ -12,13 +12,13 @@
     {
       "matches": ["https://classroom.google.com/*"],
       "run_at": "document_idle",
-      "css": ["style/style.css", "style/webcam.css"],
-      "js": ["js/youtube.js", "js/GoogleClassroomContentScript.js"]
+      "css": ["style/VendorFontAwesome.css", "style/CommStyle.css", "style/Webcam.css"],
+      "js": ["js/VendorFontAwesome.js", "js/VendorYoutube.js", "js/GoogleClassroomContentScript.js"]
     },
     {
       "matches": ["https://*.youtube.com/*"],
       "run_at": "document_idle",
-      "css": ["style/style.css"],
+      "css": ["style/CommStyle.css"],
       "js": ["js/StudyModeLocker.js"]
     }
   ],
