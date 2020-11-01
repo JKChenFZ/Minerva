@@ -1,8 +1,11 @@
 let variables = {
     // Embedded Youtube Player
     player: null,
-    // Webcam & Facial Detection
-    video: null
+    // Webcam & Canvas
+    video: null,
+    stream: null,
+    // Facial Expression
+    model: null
 };
 
 const constants = {

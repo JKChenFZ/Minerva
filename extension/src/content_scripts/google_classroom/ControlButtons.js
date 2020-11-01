@@ -21,16 +21,15 @@ async function questionBUttonOnclick(event) {
 }
 
 function exitButtonOnclick(event, eventListenerToAdd) {
-    // console.log(eventListenerToAdd);
     event.stopPropagation();
 
     let overlay = document.getElementById("studyModeLocker");
     if (overlay) {
         overlay.remove();
-        // stream.getTracks().forEach(function(track) {
-        //     track.stop();
-        // });
-        // video = null;
+        GVars.stream.getTracks().forEach(function(track) {
+            track.stop();
+        });
+        GVars.video = null;
 
         // Add the handler back
         window.addEventListener("click", eventListenerToAdd);
@@ -39,7 +38,6 @@ function exitButtonOnclick(event, eventListenerToAdd) {
 
 function addControlButtons(callerFunction) {
     let overlay = document.getElementById("studyModeLocker");
-    console.log(callerFunction);
     
     // Create nodes first
     let buttonContainer = document.createElement("DIV");
