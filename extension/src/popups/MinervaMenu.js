@@ -10,7 +10,7 @@ window.onload = function() {
         if (result.hasOwnProperty("studentName")) {
             transitionToMainMenu(result.studentName);
         } else {
-            chrome.tabs.create({url: chrome.extension.getURL("src/StudentRegistration/StudentRegistration.html")});
+            chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
         }
     });
     let images = ["golden_star.jpg", "pencil.jpg", "ruler.jpg"];
