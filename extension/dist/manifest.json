@@ -13,7 +13,7 @@
       "matches": ["https://classroom.google.com/*"],
       "run_at": "document_idle",
       "css": ["style/style.css", "style/webcam.css"],
-      "js": ["js/GoogleClassroomContentScript.js"]
+      "js": ["js/youtube.js", "js/GoogleClassroomContentScript.js"]
     },
     {
       "matches": ["https://*.youtube.com/*"],
