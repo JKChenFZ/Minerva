@@ -42,6 +42,10 @@ function hijackYoutubeLinkClicks(e) {
     }
 }
 
-settingUpModel();
-window.addEventListener("click", hijackYoutubeLinkClicks);
-console.log("Google Classroom Overlay registered");
+async function main() {
+    await settingUpModel();
+    window.addEventListener("click", hijackYoutubeLinkClicks);
+    console.log("Google Classroom Overlay registered");
+}
+
+main();
