@@ -7,7 +7,7 @@ module.exports = {
         StudentRegistration: "./src/standalone_pages/StudentRegistration.js"
     },
     output: {
-        filename: "[name].js",
+        filename: "scripts/[name].js",
         path: path.resolve(__dirname, "dist"),
     },
     plugins: [
@@ -15,7 +15,11 @@ module.exports = {
             patterns: [
                 { from: "style", to: "style" },
                 { from: "images", to: "images" },
-                { from: "src/standalone_pages/*.html", to: "" }
+                {
+                    context: "src/standalone_pages",
+                    from: "*.html",
+                    to: "html"
+                }
             ],
         }),
     ]
