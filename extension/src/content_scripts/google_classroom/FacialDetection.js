@@ -1,8 +1,9 @@
 import { GVars } from "./GlobalVariablesAndConstants.js";
-import * as blazeface from "@tensorflow-models/blazeface";
+import { setWasmPaths } from "@tensorflow/tfjs-backend-wasm";
 import * as tf from "@tensorflow/tfjs";
+import * as blazeface from "@tensorflow-models/blazeface";
 
-const WASM_PATH = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm";
+const WASM_PATH = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/";
 
 async function renderPrediction() {
     if(!GVars.video)  {
@@ -49,7 +50,7 @@ async function renderPrediction() {
 };
 
 async function settingUpModel() {
-    await tf.wasm.setWasmPath(WASM_PATH); 
+    setWasmPaths(WASM_PATH);
     await tf.setBackend("wasm"); 
     GVars.model = await blazeface.load(); 
     console.log("Finished loading model");

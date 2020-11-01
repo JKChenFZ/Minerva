@@ -18,9 +18,8 @@
   "dependencies": {
     "@tensorflow-models/blazeface": "0.0.5",
     "@tensorflow/tfjs": "^2.7.0",
+    "@tensorflow/tfjs-backend-wasm": "^2.7.0",
     "@tensorflow/tfjs-converter": "^2.7.0",
-    "font-awesome": "^4.7.0",
-    "sweetalert2": "^10.9.0",
-    "youtube-player": "^5.5.2"
+    "sweetalert2": "^10.9.0"
   }
 }

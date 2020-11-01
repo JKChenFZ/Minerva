@@ -40,7 +40,7 @@ async function integrateWebcam() {
     GVars.ctx = GVars.canvas.getContext("2d");
     GVars.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
 
-    // renderPrediction();
+    renderPrediction();
 }
 
 export { integrateWebcam };
