@@ -1,4 +1,5 @@
 import { GVars } from "./GlobalVariablesAndConstants.js";
+import { renderPrediction } from "./FacialDetection.js";
 
 function setupWebcam() {
     let videoFeed = document.createElement("VIDEO");
@@ -35,9 +36,9 @@ async function integrateWebcam() {
     setupWebcam();
     await enableCamera();
 
-    // canvas = document.getElementById("overlayVideoCanvas");
-    // ctx = canvas.getContext("2d");
-    // ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    GVars.canvas = document.getElementById("overlayVideoCanvas");
+    GVars.ctx = GVars.canvas.getContext("2d");
+    GVars.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
 
     // renderPrediction();
 }

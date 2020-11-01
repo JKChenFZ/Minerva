@@ -4,6 +4,8 @@ let variables = {
     // Webcam & Canvas
     video: null,
     stream: null,
+    ctx: null,
+    canvas: null,
     // Facial Expression
     model: null
 };

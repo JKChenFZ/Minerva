@@ -1,6 +1,7 @@
 import { addControlButtons } from "./ControlButtons.js";
 import { addYoutubeIframe } from "./YoutubeIframe.js";
 import { integrateWebcam } from "./Webcam.js";
+import { settingUpModel } from "./FacialDetection.js";
 
 function hijackYoutubeLinkClicks(e) {
     console.log("Detected a click");
@@ -41,5 +42,6 @@ function hijackYoutubeLinkClicks(e) {
     }
 }
 
+settingUpModel();
 window.addEventListener("click", hijackYoutubeLinkClicks);
 console.log("Google Classroom Overlay registered");
