@@ -1,0 +1,14 @@
+/* Popup CSS */
+
+#studentCollapseCard {
+    min-width: 300px;
+}
+
+#registerStudentCard {
+    width: 300px;
+}
+
+.tab-pane {
+    width: 300px;
+    height: 200px;
+}

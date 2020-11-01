@@ -6,19 +6,10 @@ function transitionToMainMenu(studentName) {
 }
 window.onload = function() {
     chrome.storage.local.get(["studentName"], (result) => {
-        console.log(result);
         if (result.hasOwnProperty("studentName")) {
             transitionToMainMenu(result.studentName);
         } else {
-            let studentNameField = document.getElementById("studentNameField");
-            studentNameField.onkeydown = function(event) {
-                if (event.code == "Enter" || event.key == "Enter") {
-                    transitionToMainMenu(studentNameField.value);
-                    chrome.storage.local.set({"studentName": studentNameField.value}, function() {
-                        chrome.storage.local.get(console.log);
-                    });
-                }
-            };
+            chrome.tabs.create({url: chrome.extension.getURL("src/StudentRegistration/StudentRegistration.html")});
         }
     });
     let images = ["golden_star.jpg", "pencil.jpg", "ruler.jpg"];
