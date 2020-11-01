@@ -1,5 +1,6 @@
-import { addControlButtons } from "./OverlayControlButtons.js";
-import { addYoutubeIframe } from "./OverlayYoutubeIframe.js";
+import { addControlButtons } from "./ControlButtons.js";
+import { addYoutubeIframe } from "./YoutubeIframe.js";
+import { integrateWebcam } from "./Webcam.js";
 
 function hijackYoutubeLinkClicks(e) {
     console.log("Detected a click");
@@ -34,8 +35,8 @@ function hijackYoutubeLinkClicks(e) {
             // Embed the Video
             addYoutubeIframe(destination);
 
-            // // Add the webcam feed
-            // integrateWebcam();
+            // Add the webcam feed
+            integrateWebcam();
         }
     }
 }

@@ -1,5 +1,8 @@
 let variables = {
-    player: null
+    // Embedded Youtube Player
+    player: null,
+    // Webcam & Facial Detection
+    video: null
 };
 
 const constants = {
