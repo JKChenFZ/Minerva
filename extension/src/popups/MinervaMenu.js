@@ -4,6 +4,7 @@ function transitionToMainMenu(studentName) {
     let studentNamePanel = document.getElementById("studentName-youPanel");
     studentNamePanel.innerText = "Hi " + studentName;
 }
+
 window.onload = function() {
     chrome.storage.local.get(["studentName"], (result) => {
         if (result.hasOwnProperty("studentName")) {
