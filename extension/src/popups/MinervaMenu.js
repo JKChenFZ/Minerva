@@ -13,6 +13,10 @@ window.onload = function() {
             chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
         }
     });
+    let dashboardRedirectButton = document.getElementById("dashboardRedirectButton");
+    dashboardRedirectButton.onclick = function() {
+        chrome.tabs.create({url: chrome.extension.getURL("src/InstructorDashboard/InstructorDashboard.html")});
+    };
     let images = ["golden_star.jpg", "pencil.jpg", "ruler.jpg"];
     for (var i = 1; i <= 3; i++) {
         let image = document.getElementById(`item-${i}-image`);
