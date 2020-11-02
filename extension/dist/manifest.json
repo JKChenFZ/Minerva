@@ -12,7 +12,7 @@
     {
       "matches": ["https://classroom.google.com/*"],
       "run_at": "document_idle",
-      "css": ["style/VendorFontAwesome.css", "style/CommStyle.css", "style/Webcam.css"],
+      "css": ["style/VendorFontAwesome.css", "style/CommStyle.css", "style/CameraAndCanvas.css"],
       "js": ["js/VendorFontAwesome.js", "js/VendorYoutube.js", "js/GoogleClassroomContentScript.js"]
     },
     {
