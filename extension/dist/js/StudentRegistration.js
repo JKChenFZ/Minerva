@@ -1,1 +1,0 @@
-window.onload=function(){let e=document.getElementById("studentNameField");e.onkeydown=function(n){"Enter"!=n.code&&"Enter"!=n.key||($("#studentCollapseCard").collapse("hide"),$("#loginConfirmationCollapseCard").collapse("show"),chrome.storage.local.set({student_name:e.value},(function(){console.debug("Student name has been set",e.value)})))}};
