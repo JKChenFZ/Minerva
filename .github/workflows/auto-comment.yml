@@ -7,8 +7,8 @@ jobs:
       - uses: bubkoo/auto-comment@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          issuesOpened: >
-            👋 Before you start, read the following guideline
+          issuesOpened: |
+            👋 Before you start, read the following guideline\n
             
             1. Generic code pointers in #59
             2. Give your branch a short and meaningful name, pull request title should be the same as your branch name
