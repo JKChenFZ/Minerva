@@ -48,4 +48,26 @@ async function addActiveQuestion(videoID, timestamp, questionText) {
     }
 }
 
-export { addActiveQuestion };
+async function finishVideo(videoID, increment) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = POST_REQUEST;
+
+    try {
+        let studentHandle = await getStudentHandle();
+        requestOption.body = JSON.stringify({
+            "student_name": studentHandle,
+            "videoID": videoID,
+            "increment": increment,
+        });
+        let result = await fetch(`http://${API_HOST}/student/finishVideo`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
+export { addActiveQuestion, finishVideo };
