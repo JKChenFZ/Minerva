@@ -1,23 +1,36 @@
-import { GVars } from "./GlobalVariablesAndConstants.js";
+import { GVars, CONSTANTS } from "./GlobalVariablesAndConstants.js";
+import Swal from "sweetalert2";
 
-async function questionBUttonOnclick(event) {
+function questionOnSubmit(questionText) {
+    // eslint-disable-next-line no-unused-vars
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            questionText,
+            videoID: window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID),
+            timestamp: Math.trunc(GVars.player.getCurrentTime()),
+        }, (response) => {
+            resolve(response);
+        });
+    });
+}
+
+async function questionButtonOnclick(event) {
     event.stopPropagation();
     console.debug(`Question ButtonPressed at ${GVars.player.getCurrentTime()}`);
-
-    // try {
-    //     let requestOption = getBaselineFetchOptions();
-    //     requestOption.method = POST_REQUEST;
-    //     requestOption.body = JSON.stringify({
-    //         "videoID": window.localStorage.getItem(YOUTUBE_VIDEO_ID),
-    //         "timestamp": Math.trunc(player.getCurrentTime()),
-    //         "type": "active"
-    //     });
-
-    //     await fetch(`http://${API_HOST}/video/addQuestion`, requestOption);
-    //     showSnackbarWithMsg(QUESTION_CONFIRMATION);
-    // } catch (e) {
-    //     console.error(e);
-    // }
+    
+    let result = await Swal.fire({
+        input: "textarea",
+        inputLabel: "Have a question?",
+        inputPlaceholder: "Type your question here...",
+        showCancelButton: true,
+        confirmButtonText: "Submit",
+        showLoaderOnConfirm: true,
+        preConfirm: (questionText) => questionOnSubmit(questionText)
+    });
+    console.log(result);
+    if (result.isConfirmed && result.value.status) {
+        console.log("Good");
+    }
 }
 
 function exitButtonOnclick(event, eventListenerToAdd) {
@@ -56,7 +69,7 @@ function addControlButtons(callerFunction) {
     questionIcon.setAttribute("class", "fas fa-question icon-left-padding");
     questionButton.setAttribute("class", "button question-button");
     questionButton.innerText = "Question";
-    questionButton.addEventListener("click", (e) => questionBUttonOnclick(e));
+    questionButton.addEventListener("click", (e) => questionButtonOnclick(e));
 
     // Put everything together
     exitButton.appendChild(exitIcon);
