@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllKeys, incrAsync, rpushAsync } from "../utils/Redis.js";
+import { incrAsync, keysAsync, lrangeAsync, mgetAsync, rpushAsync } from "../utils/Redis.js";
 import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
 const router = express.Router();
 
@@ -57,6 +57,7 @@ router.post("/addPassiveQuestion", async function (req, res) {
 router.get("/getAllQuestions", async function (req, res) {
     let status = true;
     let activeQuestions = [];
+    let activeQuestionText = [];
     let passiveQuestions = [];
     let videoID = req.query.videoID; 
 
@@ -65,16 +66,60 @@ router.get("/getAllQuestions", async function (req, res) {
             throw new Error("Incomplete parameters");
         }
 
-        let activeQuestionKey = `${videoID}-active`;
-        let passiveQUestionKey = `${videoID}-passive`;
-        activeQuestions = await getAllKeys(activeQuestionKey, 0, -1);
-        passiveQuestions = await getAllKeys(passiveQUestionKey, 0, -1);
+        // Grab all passive questions
+        let passiveQuestionKeyPattern = `${videoID}-passive-questions-*`;
+        let foundPassiveQuestionKeys = await keysAsync(passiveQuestionKeyPattern);
+        let foundPassiveQuestionVals = await mgetAsync(foundPassiveQuestionKeys);
+
+        passiveQuestions = foundPassiveQuestionKeys.map((key, index) => {
+            let correspondingCounter = foundPassiveQuestionVals[index];
+            let timestamp = key.replace(`${videoID}-passive-questions-`, "");
+
+            return {
+                "timestamp": parseInt(timestamp),
+                "count": parseInt(correspondingCounter)
+            };
+        });
+
+        // Grab all active questions
+        let activeQuestionKeyPattern = `${videoID}-active-questions-*`;
+        let foundActiveQuestionKeys = await keysAsync(activeQuestionKeyPattern);
+        let foundActiveQuestionVals = await mgetAsync(foundActiveQuestionKeys);
+
+        activeQuestions = foundActiveQuestionKeys.map((key, index) => {
+            let correspondingCounter = foundActiveQuestionVals[index];
+            let timestamp = key.replace(`${videoID}-active-questions-`, "");
+
+            return {
+                "timestamp": parseInt(timestamp),
+                "count": parseInt(correspondingCounter)
+            };
+        });
+
+        // Grab texual questions
+        let activeTextQuestionKey = `${videoID}-active-questions-text`;
+        let condensedQuestions = await lrangeAsync(activeTextQuestionKey, 0, -1);
+        
+        activeQuestionText = condensedQuestions.map((value) => {
+            let splitted = value.split("-<>-");
+
+            return {
+                "name": splitted[0],
+                "timestamp": parseInt(splitted[1]),
+                "text": splitted[2]
+            };
+        });
     } catch (e) {
         console.error(`[Endpoint] getAllQuestions failed, ${e}`);
         status = false;
     }
 
-    res.json({status, activeQuestions, passiveQuestions});
+    res.json({
+        status,
+        "active_questions": activeQuestions,
+        "active_questions_text": activeQuestionText,
+        "passive_question": passiveQuestions
+    });
 });
 
 export { router as VideoRouter };
