@@ -8,10 +8,10 @@
         "sourceType": "module"
     },
     "ignorePatterns": [
-        "./node_modules/*",
-        "./dist/*",
-        "webpack.config.js",
-        "./src/vendor_scripts/*"
+        "./node_modules/**",
+        "./dist/**",
+        "./webpack.config.js",
+        "./src/vendor_scripts/**"
     ],
     "rules": {
         "indent": [
