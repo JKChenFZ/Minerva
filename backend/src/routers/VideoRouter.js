@@ -76,8 +76,8 @@ router.get("/getAllQuestions", async function (req, res) {
             let timestamp = key.replace(`${videoID}-passive-questions-`, "");
 
             return {
-                timestamp,
-                count: correspondingCounter
+                "timestamp": parseInt(timestamp),
+                "count": parseInt(correspondingCounter)
             };
         });
 
@@ -91,8 +91,8 @@ router.get("/getAllQuestions", async function (req, res) {
             let timestamp = key.replace(`${videoID}-active-questions-`, "");
 
             return {
-                timestamp,
-                count: correspondingCounter
+                "timestamp": parseInt(timestamp),
+                "count": parseInt(correspondingCounter)
             };
         });
 
@@ -104,9 +104,9 @@ router.get("/getAllQuestions", async function (req, res) {
             let splitted = value.split("-<>-");
 
             return {
-                name: splitted[0],
-                timestamp: splitted[1],
-                text: splitted[2]
+                "name": splitted[0],
+                "timestamp": parseInt(splitted[1]),
+                "text": splitted[2]
             };
         });
     } catch (e) {
