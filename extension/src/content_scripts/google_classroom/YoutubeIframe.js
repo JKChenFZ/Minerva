@@ -1,4 +1,26 @@
 import { GVars, CONSTANTS } from "./GlobalVariablesAndConstants.js";
+import Swal from "sweetalert2";
+
+async function videoFinishedHandler() {
+    // eslint-disable-next-line no-unused-vars
+    let promise = new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "FinishVideo",
+            videoID: window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID),
+            increment: window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_DURATION)
+        }, (response) => {
+            resolve(response);
+        });
+    });
+
+    let result = await promise;
+    if (result.status) {
+        Swal.fire({
+            icon: "success",
+            text: `Great, you just finished another video. Your current coin balance is ${result.newBalance}`,
+        });
+    }
+}
 
 function addYoutubeIframe(rawDestination) {
     let overlay = document.getElementById("studyModeLocker");
@@ -50,7 +72,7 @@ function addYoutubeIframe(rawDestination) {
             "onStateChange": (event) => {
                 console.debug("Embedded Youtube Player has a new change");
                 if (event.data == YT.PlayerState.ENDED) {
-                    // videoFinishedHandler();
+                    videoFinishedHandler();
                 }
             }
         }
