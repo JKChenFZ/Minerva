@@ -1,0 +1,21 @@
+name: Auto Comment
+on: [issues]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: bubkoo/auto-comment@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          issuesOpened: >
+            👋 Before you start, read the following guideline
+            
+            1. Generic code pointers in #59
+            2. Give your branch a short and meaningful name, pull request title should be the same as your branch name
+            3. Keep your pull request/commits small
+            4. While working on the same issue, it is okay to have multiple branches. Second feature should be branched off first feature if there is a dependency. 
+            5. In the commit message, prefix the message with `[#issueNumber]` like `[#1]` easy referencing.
+            6. Once a pull request is opened, check the linter and the code you submitted (under changed `files` tab) to make sure everything is correct
+            7. After revision, please re-request review by clicking on the circle next to reviewer names
+            8. If the change has to do with UI, please include screenshots of the changed UI as part of the pull request
+            9. If your feature branch is stale, always `rebase` instead of `merge`.
