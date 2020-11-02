@@ -4,7 +4,7 @@ window.onload = function() {
         if (event.code == "Enter" || event.key == "Enter") {
             $("#studentCollapseCard").collapse("hide");
             $("#loginConfirmationCollapseCard").collapse("show");
-            chrome.storage.local.set({"studentName": studentNameField.value}, function() {
+            chrome.storage.local.set({"student_name": studentNameField.value}, function() {
                 console.debug("Student name has been set", studentNameField.value);
             });
         }

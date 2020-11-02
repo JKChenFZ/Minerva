@@ -18,6 +18,7 @@ function getStudentHandle() {
             if (result[STUDENT_NAME]) {
                 resolve(result[STUDENT_NAME]);
             } else {
+                console.error(result);
                 reject("Name retrieval failed");
             }
         });
@@ -27,16 +28,16 @@ function getStudentHandle() {
 async function addActiveQuestion(videoID, timestamp, questionText) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
+
     try {
         let studentHandle = await getStudentHandle();
         requestOption.body = JSON.stringify({
             "student_name": studentHandle,
             "videoID": videoID,
             "timestamp": timestamp,
-            "type": "active",
             "question_text": questionText
         });
-        let result = await fetch(`http://${API_HOST}/video/addQuestion`, requestOption);
+        let result = await fetch(`http://${API_HOST}/video/addActiveQuestion`, requestOption);
         let parsed = await result.json();
 
         return parsed;

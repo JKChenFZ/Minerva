@@ -5,9 +5,10 @@ function questionOnSubmit(questionText) {
     // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
         chrome.runtime.sendMessage({
-            questionText,
+            type: "AddActiveQuestion",
             videoID: window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID),
             timestamp: Math.trunc(GVars.player.getCurrentTime()),
+            questionText
         }, (response) => {
             resolve(response);
         });
@@ -16,6 +17,7 @@ function questionOnSubmit(questionText) {
 
 async function questionButtonOnclick(event) {
     event.stopPropagation();
+    GVars.player.pauseVideo();
     console.debug(`Question ButtonPressed at ${GVars.player.getCurrentTime()}`);
     
     let result = await Swal.fire({
@@ -27,9 +29,12 @@ async function questionButtonOnclick(event) {
         showLoaderOnConfirm: true,
         preConfirm: (questionText) => questionOnSubmit(questionText)
     });
-    console.log(result);
+
     if (result.isConfirmed && result.value.status) {
-        console.log("Good");
+        Swal.fire({
+            icon: "success",
+            text: "Great, we will let your teacher know.",
+        });
     }
 }
 

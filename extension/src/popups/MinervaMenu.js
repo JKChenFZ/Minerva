@@ -6,9 +6,9 @@ function transitionToMainMenu(studentName) {
 }
 
 window.onload = function() {
-    chrome.storage.local.get(["studentName"], (result) => {
-        if (result.hasOwnProperty("studentName")) {
-            transitionToMainMenu(result.studentName);
+    chrome.storage.local.get(["student_name"], (result) => {
+        if (result.hasOwnProperty("student_name")) {
+            transitionToMainMenu(result["student_name"]);
         } else {
             chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
         }

@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         console.log(`Received a message from ${sender.tab ? sender.tab.url : "extension"}`);
         if (request.type == "AddActiveQuestion") {
-            handleAddActiveQuestion(sendResponse);
+            handleAddActiveQuestion(request, sendResponse);
         } else {
             sendResponse({ status: false });
         }
