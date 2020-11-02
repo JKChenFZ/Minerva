@@ -1,25 +1,52 @@
 import express from "express";
-import { getAllKeys, rpushAsync } from "../utils/Redis.js";
+import { getAllKeys, incrAsync, rpushAsync } from "../utils/Redis.js";
 import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
 const router = express.Router();
 
 // Add question timestamp based on given video ID
-router.post("/addQuestion", async function (req, res) {
+router.post("/addActiveQuestion", async function (req, res) {
     let status = true;
+    let studentName = req.body.student_name;
     let videoID = req.body.videoID;
     let timestamp = req.body.timestamp;
-    let type = req.body.type;
+    let questionText = req.body.question_text;
+
     try {
-        if (includesNullOrUndefined([videoID, timestamp, type])) {
+        if (includesNullOrUndefined([studentName, videoID, timestamp, questionText])) {
             throw new Error("Incomplete parameters");
         }
 
-        let key = `${videoID}-${type}`;
-        let val = `${timestamp}`;
-        let result = await rpushAsync(key, val);
-        console.log(`[Endpoint] Appended ${val} to ${key}, new length is ${result}`);
+        let counterKey = `${videoID}-active-questions-${timestamp}`;
+        let newCount = await incrAsync(counterKey);
+        let questionKey = `${videoID}-active-questions-text`;
+        let questionVal = `${studentName}-<>-${timestamp}-<>-${questionText}`;
+        let result = await rpushAsync(questionKey, questionVal);
+        console.log(`[Endpoint] incremented ${counterKey}, new length is ${newCount}`);
+        console.log(`[Endpoint] Appended ${questionVal} to ${questionKey}, new length is ${result}`);
     } catch (e) {
         console.error(`[Endpoint] addActiveQuestion failed, ${e}`);
+        status = false;
+    }
+
+    res.json({status});
+});
+
+router.post("/addPassiveQuestion", async function (req, res) {
+    let status = true;
+    let studentName = req.body.student_name;
+    let videoID = req.body.videoID;
+    let timestamp = req.body.timestamp;
+
+    try {
+        if (includesNullOrUndefined([studentName, videoID, timestamp])) {
+            throw new Error("Incomplete parameters");
+        }
+
+        let counterKey = `${videoID}-passive-questions-${timestamp}`;
+        let newCount = await incrAsync(counterKey);
+        console.log(`[Endpoint] incremented ${counterKey}, new length is ${newCount}`);
+    } catch (e) {
+        console.error(`[Endpoint] addPassiveQuestion failed, ${e}`);
         status = false;
     }
 

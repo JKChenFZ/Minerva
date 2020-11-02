@@ -4,12 +4,13 @@ function transitionToMainMenu(studentName) {
     let studentNamePanel = document.getElementById("studentName-youPanel");
     studentNamePanel.innerText = "Hi " + studentName;
 }
+
 window.onload = function() {
-    chrome.storage.local.get(["studentName"], (result) => {
-        if (result.hasOwnProperty("studentName")) {
-            transitionToMainMenu(result.studentName);
+    chrome.storage.local.get(["student_name"], (result) => {
+        if (result.hasOwnProperty("student_name")) {
+            transitionToMainMenu(result["student_name"]);
         } else {
-            chrome.tabs.create({url: chrome.extension.getURL("src/StudentRegistration/StudentRegistration.html")});
+            chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
         }
     });
     let images = ["golden_star.jpg", "pencil.jpg", "ruler.jpg"];

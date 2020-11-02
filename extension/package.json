@@ -4,11 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/webpack/bin/webpack.js --watch"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^7.12.0"
+    "copy-webpack-plugin": "^6.2.1",
+    "eslint": "^7.12.0",
+    "webpack": "^5.3.2",
+    "webpack-cli": "^4.1.0"
+  },
+  "dependencies": {
+    "@tensorflow-models/blazeface": "0.0.5",
+    "@tensorflow/tfjs": "^2.7.0",
+    "@tensorflow/tfjs-backend-wasm": "^2.7.0",
+    "@tensorflow/tfjs-converter": "^2.7.0",
+    "sweetalert2": "^10.9.0"
   }
 }
