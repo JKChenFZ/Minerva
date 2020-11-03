@@ -1,5 +1,13 @@
 import express from "express";
-import { incrAsync, incrByAsync, keysAsync, lrangeAsync, mgetAsync } from "../utils/Redis.js";
+import {
+    client,
+    incrAsync,
+    incrByAsync,
+    keysAsync,
+    lrangeAsync,
+    mgetAsync,
+    watchAsync
+} from "../utils/Redis.js";
 import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
 
 const router = express.Router();
@@ -101,8 +109,34 @@ router.post("/purchaseSticker", async function (req, res) {
         if (includesNullOrUndefined([studentName, stickerName, price])) {
             throw new Error("Incomplete parameters");
         }
-
         
+        let studentBalanceKey = `${studentName}-balance`;
+        let studentStickerKey = `${studentName}-owned-badges`;
+        // Start a transaction
+        await watchAsync(studentBalanceKey, studentStickerKey);
+        let balance = await mgetAsync(studentBalanceKey);
+        let ownedStickers = await lrangeAsync(studentStickerKey, 0, -1);
+
+        // Check for the conditions
+        if (balance[0] < price || ownedStickers.includes(stickerName)) {
+            throw new Error("Insufficient balance or duplicate sticker");
+        }
+
+        let result = await new Promise((resolve, reject) => {
+            client.multi()
+                .decrby(studentBalanceKey, price)
+                .rpush(studentStickerKey, stickerName)
+                .exec((error, reply) => {
+                    if (error || !reply) {
+                        reject(error);
+                    }
+
+                    resolve(reply);
+                });
+        });
+
+        console.log("[Endpoint] purchaseSticker executed with following output");
+        console.log(result);
     } catch (e) {
         console.error(`[Endpoint] purchaseSticker failed, ${e}`);
         status = false;
