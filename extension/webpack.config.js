@@ -26,7 +26,7 @@ module.exports = {
                 {
                     context: "src/popups",
                     from: "*.html"
-                }, 
+                },
                 {
                     context: "src/vendor_scripts",
                     from: "*.js",
