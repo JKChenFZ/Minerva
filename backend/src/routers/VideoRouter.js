@@ -1,7 +1,61 @@
 import express from "express";
-import { incrAsync, keysAsync, lrangeAsync, mgetAsync, rpushAsync } from "../utils/Redis.js";
+import { incrAsync, keysAsync, lrangeAsync, mgetAsync, rpushAsync, setAsync } from "../utils/Redis.js";
 import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
 const router = express.Router();
+
+router.post("/saveVideoInfo", async function (req, res) {
+    let status = true;
+    let videoID = req.body.videoID;
+    let videoName = req.body.video_name;
+    let videoDuration = req.body.video_duration;
+
+    try {
+        if (includesNullOrUndefined([videoID, videoName, videoDuration])) {
+            throw new Error("Incomplete parameters");
+        }
+
+        let videoInfoKey = `${videoID}-video-info`;
+        let videoInfoVal = `${videoName}-<>-${videoDuration}`;
+        await setAsync(videoInfoKey, videoInfoVal);
+        console.log(`[Endpoint] sets ${videoInfoKey} with ${videoInfoVal}`);
+    } catch (e) {
+        console.error(`[Endpoint] saveVideoInfo failed, ${e}`);
+        status = false;
+    }
+
+    res.json({status});
+});
+
+router.get("/getAllVideoInfo", async function (req, res) {
+    let status = true;
+    let videoInfo = [];
+    try {
+        let videoInfoKeyPattern = "*-video-info";
+        let foundVideoInfoKeys = await keysAsync(videoInfoKeyPattern);
+        let foundVideoInfo = await mgetAsync(foundVideoInfoKeys);
+        videoInfo = foundVideoInfoKeys.map((key, index) => {
+            let correspondingVideoInfo = foundVideoInfo[index];
+            let parsedKey = key.replace("-video-info", "");
+            let parsedVideoInfo = correspondingVideoInfo.split("-<>-");
+
+            return {
+                "videoID": parsedKey,
+                "video_title": parsedVideoInfo[0],
+                "video_duration": parseInt(parsedVideoInfo[1])
+            };
+        });
+
+        console.log(`[Endpoint] Found ${foundVideoInfoKeys.length} in Redis`);
+    } catch (e) {
+        console.error(`[Endpoint] getAllVideoInfo failed, ${e}`);
+        status = false;
+    }
+
+    res.json({
+        status,
+        "video_info": videoInfo
+    });
+});
 
 // Add question timestamp based on given video ID
 router.post("/addActiveQuestion", async function (req, res) {
