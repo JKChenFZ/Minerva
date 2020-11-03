@@ -7,7 +7,8 @@ module.exports = {
         GoogleClassroomContentScript: "./src/content_scripts/google_classroom/GoogleClassroom.js",
         MinervaMenu: "./src/popups/MinervaMenu.js",
         StudentRegistration: "./src/standalone_pages/StudentRegistration.js",
-        StudyModeLocker: "./src/content_scripts/youtube/StudyModeLocker.js"
+        InstructorDashboard: "./src/standalone_pages/InstructorDashboard.js",
+        StudyModeLocker: "./src/content_scripts/youtube/StudyModeLocker.js",
     },
     output: {
         filename: "js/[name].js",
@@ -25,7 +26,7 @@ module.exports = {
                 {
                     context: "src/popups",
                     from: "*.html"
-                },
+                }, 
                 {
                     context: "src/vendor_scripts",
                     from: "*.js",
