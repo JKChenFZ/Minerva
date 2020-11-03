@@ -70,4 +70,25 @@ async function finishVideo(videoID, increment) {
     }
 }
 
-export { addActiveQuestion, finishVideo };
+async function saveVideoInfo(videoID, videoName, videoDuration) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = POST_REQUEST;
+
+    try {
+        requestOption.body = JSON.stringify({
+            "videoID": videoID,
+            "video_name": videoName,
+            "video_duration": videoDuration // Integer Type
+        });
+        let result = await fetch(`http://${API_HOST}/video/saveVideoInfo`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
+export { addActiveQuestion, finishVideo, saveVideoInfo };
