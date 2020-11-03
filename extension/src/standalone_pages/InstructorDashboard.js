@@ -26,8 +26,7 @@ window.onload = function() {
     new Chart(passiveChart, {
         type: "line",
         data: {
-            datasets: [
-            {
+            datasets: [{
                 label: "Passive Feedback",
                 borderColor: color[1],
                 pointBackgroundColor: color[1],
