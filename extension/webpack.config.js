@@ -6,8 +6,9 @@ module.exports = {
         Background: "./src/background_scripts/background.js",
         GoogleClassroomContentScript: "./src/content_scripts/google_classroom/GoogleClassroom.js",
         MinervaMenu: "./src/popups/MinervaMenu.js",
-        StudentRegistration: "./src/standalone_pages/StudentRegistration.js",
         InstructorDashboard: "./src/standalone_pages/InstructorDashboard.js",
+        Options: "./src/standalone_pages/Options.js",
+        StudentRegistration: "./src/standalone_pages/StudentRegistration.js",
         StudyModeLocker: "./src/content_scripts/youtube/StudyModeLocker.js",
     },
     output: {
