@@ -54,6 +54,9 @@ chrome.runtime.onMessage.addListener(
         case "AddActiveQuestion":
             handleAddActiveQuestion(request, sendResponse);
             break;
+        case "FetchVideos":
+            handleFetchVideos(request, sendResponse);
+            break
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
             break;
