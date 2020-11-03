@@ -30,46 +30,32 @@ router.get("/getAllStudentTime", async function (req, res) {
     res.json({status, studentInfo});
 });
 
-router.get("/getStudentBalance", async function (req, res) {
+router.get("/getStudentProfile", async function (req, res) {
     let status = true;
-    let balance = null;
     let studentName = req.query["student_name"];
+    let timeRecord = [null];
+    let coinBalance = [null];
 
     try {
         if (isNullOrUndefined(studentName)) {
             throw new Error("Incomplete parameters");
         }
 
-        let key = `${studentName}-balance`;
-        let result = await mgetAsync(key);
-        balance = result[0];
+        let coinKey = `${studentName}-balance`;
+        coinBalance = await mgetAsync(coinKey);
+
+        let timeKey = `${studentName}-time`;
+        timeRecord = await mgetAsync(timeKey);
     } catch (e) {
         console.error(`[Endpoint] getStudentBalance failed, ${e}`);
         status = false;
     }
 
-    res.json({status, balance});
-});
-
-router.get("/getStudentTime", async function (req, res) {
-    let status = true;
-    let time = null;
-    let studentName = req.query["student_name"];
-
-    try {
-        if (isNullOrUndefined(studentName)) {
-            throw new Error("Incomplete parameters");
-        }
-
-        let key = `${studentName}-time`;
-        let result = await mgetAsync(key);
-        time = result[0];
-    } catch (e) {
-        console.error(`[Endpoint] getStudentTime failed, ${e}`);
-        status = false;
-    }
-
-    res.json({status, time});
+    res.json({
+        status,
+        "time_record": timeRecord[0],
+        "coin_balance": coinBalance[0]
+    });
 });
 
 router.post("/finishVideo", async function (req, res) {
