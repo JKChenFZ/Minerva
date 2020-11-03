@@ -1,5 +1,5 @@
 import express from "express";
-import { incrAsync, incrByAsync, keysAsync, mgetAsync } from "../utils/Redis.js";
+import { incrAsync, incrByAsync, keysAsync, lrangeAsync, mgetAsync } from "../utils/Redis.js";
 import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
 
 const router = express.Router();
@@ -35,6 +35,7 @@ router.get("/getStudentProfile", async function (req, res) {
     let studentName = req.query["student_name"];
     let timeRecord = [null];
     let coinBalance = [null];
+    let ownedBadges = [];
 
     try {
         if (isNullOrUndefined(studentName)) {
@@ -46,6 +47,9 @@ router.get("/getStudentProfile", async function (req, res) {
 
         let timeKey = `${studentName}-time`;
         timeRecord = await mgetAsync(timeKey);
+
+        let badgeKey = `${studentName}-owned-badges`;
+        ownedBadges = await lrangeAsync(badgeKey, 0, -1);
     } catch (e) {
         console.error(`[Endpoint] getStudentBalance failed, ${e}`);
         status = false;
@@ -54,7 +58,8 @@ router.get("/getStudentProfile", async function (req, res) {
     res.json({
         status,
         "time_record": timeRecord[0],
-        "coin_balance": coinBalance[0]
+        "coin_balance": coinBalance[0],
+        "owned_badges": ownedBadges
     });
 });
 
