@@ -91,4 +91,24 @@ router.post("/finishVideo", async function (req, res) {
     res.json({status, newBalance, newTime});
 });
 
+router.post("/purchaseSticker", async function (req, res) {
+    let status = true;
+    let studentName = req.body["student_name"];
+    let stickerName = req.body["sticker_name"];
+    let price = req.body["price"];
+
+    try {
+        if (includesNullOrUndefined([studentName, stickerName, price])) {
+            throw new Error("Incomplete parameters");
+        }
+
+        
+    } catch (e) {
+        console.error(`[Endpoint] purchaseSticker failed, ${e}`);
+        status = false;
+    }
+
+    res.json({ status });
+});
+
 export { router as StudentRouter };
