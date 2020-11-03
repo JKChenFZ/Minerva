@@ -1,5 +1,5 @@
-let activeFeedback = [{x: new Date(0,0,0,0,1,2,0), y: "2", students: ["Yuki","John"]},{x: new Date(0,0,0,0,20,1,0), y: "3", students: ["John","Jack", "Seth"]}];
-let passiveFeedback = [{x: new Date(0,0,0,0,12,45,0), y: "1", students: ["Seth"] }, {x: new Date(0,0,0,1,14,5,0), y: "2", students: ["Yuki","John"] }];
+let activeFeedback = [{x: new Date(0, 0, 0, 0, 1, 2, 0), y: "2", students: ["Yuki", "John"]},{x: new Date(0, 0, 0, 0, 20, 1, 0), y: "3", students: ["John", "Jack", "Seth"]}];
+let passiveFeedback = [{x: new Date(0, 0, 0, 0, 12, 45, 0), y: "1", students: ["Seth"] }, {x: new Date(0, 0, 0, 1, 14, 5, 0), y: "2", students: ["Yuki", "John"] }];
 let data = [activeFeedback, passiveFeedback];
 function displayFormatFunction(label, index, labels) {
     let hoursIndex = label.indexOf(":");
@@ -10,18 +10,20 @@ function displayFormatFunction(label, index, labels) {
     }
 }
 function displayStudents(TooltipItem, object) {
+    /* eslint-disable no-unused-vars */
     let label = [];
     let index = TooltipItem[0].index;
     let datasetIndex = TooltipItem[0].datasetIndex;
     for (let i = 0; i < data[datasetIndex][index].students.length; i++) {
         label.push(data[datasetIndex][index].students[i]);
     }
-    return label.join(" ");   
+    return label.join(" ");
+    /* eslint-disable no-unused-vars */  
 }
 window.onload = function() {
     let ctx = document.getElementById("myChart").getContext("2d");
     let color=["#5959e6","#800000"];
-    let myChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: "line",
         data: {
             datasets: [{
@@ -45,9 +47,9 @@ window.onload = function() {
         },
         options: {
             tooltips: {
-              callbacks: {
-                  title: displayStudents
-              }
+                callbacks: {
+                    title: displayStudents
+                }
             },
             scales: {
                 xAxes: [{
@@ -69,4 +71,4 @@ window.onload = function() {
             }
         }
     });
-}
+};
