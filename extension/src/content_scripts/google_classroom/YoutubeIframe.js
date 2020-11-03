@@ -22,6 +22,26 @@ async function videoFinishedHandler() {
     }
 }
 
+async function saveVideoInfo() {
+    // eslint-disable-next-line no-unused-vars
+    let response = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "SaveVideoInfo",
+            videoID: window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID),
+            videoName: window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_TITLE),
+            videoDuration: window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_DURATION)
+        }, (response) => {
+            resolve(response);
+        });
+    });
+
+    if (response.status) {
+        console.log("Successfully saved video info");
+    } else {
+        console.error("Unable to save video info");
+    }
+}
+
 function addYoutubeIframe(rawDestination) {
     let overlay = document.getElementById("studyModeLocker");
 
@@ -68,6 +88,9 @@ function addYoutubeIframe(rawDestination) {
                     CONSTANTS.YOUTUBE_VIDEO_TITLE,
                     event.target.getVideoData().title
                 );
+
+                // Also persist the video information into Redis
+                saveVideoInfo();
             },
             "onStateChange": (event) => {
                 console.debug("Embedded Youtube Player has a new change");

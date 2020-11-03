@@ -1,4 +1,4 @@
-import { addActiveQuestion, finishVideo } from "../utils/ApiInterface.js";
+import { addActiveQuestion, finishVideo, saveVideoInfo } from "../utils/ApiInterface.js";
 
 async function handleAddActiveQuestion(request, reply) {
     let result = await addActiveQuestion(
@@ -14,6 +14,16 @@ async function handleFinishVideo(request, reply) {
     let result = await finishVideo(
         request.videoID,
         request.increment
+    );
+
+    reply(result);
+}
+
+async function handleSaveVideoInfo(request, reply) {
+    let result = await saveVideoInfo(
+        request.videoID,
+        request.videoName,
+        request.videoDuration
     );
 
     reply(result);
@@ -40,6 +50,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
+            break;
+        case "SaveVideoInfo":
+            handleSaveVideoInfo(request, sendResponse);
             break;
         default:
             sendResponse({ status: false });
