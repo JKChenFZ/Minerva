@@ -11,5 +11,15 @@ const mgetAsync = promisify(client.mget).bind(client);
 const incrAsync = promisify(client.incr).bind(client);
 const incrByAsync = promisify(client.incrby).bind(client);
 const keysAsync = promisify(client.keys).bind(client);
+const watchAsync = promisify(client.watch).bind(client);
 
-export { lrangeAsync, incrAsync, incrByAsync, keysAsync, mgetAsync, rpushAsync };
+export {
+    client,
+    lrangeAsync,
+    incrAsync,
+    incrByAsync,
+    keysAsync,
+    mgetAsync,
+    rpushAsync,
+    watchAsync
+};
