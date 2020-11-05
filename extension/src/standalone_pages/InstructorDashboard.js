@@ -1,7 +1,7 @@
 let activeFeedback = [{x: new Date(0, 0, 0, 0, 1, 2, 0), y: "2", students: ["Yuki", "John"]}, {x: new Date(0, 0, 0, 0, 20, 1, 0), y: "3", students: ["John", "Jack", "Seth"]}];
 let passiveFeedback = [{x: new Date(0, 0, 0, 0, 12, 45, 0), y: "1", students: ["Seth"] }, {x: new Date(0, 0, 0, 1, 14, 5, 0), y: "2", students: ["Yuki", "John"] }];
 let data = [activeFeedback, passiveFeedback];
-function displayFormatFunction(label, index) {
+function displayFormatFunction(label) {
     let hoursIndex = label.indexOf(":");
     if (label.substring(0, hoursIndex) == "12") {
         return label.substring(hoursIndex + 1);
@@ -21,6 +21,11 @@ function displayStudents(TooltipItem) {
     /* eslint-enable no-unused-vars */  
 }
 window.onload = function() {
+    chrome.runtime.sendMessage({
+            type: "FetchVideos"
+    }, (response) => {
+        console.log(response);
+    });
     let color=["#5959e6", "#800000"];
     let passiveChart = document.getElementById("passiveFeedback").getContext("2d");
     new Chart(passiveChart, {
