@@ -10,6 +10,12 @@ async function handleAddActiveQuestion(request, reply) {
     reply(result);
 }
 
+async function handleFetchVideos(request, reply) {
+    let result = await fetchVideos();
+
+    reply(result);
+}
+
 async function handleFinishVideo(request, reply) {
     let result = await finishVideo(
         request.videoID,

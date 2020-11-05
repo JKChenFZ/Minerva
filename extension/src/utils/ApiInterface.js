@@ -1,4 +1,5 @@
 const API_HOST = "localhost:3000";
+const GET_REQUEST = "GET";
 const POST_REQUEST = "POST";
 const STUDENT_NAME = "student_name";
 
@@ -38,6 +39,22 @@ async function addActiveQuestion(videoID, timestamp, questionText) {
             "question_text": questionText
         });
         let result = await fetch(`http://${API_HOST}/video/addActiveQuestion`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
+async function fetchVideos() {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = GET_REQUEST;
+
+    try {
+        let result = await fetch(`http://${API_HOST}/video/getAllVideoInfo`, requestOption);
         let parsed = await result.json();
 
         return parsed;
