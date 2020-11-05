@@ -1,4 +1,4 @@
-import { addActiveQuestion, finishVideo, saveVideoInfo } from "../utils/ApiInterface.js";
+import { addActiveQuestion, fetchVideos, finishVideo, saveVideoInfo } from "../utils/ApiInterface.js";
 
 async function handleAddActiveQuestion(request, reply) {
     let result = await addActiveQuestion(
@@ -56,7 +56,7 @@ chrome.runtime.onMessage.addListener(
             break;
         case "FetchVideos":
             handleFetchVideos(request, sendResponse);
-            break
+            break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
             break;

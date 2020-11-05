@@ -87,6 +87,7 @@ async function finishVideo(videoID, increment) {
     }
 }
 
+<<<<<<< HEAD
 async function saveVideoInfo(videoID, videoName, videoDuration) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
@@ -109,3 +110,6 @@ async function saveVideoInfo(videoID, videoName, videoDuration) {
 }
 
 export { addActiveQuestion, finishVideo, saveVideoInfo };
+=======
+export { addActiveQuestion, fetchVideos, finishVideo };
+>>>>>>> c2ecc22... added API calls
