@@ -36,16 +36,25 @@ async function handleAnswerQuestionIncorrectly(request, reply) {
     reply(result);
 }
 
+async function handleFetchStudentRankings(request, reply) {
+    let result = await fetchStudentRankings();
+
+    reply(result);
+}
+
 async function handleFetchVideos(reply) {
     let result = await fetchVideos();
 
     reply(result);
 }
 
-async function handleFetchStudentRankings(request, reply) {
-    let result = await fetchStudentRankings();
+async function handleFetchVideoFeedback(request, reply) {
+    let result = await finishVideo(
+        request.videoID
+    );
 
     reply(result);
+
 }
 
 async function handleFinishVideo(request, reply) {
@@ -136,11 +145,11 @@ chrome.runtime.onMessage.addListener(
         case "AnswerQuestionIncorrectly":
             handleAnswerQuestionIncorrectly(request, sendResponse);
             break;
-        case "FetchVideos":
-            handleFetchVideos(sendResponse);
-            break;
         case "FetchStudentRankings":
             handleFetchStudentRankings(request, sendResponse);
+            break;
+        case "FetchVideos":
+            handleFetchVideos(sendResponse);
             break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
@@ -157,6 +166,9 @@ chrome.runtime.onMessage.addListener(
         case "MuteCurrentTab":
             handleMuteCurrentTab();
             sendResponse({ status: true });
+        case "FetchVideoFeedback":
+            handleFetchVideoFeedback(request, sendResponse);
+            break;
         case "SaveVideoInfo":
             handleSaveVideoInfo(request, sendResponse);
             break;
