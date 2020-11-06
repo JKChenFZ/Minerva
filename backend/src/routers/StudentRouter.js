@@ -60,10 +60,10 @@ router.get("/getStudentProfile", async function (req, res) {
         ];
 
         let result = await mgetAsync(keys);
-        timeRecord = result[0];
-        coinBalance = result[1];
-        correctCount = result[2];
-        incorrectCount = result[3];
+        timeRecord = parseInt(result[0]);
+        coinBalance = parseInt(result[1]);
+        correctCount = parseInt(result[2]);
+        incorrectCount = parseInt(result[3]);
 
         let badgeKey = `${studentName}-owned-badges`;
         ownedBadges = await lrangeAsync(badgeKey, 0, -1);
