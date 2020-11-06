@@ -41,8 +41,10 @@ router.get("/getAllStudentTime", async function (req, res) {
 router.get("/getStudentProfile", async function (req, res) {
     let status = true;
     let studentName = req.query["student_name"];
-    let timeRecord = [null];
-    let coinBalance = [null];
+    let timeRecord = null;
+    let coinBalance = null;
+    let correctCount = -1;
+    let incorrectCount = -1;
     let ownedBadges = [];
 
     try {
@@ -50,11 +52,18 @@ router.get("/getStudentProfile", async function (req, res) {
             throw new Error("Incomplete parameters");
         }
 
-        let coinKey = `${studentName}-balance`;
-        coinBalance = await mgetAsync(coinKey);
+        let keys = [
+            `${studentName}-time`,
+            `${studentName}-balance`,
+            `${studentName}-correct-question-count`,
+            `${studentName}-incorrect-question-count`
+        ];
 
-        let timeKey = `${studentName}-time`;
-        timeRecord = await mgetAsync(timeKey);
+        let result = await mgetAsync(keys);
+        timeRecord = result[0];
+        coinBalance = result[1];
+        correctCount = result[2];
+        incorrectCount = result[3];
 
         let badgeKey = `${studentName}-owned-badges`;
         ownedBadges = await lrangeAsync(badgeKey, 0, -1);
@@ -65,8 +74,10 @@ router.get("/getStudentProfile", async function (req, res) {
 
     res.json({
         status,
-        "time_record": timeRecord[0],
-        "coin_balance": coinBalance[0],
+        "time_record": timeRecord,
+        "coin_balance": coinBalance,
+        "correct_count": correctCount,
+        "incorrect_count": incorrectCount,
         "owned_badges": ownedBadges
     });
 });
@@ -139,6 +150,44 @@ router.post("/purchaseSticker", async function (req, res) {
         console.log(result);
     } catch (e) {
         console.error(`[Endpoint] purchaseSticker failed, ${e}`);
+        status = false;
+    }
+
+    res.json({ status });
+});
+
+router.post("/answerQuestionCorrect", async function (req, res) {
+    let status = true;
+    let studentName = req.body["student_name"];
+
+    try {
+        if (isNullOrUndefined(studentName)) {
+            throw new Error("Incomplete parameters");
+        }
+
+        let key = `${studentName}-correct-question-count`;
+        await incrAsync(key);
+    } catch (e) {
+        console.error(`[Endpoint] answerQuestionCorrect failed, ${e}`);
+        status = false;
+    }
+
+    res.json({ status });
+});
+
+router.post("/answerQuestionIncorrect", async function (req, res) {
+    let status = true;
+    let studentName = req.body["student_name"];
+
+    try {
+        if (isNullOrUndefined(studentName)) {
+            throw new Error("Incomplete parameters");
+        }
+
+        let key = `${studentName}-incorrect-question-count`;
+        await incrAsync(key);
+    } catch (e) {
+        console.error(`[Endpoint] answerQuestionIncorrect failed, ${e}`);
         status = false;
     }
 
