@@ -41,7 +41,7 @@ async function handleFetchVideos(reply) {
     reply(result);
 }
 
-async function handleFetchStudentRankings (request, reply) {
+async function handleFetchStudentRankings(request, reply) {
     let result = await fetchStudentRankings();
 
     reply(result);

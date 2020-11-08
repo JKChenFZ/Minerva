@@ -1,11 +1,13 @@
 import { renderStudentRankings } from "./MinervaMenuRenderInfo.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
-import {$,jQuery} from "jquery";
+import $ from "jquery";
+window.jQuery = $;
+window.$ = $;
 
 function transitionToMainMenu(studentName) {
-    jQuery("#minervaMenuCollapseCard").collapse("show");
-    jQuery("#studentCollapseCard").collapse("hide");
+    $("#minervaMenuCollapseCard").collapse("show");
+    $("#studentCollapseCard").collapse("hide");
     let studentNamePanel = document.getElementById("studentName-youPanel");
     studentNamePanel.innerText = "Hi " + studentName;
 }
