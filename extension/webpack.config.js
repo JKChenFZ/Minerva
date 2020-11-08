@@ -5,12 +5,12 @@ module.exports = {
     entry: {
         Background: "./src/background_scripts/background.js",
         GoogleClassroomContentScript: "./src/content_scripts/google_classroom/GoogleClassroom.js",
-        MinervaMenu: "./src/popups/MinervaMenu.js",
         InstructorDashboard: "./src/standalone_pages/InstructorDashboard.js",
         InstructorDashboardRenderVideoInfo: "./src/standalone_pages/InstructorDashboardRenderVideoInfo.js",
+        MinervaMenu: "./src/popups/MinervaMenu.js",
         Options: "./src/standalone_pages/Options.js",
         StudentRegistration: "./src/standalone_pages/StudentRegistration.js",
-        StudyModeLocker: "./src/content_scripts/youtube/StudyModeLocker.js",
+        StudyModeLocker: "./src/content_scripts/youtube/StudyModeLocker.js"
     },
     output: {
         filename: "js/[name].js",
@@ -41,7 +41,7 @@ module.exports = {
         rules: [
             {
             test: /\.css$/,
-            use: ['style-loader', 'css-loader']
+            use: ["style-loader", "css-loader"]
             }
         ]
     }
