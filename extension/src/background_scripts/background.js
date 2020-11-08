@@ -49,7 +49,7 @@ async function handleFetchVideos(reply) {
 }
 
 async function handleFetchVideoFeedback(request, reply) {
-    let result = await finishVideo(
+    let result = await fetchVideoFeedback(
         request.videoID
     );
 

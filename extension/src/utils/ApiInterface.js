@@ -90,6 +90,22 @@ async function answerQuestionIncorrectly() {
     }
 }
 
+async function fetchStudentRankings() {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = GET_REQUEST;
+
+    try {
+        let result = await fetch(`http://${API_HOST}/student/getAllStudentTime`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function fetchVideos() {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = GET_REQUEST;
@@ -106,12 +122,15 @@ async function fetchVideos() {
     }
 }
 
-async function fetchStudentRankings() {
+async function fetchVideoFeedback(videoID) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = GET_REQUEST;
+    requestOption.body = JSON.stringify({
+            "videoID": videoID
+    });
 
     try {
-        let result = await fetch(`http://${API_HOST}/student/getAllStudentTime`, requestOption);
+        let result = await fetch(`http://${API_HOST}/video/getAllQuestions`, requestOption);
         let parsed = await result.json();
 
         return parsed;

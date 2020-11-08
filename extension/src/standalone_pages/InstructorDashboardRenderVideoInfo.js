@@ -35,8 +35,80 @@ function renderVideoAccordian(document, videoObjects) {
 
         accordianDiv.appendChild(card);
         console.log(`processed ${video.video_title}`);
-    });
+        });
     document.getElementById("nav-videos").appendChild(accordianDiv);
+}
+function displayFormatFunction(label) {
+    let hoursIndex = label.indexOf(":");
+    if (label.substring(0, hoursIndex) == "12") {
+        return label.substring(hoursIndex + 1);
+    } else {
+        return label;
+    }
+}
+function displayStudents(TooltipItem) {
+    /* eslint-disable no-unused-vars */
+    let label = [];
+    let index = TooltipItem[0].index;
+    let datasetIndex = TooltipItem[0].datasetIndex;
+    for (let i = 0; i < data[datasetIndex][index].students.length; i++) {
+        label.push(data[datasetIndex][index].students[i]);
+    }
+    return label.join(" ");
+    /* eslint-enable no-unused-vars */  
+}
+function displayFeedback(videoObjects) {
+    if (videoObjects.status == true) {
+        videoObjects["video_info"].forEach(video => {
+            chrome.runtime.sendMessage({
+                type: "FetchVideoFeedback"
+                }, (response) => {
+                    renderPassiveFeedback(video, response);
+                });
+        });
+    }
+}
+function renderPassiveFeedback(video, response) {
+    let color= "#5959e6";
+    let passiveChart = document.getElementById(`passiveFeedback_${video.videoID}`).getContext("2d");
+    new Chart(passiveChart, {
+        type: "line",
+        data: {
+            datasets: [{
+                label: "Passive Feedback",
+                borderColor: color,
+                pointBackgroundColor: color,
+                pointBorderColor: color,
+                pointHoverBackgroundColor:color,
+                pointHoverBorderColor: color,
+                data: response.passive_question
+            }],
+        },
+        options: {
+            tooltips: {
+                callbacks: {
+                    title: displayStudents
+                }
+            },
+            scales: {
+                xAxes: [{
+                    type: "time",
+                    distribution: "series",
+                    time: {
+                        displayFormats: {
+                            "millisecond": "h:m:ss",
+                            "second": "h:m:ss",
+                            "minute": "h:m:ss",
+                            "hour": "h:m:ss"
+                        },
+                    },
+                    ticks: {
+                        callback: displayFormatFunction
+                    },
+
+                }]
+            }
+        }
 }
 
 export { renderVideoAccordian };
