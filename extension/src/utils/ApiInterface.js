@@ -106,6 +106,23 @@ async function fetchVideos() {
     }
 }
 
+async function fetchStudentRankings() {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = GET_REQUEST;
+
+    try {
+        let result = await fetch(`http://${API_HOST}/student/getAllStudentTime`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
+
 async function finishVideo(videoID, increment) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
@@ -188,6 +205,7 @@ async function saveVideoInfo(videoID, videoName, videoDuration) {
     }
 }
 
+<<<<<<< HEAD
 async function setNewFreeHours(hourStart, hourEnd) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
@@ -222,3 +240,6 @@ export {
     saveVideoInfo,
     setNewFreeHours
 };
+=======
+export { addActiveQuestion, fetchVideos, fetchStudentRankings, finishVideo, saveVideoInfo };
+>>>>>>> c93c006... WIP

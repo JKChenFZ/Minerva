@@ -41,6 +41,12 @@ async function handleFetchVideos(reply) {
     reply(result);
 }
 
+async function handleFetchStudentRankings (request, reply) {
+    let result = await fetchStudentRankings();
+
+    reply(result);
+}
+
 async function handleFinishVideo(request, reply) {
     let result = await finishVideo(
         request.videoID,
@@ -131,6 +137,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "FetchVideos":
             handleFetchVideos(sendResponse);
+            break;
+        case "FetchStudentRankings":
+            handleFetchStudentRankings(request, sendResponse);
             break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
