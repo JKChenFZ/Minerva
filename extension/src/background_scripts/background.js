@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
     addActiveQuestion,
     answerQuestionCorrectly,

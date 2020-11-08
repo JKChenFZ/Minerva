@@ -1,21 +1,18 @@
-import { renderVideoAccordian } from "./InstructorDashboardRenderVideoInfo.js";
+import { displayFeedback, renderVideoAccordian } from "./InstructorDashboardRenderVideoInfo.js";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
 
 function displayVideos(videoObjects) {
     let videoNav = document.getElementById("nav-videos");
     if (videoObjects.status == false) {
         videoNav.innerText = "No videos could be found";
-    }
-}
-function displayFormatFunction(label) {
-    let hoursIndex = label.indexOf(":");
-    if (label.substring(0, hoursIndex) == "12") {
-        return label.substring(hoursIndex + 1);
-    } else {
+    } {
         renderVideoAccordian(document, videoObjects);
     }
 }
 
 window.onload = function() {
+    console.log("fucking run plz");
     chrome.runtime.sendMessage({
         type: "FetchVideos"
     }, (response) => {
