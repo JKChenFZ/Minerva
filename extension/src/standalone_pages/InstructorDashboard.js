@@ -1,4 +1,6 @@
 import { renderVideoAccordian } from "./InstructorDashboardRenderVideoInfo.js";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
 
 function displayVideos(videoObjects) {
     let videoNav = document.getElementById("nav-videos");
