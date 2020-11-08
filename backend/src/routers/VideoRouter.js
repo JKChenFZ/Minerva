@@ -123,32 +123,36 @@ router.get("/getAllQuestions", async function (req, res) {
         // Grab all passive questions
         let passiveQuestionKeyPattern = `${videoID}-passive-questions-*`;
         let foundPassiveQuestionKeys = await keysAsync(passiveQuestionKeyPattern);
-        let foundPassiveQuestionVals = await mgetAsync(foundPassiveQuestionKeys);
+        if (foundPassiveQuestionKeys.length > 0) {
+            let foundPassiveQuestionVals = await mgetAsync(foundPassiveQuestionKeys);
 
-        passiveQuestions = foundPassiveQuestionKeys.map((key, index) => {
-            let correspondingCounter = foundPassiveQuestionVals[index];
-            let timestamp = key.replace(`${videoID}-passive-questions-`, "");
+            passiveQuestions = foundPassiveQuestionKeys.map((key, index) => {
+                let correspondingCounter = foundPassiveQuestionVals[index];
+                let timestamp = key.replace(`${videoID}-passive-questions-`, "");
 
-            return {
-                "timestamp": parseInt(timestamp),
-                "count": parseInt(correspondingCounter)
-            };
-        });
-
+                return {
+                    "timestamp": parseInt(timestamp),
+                    "count": parseInt(correspondingCounter)
+                };
+            });
+        }
+        
         // Grab all active questions
         let activeQuestionKeyPattern = `${videoID}-active-questions-*`;
         let foundActiveQuestionKeys = await keysAsync(activeQuestionKeyPattern);
-        let foundActiveQuestionVals = await mgetAsync(foundActiveQuestionKeys);
+        if (foundActiveQuestionKeys.length > 0) {
+            let foundActiveQuestionVals = await mgetAsync(foundActiveQuestionKeys);
 
-        activeQuestions = foundActiveQuestionKeys.map((key, index) => {
-            let correspondingCounter = foundActiveQuestionVals[index];
-            let timestamp = key.replace(`${videoID}-active-questions-`, "");
+            activeQuestions = foundActiveQuestionKeys.map((key, index) => {
+                let correspondingCounter = foundActiveQuestionVals[index];
+                let timestamp = key.replace(`${videoID}-active-questions-`, "");
 
-            return {
-                "timestamp": parseInt(timestamp),
-                "count": parseInt(correspondingCounter)
-            };
-        });
+                return {
+                    "timestamp": parseInt(timestamp),
+                    "count": parseInt(correspondingCounter)
+                };
+            });
+        }
 
         // Grab texual questions
         let activeTextQuestionKey = `${videoID}-active-questions-text`;
