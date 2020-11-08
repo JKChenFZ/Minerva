@@ -1,5 +1,6 @@
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
     entry: {
@@ -37,6 +38,11 @@ module.exports = {
                     to: "js"
                 }
             ],
+        }),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "window.jQuery": "jquery"
         })
     ],
     module: {
