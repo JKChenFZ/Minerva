@@ -98,16 +98,17 @@ router.post("/finishVideo", async function (req, res) {
         let watchTimesKey = `${videoID}-${studentName}-watch-times`;
         let newWatchTimes = await incrAsync(watchTimesKey);
         let discountedIncrement = Math.trunc(newIncrement / newWatchTimes);
-        let balanceKey = `${studentName}-balance`;
-        let timeKey = `${studentName}-time`;
-        newBalance = await incrByAsync(balanceKey, discountedIncrement);
-        newTime = await incrByAsync(timeKey, discountedIncrement);
+        let balanceResult = await incrByAsync(`${studentName}-balance`, discountedIncrement);
+        let timeResult = await incrByAsync(`${studentName}-time`, discountedIncrement);
+
+        newBalance = parseInt(balanceResult);
+        newTime = parseInt(timeResult); 
     } catch (e) {
         console.error(`[Endpoint] addStudentBalance failed, ${e}`);
         status = false;
     }
 
-    res.json({status, newBalance, newTime});
+    res.json({ status, newBalance, newTime });
 });
 
 router.post("/purchaseSticker", async function (req, res) {
