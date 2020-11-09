@@ -23,7 +23,7 @@ router.post("/saveVideoInfo", async function (req, res) {
         status = false;
     }
 
-    res.json({status});
+    res.json({ status });
 });
 
 router.get("/getAllVideoInfo", async function (req, res) {
@@ -82,7 +82,7 @@ router.post("/addActiveQuestion", async function (req, res) {
         status = false;
     }
 
-    res.json({status});
+    res.json({ status });
 });
 
 router.post("/addPassiveQuestion", async function (req, res) {
@@ -104,7 +104,7 @@ router.post("/addPassiveQuestion", async function (req, res) {
         status = false;
     }
 
-    res.json({status});
+    res.json({ status });
 });
 
 // Get all timestamps associated with a video
