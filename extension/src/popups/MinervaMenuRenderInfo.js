@@ -1,7 +1,8 @@
 function renderStudentRankings(classRankingBody, response) {
     response.sort((a, b) => {
-        return parseInt(a.time) < parseInt(b.time) ? 1: -1;
+        return b.time - a.time;
     });
+    console.log(response);
     response.forEach(function(student, index) {
         let tableRow = document.createElement("TR");
         let rank = tableRow.insertCell(0);
@@ -13,6 +14,12 @@ function renderStudentRankings(classRankingBody, response) {
 
         let date = new Date(null);
         date.setSeconds(student.time);
+        /* substr takes 2 args. 
+        First is start index,
+        Second is number of chars to pull.
+        11 is the index of Hours and we extend 5 to pull
+        minutes.
+        */
         let result = date.toISOString().substr(11, 5);
 
         amount.innerText = result;

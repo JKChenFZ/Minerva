@@ -15,7 +15,7 @@ function displayClassRankings() {
     chrome.runtime.sendMessage({
         type: "FetchStudentRankings"
     }, (response) => {
-        if (response.status == true) {
+        if (response.status) {
             renderStudentRankings(classRankingBody, response.studentInfo);
         } else {
             let navRanking = document.getElementById("nav-ranking");
