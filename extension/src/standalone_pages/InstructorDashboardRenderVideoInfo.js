@@ -76,9 +76,19 @@ function renderVideoAccordian(document, videoObjects) {
 function renderActiveFeedback(video, response) {
     let color= "#5959e6";
     let activeChart = document.getElementById(`activeFeedback_${video.videoID}`).getContext("2d");
+    response.active_questions.sort((a,b) => {
+        return a.timestamp - b.timestamp;
+    });
+    let labels = response.active_questions.map(question => {
+        return question.timestamp;
+    });
+    let amounts = response.active_questions.map(question => {
+        return question.count;
+    });
     new Chart(activeChart, {
         type: "bar",
         data: {
+            labels: labels,
             datasets: [{
                 label: "Active Feedback",
                 borderColor: color,
@@ -86,7 +96,7 @@ function renderActiveFeedback(video, response) {
                 pointBorderColor: color,
                 pointHoverBackgroundColor:color,
                 pointHoverBorderColor: color,
-                data: response.active_questions
+                data: amounts
             }],
         },
         options: {
