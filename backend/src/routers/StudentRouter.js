@@ -26,8 +26,8 @@ router.get("/getAllStudentTime", async function (req, res) {
             let name = correspondingKey.replace("-time", "");
 
             return {
-                time,
-                name
+                name,
+                "time": parseInt(time)
             };
         });
     } catch (e) {
