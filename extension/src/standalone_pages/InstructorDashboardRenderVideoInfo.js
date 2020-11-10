@@ -18,7 +18,7 @@ function displayStudents(TooltipItem) {
 function displayStudentQuestions(label, questionsMap) {
     let htmlQuestions = "";
     questionsMap[label].forEach((question) => {
-        htmlQuestions += `<div>${question.name} asked ${question.text}<div>`
+        htmlQuestions += `<div>${question.name} asked ${question.text}<div>`;
     });
 
     Swal.fire({
@@ -75,21 +75,21 @@ function renderVideoAccordian(document, videoObjects) {
 function renderActiveFeedback(video, response) {
     let color= "#5959e6";
     let activeChart = document.getElementById(`activeFeedback_${video.videoID}`).getContext("2d");
-    response.active_questions.sort((a,b) => {
+    response.active_questions.sort((a, b) => {
         return a.timestamp - b.timestamp;
     });
     let labels = response.active_questions.flatMap((question) => {
         if (question.timestamp !== null) {
             return [question.timestamp];
         } else {
-            return []
+            return [];
         }
     });
     let amounts = response.active_questions.flatMap(question => {
         if (question.count !== null) {
             return [question.count];
         } else {
-            return []
+            return [];
         }
     });
     let questionsMap = new Map();
@@ -138,7 +138,7 @@ function renderActiveFeedback(video, response) {
     because we need a reference to the chart variable.
     */
     let canvas = document.getElementById(`activeFeedback_${video.videoID}`);
-    canvas.onclick = function (evt) {
+    canvas.onclick = function(evt) {
         var firstPoint = chart.getElementAtEvent(evt)[0];
 
         if (firstPoint) {
@@ -153,11 +153,11 @@ function renderPassiveFeedback(video, response) {
     let color= "#5959e6";
 
     let passiveChart = document.getElementById(`passiveFeedback_${video.videoID}`).getContext("2d");
-    response.passive_question.sort((a,b) => {
+    response.passive_question.sort((a, b) => {
         return a.timestamp - b.timestamp;
     });
     let transformedData = response.passive_question.map((question) => { 
-        return { x: new Date(0, 0, 0, 0, 0, question.timestamp, 0), y: question.count }
+        return { x: new Date(0, 0, 0, 0, 0, question.timestamp, 0), y: question.count };
     });
     console.log(transformedData);
     new Chart(passiveChart, {

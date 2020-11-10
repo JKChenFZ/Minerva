@@ -1,6 +1,6 @@
 import { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian } from "./InstructorDashboardRenderVideoInfo.js";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap";
 
 function displayFeedback(videoObjects) {
     if (videoObjects.status) {
@@ -9,7 +9,6 @@ function displayFeedback(videoObjects) {
                 type: "FetchVideoFeedback",
                 videoID: video.videoID
             }, (response) => {
-                console.log(video.videoID, response)
                 renderPassiveFeedback(video, response);
                 renderActiveFeedback(video, response);  
             });
