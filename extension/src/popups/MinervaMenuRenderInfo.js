@@ -14,12 +14,9 @@ function renderStudentRankings(classRankingBody, response) {
 
         let date = new Date(null);
         date.setSeconds(student.time);
-        /* substr takes 2 args. 
-        First is start index,
-        Second is number of chars to pull.
-        11 is the index of Hours and we extend 5 to pull
-        minutes.
-        */
+        
+        // ISOString format 2011-10-05T14:48:00.000Z
+        // Start at index 11 and grab 5 characters.
         let result = date.toISOString().substr(11, 5);
 
         amount.innerText = result;
