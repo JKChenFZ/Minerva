@@ -196,8 +196,7 @@ function renderPassiveFeedback(video, response) {
                         },
                     },
                     ticks: {
-                        callback: displayFormatFunction,
-                        // source: "labels"
+                        callback: displayFormatFunction
                     },
                 }],
                 yAxes: [{
