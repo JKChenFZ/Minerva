@@ -1,38 +1,18 @@
 import Chart from "chart.js";
 import Swal from "sweetalert2";
 
-// function displayFormatFunction(label) {
-//     let hoursIndex = label.indexOf(":");
-//     if (label.substring(0, hoursIndex) == "12") {
-//         return label.substring(hoursIndex + 1);
-//     } else {
-//         return label;
-//     }
-// }
-// function displayStudents(TooltipItem) {
-//     /* eslint-disable no-unused-vars */
-//     let label = [];
-//     let index = TooltipItem[0].index;
-//     let datasetIndex = TooltipItem[0].datasetIndex;
-//     for (let i = 0; i < data[datasetIndex][index].students.length; i++) {
-//         label.push(data[datasetIndex][index].students[i]);
-//     }
-//     return label.join(" ");
-//     /* eslint-enable no-unused-vars */  
-// }
-function displayFeedback(videoObjects) {
-    if (videoObjects.status) {
-        videoObjects["video_info"].forEach(video => {
-            chrome.runtime.sendMessage({
-                type: "FetchVideoFeedback",
-                videoID: video.videoID
-            }, (response) => {
-                console.log(video.videoID, response)
-                // renderPassiveFeedback(video, response);
-                renderActiveFeedback(video, response);  
-            });
-        });
+function displayFormatFunction(label) {
+    let hoursIndex = label.indexOf(":");
+    if (label.substring(0, hoursIndex) == "12") {
+        return "0:" + label.substring(hoursIndex + 1);
+    } else {
+        return label;
     }
+}
+function displayStudents(TooltipItem) {
+    let time = TooltipItem[0].label.split(" ");
+    console.log(time);
+    return displayFormatFunction(time[3].substr(0, 8));
 }
 
 function displayStudentQuestions(label, questionsMap) {
@@ -91,6 +71,7 @@ function renderVideoAccordian(document, videoObjects) {
     });
     document.getElementById("nav-videos").appendChild(accordianDiv);
 }
+
 function renderActiveFeedback(video, response) {
     let color= "#5959e6";
     let activeChart = document.getElementById(`activeFeedback_${video.videoID}`).getContext("2d");
@@ -135,6 +116,9 @@ function renderActiveFeedback(video, response) {
                     scaleLabel: {
                         display: true,
                         labelString: "Timestamp (s)"
+                    },
+                    ticks: {
+                        beginAtZero: true
                     }
                 }], 
                 yAxes: [{
@@ -163,11 +147,19 @@ function renderActiveFeedback(video, response) {
             displayStudentQuestions(label, questionsMap);
         }
     };
-
 }
+
 function renderPassiveFeedback(video, response) {
     let color= "#5959e6";
+
     let passiveChart = document.getElementById(`passiveFeedback_${video.videoID}`).getContext("2d");
+    response.passive_question.sort((a,b) => {
+        return a.timestamp - b.timestamp;
+    });
+    let transformedData = response.passive_question.map((question) => { 
+        return { x: new Date(0, 0, 0, 0, 0, question.timestamp, 0), y: question.count }
+    });
+    console.log(transformedData);
     new Chart(passiveChart, {
         type: "line",
         data: {
@@ -178,7 +170,7 @@ function renderPassiveFeedback(video, response) {
                 pointBorderColor: color,
                 pointHoverBackgroundColor:color,
                 pointHoverBorderColor: color,
-                data: response.passive_question
+                data: transformedData
             }],
         },
         options: {
@@ -189,8 +181,12 @@ function renderPassiveFeedback(video, response) {
             },
             scales: {
                 xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Timestamp (h:m:s)"
+                    },
                     type: "time",
-                    distribution: "series",
+                    distribution: "linear",
                     time: {
                         displayFormats: {
                             "millisecond": "h:m:ss",
@@ -200,13 +196,22 @@ function renderPassiveFeedback(video, response) {
                         },
                     },
                     ticks: {
-                        callback: displayFormatFunction
+                        callback: displayFormatFunction,
+                        // source: "labels"
                     },
-
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "# of Emotional Responses"
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                    }
                 }]
             }
         }
     });
 }
 
-export { displayFeedback, renderVideoAccordian };
+export { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian };
