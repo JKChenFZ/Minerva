@@ -55,7 +55,6 @@ async function handleFetchVideoFeedback(request, reply) {
     );
 
     reply(result);
-
 }
 
 async function handleFinishVideo(request, reply) {

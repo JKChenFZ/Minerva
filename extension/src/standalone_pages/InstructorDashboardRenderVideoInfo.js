@@ -1,18 +1,21 @@
 import Chart from "chart.js";
 import Swal from "sweetalert2";
 
-function displayFormatFunction(label) {
-    let hoursIndex = label.indexOf(":");
-    if (label.substring(0, hoursIndex) == "12") {
-        return "0:" + label.substring(hoursIndex + 1);
-    } else {
-        return label;
-    }
-}
-function displayStudents(TooltipItem) {
-    let time = TooltipItem[0].label.split(" ");
-    console.log(time);
-    return displayFormatFunction(time[3].substr(0, 8));
+// tooltipItem example
+// datasetIndex: 0
+// index: 1
+// label: "5"
+// value: "4"
+// x: 284.2205989583333
+// xLabel: 5
+// y: 32
+// yLabel: 4
+function displayStudents(tooltipItem) {
+    let time = tooltipItem[0].xLabel;
+    let date = new Date(null);
+    date.setSeconds(time); 
+    let result = date.toISOString().substr(11, 8);
+    return result
 }
 
 function displayStudentQuestions(label, questionsMap) {
@@ -86,7 +89,7 @@ function renderActiveFeedback(video, response) {
         }
     });
     let amounts = response.active_questions.flatMap(question => {
-        if (question.count !== null) {
+        if (question.count != null) {
             return [question.count];
         } else {
             return [];
@@ -133,17 +136,13 @@ function renderActiveFeedback(video, response) {
             }
         }
     });
-
-    /* The following function definition must be initialized here
-    because we need a reference to the chart variable.
-    */
     let canvas = document.getElementById(`activeFeedback_${video.videoID}`);
     canvas.onclick = function(evt) {
-        var firstPoint = chart.getElementAtEvent(evt)[0];
+        let firstPoint = chart.getElementAtEvent(evt)[0];
 
         if (firstPoint) {
-            var label = chart.data.labels[firstPoint._index];
-            console.log(label, questionsMap[label]);
+            let label = chart.data.labels[firstPoint._index];
+            console.debug(label, questionsMap[label]);
             displayStudentQuestions(label, questionsMap);
         }
     };
@@ -157,12 +156,20 @@ function renderPassiveFeedback(video, response) {
         return a.timestamp - b.timestamp;
     });
     let transformedData = response.passive_question.map((question) => { 
-        return { x: new Date(0, 0, 0, 0, 0, question.timestamp, 0), y: question.count };
+        return { x: question.timestamp, y: question.count };
     });
-    console.log(transformedData);
+    let labels = response.passive_question.flatMap((question) => {
+        if (question.timestamp !== null) {
+            return [question.timestamp];
+        } else {
+            return [];
+        }
+    });
+    console.debug(transformedData);
     new Chart(passiveChart, {
         type: "line",
         data: {
+            labels: labels,
             datasets: [{
                 label: "Passive Feedback",
                 borderColor: color,
@@ -183,20 +190,11 @@ function renderPassiveFeedback(video, response) {
                 xAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: "Timestamp (h:m:s)"
+                        labelString: "Timestamp"
                     },
-                    type: "time",
                     distribution: "linear",
-                    time: {
-                        displayFormats: {
-                            "millisecond": "h:m:ss",
-                            "second": "h:m:ss",
-                            "minute": "h:m:ss",
-                            "hour": "h:m:ss"
-                        },
-                    },
                     ticks: {
-                        callback: displayFormatFunction
+                        display: false
                     },
                 }],
                 yAxes: [{
