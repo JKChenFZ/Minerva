@@ -15,7 +15,7 @@ function displayStudents(tooltipItem) {
     let date = new Date(null);
     date.setSeconds(time); 
     let result = date.toISOString().substr(11, 8);
-    return result
+    return result;
 }
 
 function displayStudentQuestions(label, questionsMap) {
