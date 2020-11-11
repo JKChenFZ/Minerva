@@ -1,4 +1,10 @@
-import { addActiveQuestion, fetchVideos, finishVideo, saveVideoInfo } from "../utils/ApiInterface.js";
+import {
+    addActiveQuestion,
+    fetchVideos,
+    finishVideo,
+    getStudentFreeHours,
+    saveVideoInfo
+} from "../utils/ApiInterface.js";
 
 async function handleAddActiveQuestion(request, reply) {
     let result = await addActiveQuestion(
@@ -10,7 +16,7 @@ async function handleAddActiveQuestion(request, reply) {
     reply(result);
 }
 
-async function handleFetchVideos(request, reply) {
+async function handleFetchVideos(reply) {
     let result = await fetchVideos();
 
     reply(result);
@@ -25,12 +31,8 @@ async function handleFinishVideo(request, reply) {
     reply(result);
 }
 
-async function handleSaveVideoInfo(request, reply) {
-    let result = await saveVideoInfo(
-        request.videoID,
-        request.videoName,
-        request.videoDuration
-    );
+async function handleGetStudentFreeHours(reply) {
+    let result = await getStudentFreeHours();
 
     reply(result);
 }
@@ -39,6 +41,16 @@ function handleMuteCurrentTab() {
     chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
         chrome.tabs.update(tabs[0].id, { "muted": true });
     });
+}
+
+async function handleSaveVideoInfo(request, reply) {
+    let result = await saveVideoInfo(
+        request.videoID,
+        request.videoName,
+        request.videoDuration
+    );
+
+    reply(result);
 }
 
 chrome.runtime.onInstalled.addListener(function() {
@@ -61,10 +73,13 @@ chrome.runtime.onMessage.addListener(
             handleAddActiveQuestion(request, sendResponse);
             break;
         case "FetchVideos":
-            handleFetchVideos(request, sendResponse);
+            handleFetchVideos(sendResponse);
             break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
+            break;
+        case "GetStudentFreeHours":
+            handleGetStudentFreeHours(sendResponse);
             break;
         case "MuteCurrentTab":
             handleMuteCurrentTab();

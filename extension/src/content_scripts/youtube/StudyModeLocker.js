@@ -1,3 +1,6 @@
+let hourStart = null;
+let hourEnd = null;
+
 function addStudyModeOverlay() {
     let siteBody = document.getElementsByTagName("BODY")[0];
 
@@ -8,6 +11,10 @@ function addStudyModeOverlay() {
     let caption = document.createElement("div");
     caption.id = "studyModeLockerText";
     caption.innerText = "Locked During Study Mode";
+
+    let freeHourNotice = document.createElement("div");
+    freeHourNotice.id = "studyModeLockerFreeHourNotice";
+    freeHourNotice.innerText = `Youtube is available from ${hourStart} to ${hourEnd}`;
     
     let lockIcon = document.createElement("I");
     lockIcon.id = "studyLockerImage";
@@ -15,6 +22,7 @@ function addStudyModeOverlay() {
 
     // Add everything together
     overlay.appendChild(caption);
+    overlay.appendChild(freeHourNotice);
     overlay.appendChild(lockIcon);
     siteBody.appendChild(overlay);
 
@@ -29,11 +37,30 @@ async function isInFreeHours() {
     let currentTime = new Date();
     let currentHour = currentTime.getHours();
 
-    if (11 <= currentHour && currentHour <= 25) {
-        console.debug("Youtube is allowed, will check again");
-        // Try to apply the study mode locker every minute
-        setTimeout(isInFreeHours, 60000);
+    // eslint-disable-next-line no-unused-vars
+    let promise = new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "GetStudentFreeHours"
+        }, (response) => {
+            resolve(response);
+        });
+    });
+
+    let result = await promise;
+    if (result.status) {
+        hourStart = result["hour_start"];
+        hourEnd = result["hour_end"];
+        console.debug(`Free hours are set from ${hourStart} to ${hourEnd}, current hour is ${currentHour}`);
+        
+        if (hourStart <= currentHour && currentHour < hourEnd) {
+            console.debug("Youtube is allowed, will check again");
+            // Try to apply the study mode locker every minute
+            setTimeout(isInFreeHours, 60000);
+        } else {
+            addStudyModeOverlay();
+        }
     } else {
+        // Unconditionally apply the locker if free hours are not set
         addStudyModeOverlay();
     }
 }
