@@ -3,7 +3,8 @@ import {
     fetchVideos,
     finishVideo,
     getStudentFreeHours,
-    saveVideoInfo
+    saveVideoInfo,
+    setNewFreeHours
 } from "../utils/ApiInterface.js";
 
 async function handleAddActiveQuestion(request, reply) {
@@ -53,6 +54,15 @@ async function handleSaveVideoInfo(request, reply) {
     reply(result);
 }
 
+async function handleSetNewFreeHours(request, reply) {
+    let result = await setNewFreeHours(
+        request.hourStart,
+        request.hourEnd
+    );
+
+    reply(result);
+}
+
 chrome.runtime.onInstalled.addListener(function() {
     // eslint-disable-next-line no-undefined
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
@@ -86,6 +96,9 @@ chrome.runtime.onMessage.addListener(
             sendResponse({ status: true });
         case "SaveVideoInfo":
             handleSaveVideoInfo(request, sendResponse);
+            break;
+        case "SetNewFreeHours":
+            handleSetNewFreeHours(request, sendResponse);
             break;
         default:
             sendResponse({ status: false });

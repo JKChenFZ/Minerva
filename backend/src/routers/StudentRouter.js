@@ -210,6 +210,8 @@ router.post("/saveStudentFreeHours", async function (req, res) {
         let key = `${studentName}-free-hour`;
         let val = `${freeHourStart}-<>-${freeHourEnd}`;
         await setAsync(key, val);
+
+        console.log(`[Endpoint] saved new free hours for ${studentName}, from ${freeHourStart} to ${freeHourEnd}`);
     } catch (e) {
         console.error(`[Endpoint] saveStudentFreeHours failed, ${e}`);
         status = false;

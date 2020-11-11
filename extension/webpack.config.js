@@ -4,6 +4,7 @@ const path = require("path");
 module.exports = {
     entry: {
         Background: "./src/background_scripts/background.js",
+        FreeHoursSettings: "./src/standalone_pages/FreeHoursSettings.js",
         GoogleClassroomContentScript: "./src/content_scripts/google_classroom/GoogleClassroom.js",
         InstructorDashboard: "./src/standalone_pages/InstructorDashboard.js",
         MinervaMenu: "./src/popups/MinervaMenu.js",

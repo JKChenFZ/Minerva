@@ -128,10 +128,33 @@ async function saveVideoInfo(videoID, videoName, videoDuration) {
     }
 }
 
+async function setNewFreeHours(hourStart, hourEnd) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = POST_REQUEST;
+
+    try {
+        let studentHandle = await getStudentHandle();
+        requestOption.body = JSON.stringify({
+            "student_name": studentHandle,
+            "hour_start": hourStart, // Integer Type
+            "hour_end": hourEnd // Integer Type
+        });
+        let result = await fetch(`http://${API_HOST}/student/saveStudentFreeHours`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 export {
     addActiveQuestion,
     fetchVideos,
     finishVideo,
     getStudentFreeHours,
-    saveVideoInfo
+    saveVideoInfo,
+    setNewFreeHours
 };

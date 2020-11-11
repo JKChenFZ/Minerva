@@ -70,7 +70,6 @@ function addYoutubeIframe(rawDestination) {
     overlay.appendChild(wrapperDiv);
 
     // Add event handlers to capture various iframe events
-    // eslint-disable-next-line no-unused-vars
     GVars.player = new YT.Player("videoIFrame", {
         events: {
             "onReady": (event) =>  {
