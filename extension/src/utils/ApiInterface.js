@@ -87,6 +87,26 @@ async function finishVideo(videoID, increment) {
     }
 }
 
+async function getStudentFreeHours() {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = GET_REQUEST;
+
+    try {
+        let studentHandle = await getStudentHandle();
+        let result = await fetch(
+            `http://${API_HOST}/student/getStudentFreeHours?student_name=${studentHandle}`,
+            requestOption
+        );
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function saveVideoInfo(videoID, videoName, videoDuration) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
@@ -108,4 +128,10 @@ async function saveVideoInfo(videoID, videoName, videoDuration) {
     }
 }
 
-export { addActiveQuestion, fetchVideos, finishVideo, saveVideoInfo };
+export {
+    addActiveQuestion,
+    fetchVideos,
+    finishVideo,
+    getStudentFreeHours,
+    saveVideoInfo
+};

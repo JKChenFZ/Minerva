@@ -1,5 +1,7 @@
+let hourStart = null;
+let hourEnd = null;
+
 function addStudyModeOverlay() {
-    console.log("DOM is fully loaded yes");
     let siteBody = document.getElementsByTagName("BODY")[0];
 
     // Overlay
@@ -9,12 +11,62 @@ function addStudyModeOverlay() {
     let caption = document.createElement("div");
     caption.id = "studyModeLockerText";
     caption.innerText = "Locked During Study Mode";
-    
-    overlay.appendChild(caption);
-    caption.outerHTML += "<svg aria-hidden=\"true\" id=\"studyLockerImage\" focusable=\"false\" data-prefix=\"fas\" data-icon=\"lock\" class=\"svg-inline--fa fa-lock fa-w-14\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path fill=\"currentColor\" d=\"M400 224h-24v-72C376 68.2 307.8 0 224 0S72 68.2 72 152v72H48c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48zm-104 0H152v-72c0-39.7 32.3-72 72-72s72 32.3 72 72v72z\"></path></svg>";
 
-    // Add overlay to the body
+    let freeHourNotice = document.createElement("div");
+    freeHourNotice.id = "studyModeLockerFreeHourNotice";
+    if (hourStart && hourEnd) {
+        freeHourNotice.innerText = `Youtube is available from ${hourStart} to ${hourEnd}`;
+    } else {
+        freeHourNotice.innerText = "Free Hours have not been set yet";
+    }
+    
+    let lockIcon = document.createElement("I");
+    lockIcon.id = "studyLockerImage";
+    lockIcon.setAttribute("class", "fas fa-lock");
+
+    // Add everything together
+    overlay.appendChild(caption);
+    overlay.appendChild(freeHourNotice);
+    overlay.appendChild(lockIcon);
     siteBody.appendChild(overlay);
+
+    // Mute the current tab
+    chrome.runtime.sendMessage({ type: "MuteCurrentTab" }, (result) => {
+        console.debug(`${result.status ? "Muted" : "Unable to mute"} current tab`);
+    });
 }
 
-addStudyModeOverlay();
+async function isInFreeHours() {
+    console.debug("Checking to see if Youtube is allowed");
+    let currentTime = new Date();
+    let currentHour = currentTime.getHours();
+
+    // eslint-disable-next-line no-unused-vars
+    let promise = new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "GetStudentFreeHours"
+        }, (response) => {
+            resolve(response);
+        });
+    });
+
+    let result = await promise;
+    if (result.status) {
+        hourStart = result["hour_start"];
+        hourEnd = result["hour_end"];
+        console.debug(`Free hours are set from ${hourStart} to ${hourEnd}, current hour is ${currentHour}`);
+        
+        if (hourStart <= currentHour && currentHour < hourEnd) {
+            console.debug("Youtube is allowed, will check again");
+            // Try to apply the study mode locker every minute
+            setTimeout(isInFreeHours, 60000);
+        } else {
+            addStudyModeOverlay();
+        }
+    } else {
+        // Unconditionally apply the locker if free hours are not set
+        addStudyModeOverlay();
+    }
+}
+
+isInFreeHours();
