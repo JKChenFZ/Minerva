@@ -1,6 +1,6 @@
 /* Overlay CSS */
 #studyModeLocker {
-    z-index: 1000;
+    z-index: 3000;
     background-color: black;
     opacity: 0.93;
     position: fixed;
@@ -74,4 +74,9 @@
 
 .youtubeIFrame {
     border: none;
+}
+
+/* Override SweetAlert2 CSS */
+.swal2-container {
+    z-index: 10000 !important;
 }

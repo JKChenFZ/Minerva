@@ -6,6 +6,7 @@ import {
     keysAsync,
     lrangeAsync,
     mgetAsync,
+    setAsync,
     watchAsync
 } from "../utils/Redis.js";
 import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
@@ -193,6 +194,56 @@ router.post("/answerQuestionIncorrect", async function (req, res) {
     }
 
     res.json({ status });
+});
+
+router.post("/saveStudentFreeHours", async function (req, res) {
+    let status = true;
+    let studentName = req.body["student_name"];
+    let freeHourStart = req.body["hour_start"];
+    let freeHourEnd = req.body["hour_end"];
+
+    try {
+        if (includesNullOrUndefined([studentName, freeHourStart, freeHourEnd])) {
+            throw new Error("Incomplete parameters");
+        }
+
+        let key = `${studentName}-free-hour`;
+        let val = `${freeHourStart}-<>-${freeHourEnd}`;
+        await setAsync(key, val);
+    } catch (e) {
+        console.error(`[Endpoint] saveStudentFreeHours failed, ${e}`);
+        status = false;
+    }
+
+    res.json({ status });
+});
+
+router.get("/getStudentFreeHours", async function (req, res) {
+    let status = true;
+    let studentName = req.query["student_name"];
+    let freeHourStart = null;
+    let freeHourEnd = null;
+
+    try {
+        if (isNullOrUndefined(studentName)) {
+            throw new Error("Incomplete parameters");
+        }
+
+        let key = `${studentName}-free-hour`;
+        let result = await mgetAsync(key);
+        let splitRes = result[0].split("-<>-");
+        freeHourStart = parseInt(splitRes[0]);
+        freeHourEnd = parseInt(splitRes[1]);
+    } catch (e) {
+        console.error(`[Endpoint] getStudentFreeHours failed, ${e}`);
+        status = false;
+    }
+
+    res.json({
+        status,
+        "hour_start": freeHourStart,
+        "hour_end": freeHourEnd
+    });
 });
 
 export { router as StudentRouter };

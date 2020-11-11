@@ -35,6 +35,12 @@ async function handleSaveVideoInfo(request, reply) {
     reply(result);
 }
 
+function handleMuteCurrentTab() {
+    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+        chrome.tabs.update(tabs[0].id, { "muted": true });
+    });
+}
+
 chrome.runtime.onInstalled.addListener(function() {
     // eslint-disable-next-line no-undefined
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
@@ -60,6 +66,9 @@ chrome.runtime.onMessage.addListener(
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
             break;
+        case "MuteCurrentTab":
+            handleMuteCurrentTab();
+            sendResponse({ status: true });
         case "SaveVideoInfo":
             handleSaveVideoInfo(request, sendResponse);
             break;

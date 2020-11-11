@@ -18,8 +18,8 @@
     {
       "matches": ["https://*.youtube.com/*"],
       "run_at": "document_idle",
-      "css": ["style/CommStyle.css"],
-      "js": ["js/StudyModeLocker.js"]
+      "css": ["style/VendorFontAwesome.css", "style/CommStyle.css"],
+      "js": ["js/VendorFontAwesome.js", "js/StudyModeLocker.js"]
     }
   ],
   "background": {
