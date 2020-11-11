@@ -14,7 +14,11 @@ function addStudyModeOverlay() {
 
     let freeHourNotice = document.createElement("div");
     freeHourNotice.id = "studyModeLockerFreeHourNotice";
-    freeHourNotice.innerText = `Youtube is available from ${hourStart} to ${hourEnd}`;
+    if (hourStart && hourEnd) {
+        freeHourNotice.innerText = `Youtube is available from ${hourStart} to ${hourEnd}`;
+    } else {
+        freeHourNotice.innerText = "Free Hours have not been set yet";
+    }
     
     let lockIcon = document.createElement("I");
     lockIcon.id = "studyLockerImage";
