@@ -155,6 +155,7 @@ export {
     fetchVideos,
     finishVideo,
     getStudentFreeHours,
+    getStudentHandle,
     saveVideoInfo,
     setNewFreeHours
 };
