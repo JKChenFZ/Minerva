@@ -1,6 +1,16 @@
 let hourStart = null;
 let hourEnd = null;
 
+function convertMilitaryToStandardTime(givenHour) {
+    if (givenHour <= 11) {
+        return `${givenHour} A.M`;
+    } else if (givenHour == 12) {
+        return "12 P.M";
+    } else {
+        return `${givenHour % 12} P.M`;
+    }
+}
+
 function addStudyModeOverlay() {
     let siteBody = document.getElementsByTagName("BODY")[0];
 
@@ -15,7 +25,7 @@ function addStudyModeOverlay() {
     let freeHourNotice = document.createElement("div");
     freeHourNotice.id = "studyModeLockerFreeHourNotice";
     if (hourStart && hourEnd) {
-        freeHourNotice.innerText = `Youtube is available from ${hourStart} to ${hourEnd}`;
+        freeHourNotice.innerText = `Youtube is available from ${convertMilitaryToStandardTime(hourStart)} to ${convertMilitaryToStandardTime(hourEnd)}.`;
     } else {
         freeHourNotice.innerText = "Free Hours have not been set yet";
     }

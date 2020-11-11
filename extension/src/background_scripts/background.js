@@ -3,6 +3,7 @@ import {
     fetchVideos,
     finishVideo,
     getStudentFreeHours,
+    getStudentHandle,
     saveVideoInfo,
     setNewFreeHours
 } from "../utils/ApiInterface.js";
@@ -36,6 +37,22 @@ async function handleGetStudentFreeHours(reply) {
     let result = await getStudentFreeHours();
 
     reply(result);
+}
+
+async function handleGetStudentName(reply) {
+    let status = true;
+    let name = null;
+
+    try {
+        name = await getStudentHandle();
+    } catch (e) {
+        status = false;
+    }
+
+    reply({
+        status,
+        name
+    });
 }
 
 function handleMuteCurrentTab() {
@@ -90,6 +107,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "GetStudentFreeHours":
             handleGetStudentFreeHours(sendResponse);
+            break;
+        case "GetStudentName":
+            handleGetStudentName(sendResponse);
             break;
         case "MuteCurrentTab":
             handleMuteCurrentTab();
