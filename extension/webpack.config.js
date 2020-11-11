@@ -6,7 +6,6 @@ module.exports = {
         Background: "./src/background_scripts/background.js",
         GoogleClassroomContentScript: "./src/content_scripts/google_classroom/GoogleClassroom.js",
         InstructorDashboard: "./src/standalone_pages/InstructorDashboard.js",
-        InstructorDashboardRenderVideoInfo: "./src/standalone_pages/InstructorDashboardRenderVideoInfo.js",
         MinervaMenu: "./src/popups/MinervaMenu.js",
         Options: "./src/standalone_pages/Options.js",
         StudentRegistration: "./src/standalone_pages/StudentRegistration.js",
@@ -36,13 +35,5 @@ module.exports = {
                 }
             ],
         }),
-    ],
-    module: {
-        rules: [
-            {
-            test: /\.css$/,
-            use: ["style-loader", "css-loader"]
-            }
-        ]
-    }
+    ]
 };
