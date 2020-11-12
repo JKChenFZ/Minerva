@@ -107,7 +107,7 @@ $(document).ready(() => {
     });
 
     // click on cups
-    $(".cup").click(() => {
+    $(".cup").click((e) => {
         // disable to click on cups
         $(".cup").addClass("avoid-clicks");
 
@@ -120,13 +120,18 @@ $(document).ready(() => {
         $cups.css({
             "transform": `translateY(-${100 - ballHeight}px)`
         });
-
+        
+        let correct = null;
         // if ball found
-        if ($(this).hasClass("cup2")) {
+        if ($(e.currentTarget).hasClass("cup2")) {
             $(this).find(".o").show();
+            correct = true;
         } else {
             // if ball not found
             $(this).find(".x").show();
+            correct = false;
         }
+
+        window.parent.postMessage({ correct }, "*");
     });
 });

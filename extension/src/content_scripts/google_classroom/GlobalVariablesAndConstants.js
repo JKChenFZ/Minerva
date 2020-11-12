@@ -7,7 +7,9 @@ let variables = {
     ctx: null,
     canvas: null,
     // Facial Expression
-    model: null
+    model: null,
+    // Post lecture iframe
+    gameIframe: null
 };
 
 const constants = {

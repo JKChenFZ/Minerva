@@ -6,7 +6,9 @@ function setupPostLectureGame() {
     let gameIframe = document.createElement("iframe");
     gameIframe.id = "gameIframe";
     gameIframe.src = chrome.extension.getURL("PostLectureGame.html");
+
     siteBody.appendChild(gameIframe);
+    GVars.gameIframe = gameIframe;
 }
 
 async function videoFinishedHandler() {

@@ -34,7 +34,7 @@ body {
 
 .cups .cup {
     position: fixed;
-    top: 35%;
+    top: 35% !important;
     z-index: 0;
     cursor: pointer;
 }
