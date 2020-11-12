@@ -1,4 +1,8 @@
 // Modified based on muhammadolim.github.io/Find-The-Ball
+import Swal from "sweetalert2";
+
+let videoID = "default";
+
 function renderQuestionDetails(question) {
     let $questionPrompt = $("#questionTitle");
     $questionPrompt.text(`Hint: ${question.title}`);
@@ -11,6 +15,8 @@ function renderQuestionDetails(question) {
 
     let $correct = $("#rightAnswer");
     $correct.text(question["correct"]);
+
+    videoID = question["videoID"];
 }
 
 function messageHandler(msg) {
@@ -19,6 +25,50 @@ function messageHandler(msg) {
     }
 
     renderQuestionDetails(msg.data);
+}
+
+async function handleCorrectAnswer() {
+    // eslint-disable-next-line no-unused-vars
+    let message = new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "AnswerQuestionCorrectly",
+            videoID: videoID
+        }, (response) => {
+            resolve(response);
+        });
+    });
+    let result = await message;
+    
+    let alert = Swal.fire({
+        icon: "success",
+        title: `Awesome, you earned ${result["earned_amount"]} coins`,
+    });
+    await alert;
+
+    // Close the iframe
+    window.parent.postMessage({}, "*");
+}
+
+async function handleWrongAnswer() {
+    // eslint-disable-next-line no-unused-vars
+    let message = new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "AnswerQuestionIncorrectly"
+        }, (response) => {
+            resolve(response);
+        });
+    });
+    await message;
+    
+    let alert = Swal.fire({
+        icon: "error",
+        title: "Oh no",
+        text: `The correct answer is ${$("#rightAnswer").text()}`
+    });
+    await alert;
+
+    // Close the iframe
+    window.parent.postMessage({}, "*");
 }
 
 $(document).ready(() => {
@@ -144,17 +194,10 @@ $(document).ready(() => {
             "transform": `translateY(-${100 - ballHeight}px)`
         });
         
-        let correct = null;
-        // if ball found
         if ($(e.currentTarget).hasClass("cup2")) {
-            $(this).find(".o").show();
-            correct = true;
+            handleCorrectAnswer();
         } else {
-            // if ball not found
-            $(this).find(".x").show();
-            correct = false;
+            handleWrongAnswer();
         }
-
-        window.parent.postMessage({ correct }, "*");
     });
 });

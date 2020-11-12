@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { GVars } from "./GlobalVariablesAndConstants";
 
 function handleMessages(event) {
@@ -7,17 +6,10 @@ function handleMessages(event) {
         return;
     }
 
-    console.debug(event);
-    let receivedData = event.data;
-
     // Remove game iframe
     GVars.gameIframe.parentNode.removeChild(GVars.gameIframe);
     GVars.gameIframe = null;
-
-    // Show the corresponding alert
-    Swal.fire({
-        icon: receivedData.correct ? "success" : "error"
-    });
+    console.log("Successfully closed the game iframe");
 }
 
 export { handleMessages };

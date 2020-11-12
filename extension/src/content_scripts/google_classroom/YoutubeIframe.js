@@ -14,6 +14,7 @@ function setupPostLectureGame() {
     // Timeout creates a buffer time for the receiver to be ready
     setTimeout(() => {
         gameIframe.contentWindow.postMessage({
+            "videoID": window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID),
             "title": window.localStorage.getItem(CONSTANTS.QUESTION_TITLE),
             "correct": window.localStorage.getItem(CONSTANTS.QUESTION_CORRECT_ANSWER),
             "wrong_one": window.localStorage.getItem(CONSTANTS.QUESTION_WRONG_ANSWER_ONE),

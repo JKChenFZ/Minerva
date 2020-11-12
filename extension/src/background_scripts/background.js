@@ -1,5 +1,7 @@
 import {
     addActiveQuestion,
+    answerQuestionCorrectly,
+    answerQuestionIncorrectly,
     fetchVideos,
     finishVideo,
     getPostLectureQuestion,
@@ -15,6 +17,20 @@ async function handleAddActiveQuestion(request, reply) {
         request.timestamp,
         request.questionText
     );
+
+    reply(result);
+}
+
+async function handleAnswerQuestionCorrectly(request, reply) {
+    let result = await answerQuestionCorrectly(
+        request.videoID
+    );
+
+    reply(result);
+}
+
+async function handleAnswerQuestionIncorrectly(request, reply) {
+    let result = await answerQuestionIncorrectly();
 
     reply(result);
 }
@@ -106,6 +122,12 @@ chrome.runtime.onMessage.addListener(
         switch (request.type) {
         case "AddActiveQuestion":
             handleAddActiveQuestion(request, sendResponse);
+            break;
+        case "AnswerQuestionCorrectly":
+            handleAnswerQuestionCorrectly(request, sendResponse);
+            break;
+        case "AnswerQuestionIncorrectly":
+            handleAnswerQuestionIncorrectly(request, sendResponse);
             break;
         case "FetchVideos":
             handleFetchVideos(sendResponse);
