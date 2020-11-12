@@ -9,6 +9,17 @@ function setupPostLectureGame() {
 
     siteBody.appendChild(gameIframe);
     GVars.gameIframe = gameIframe;
+
+    // Send questions and answers to the game iframe
+    // Timeout creates a buffer time for the receiver to be ready
+    setTimeout(() => {
+        gameIframe.contentWindow.postMessage({
+            "title": window.localStorage.getItem(CONSTANTS.QUESTION_TITLE),
+            "correct": window.localStorage.getItem(CONSTANTS.QUESTION_CORRECT_ANSWER),
+            "wrong_one": window.localStorage.getItem(CONSTANTS.QUESTION_WRONG_ANSWER_ONE),
+            "wrong_two": window.localStorage.getItem(CONSTANTS.QUESTION_WRONG_ANSWER_TWO)
+        }, "*");
+    }, 2000);
 }
 
 async function getPostLectureQuestion() {

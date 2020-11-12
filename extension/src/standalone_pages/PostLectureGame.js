@@ -1,5 +1,29 @@
 // Modified based on muhammadolim.github.io/Find-The-Ball
+function renderQuestionDetails(question) {
+    let $questionPrompt = $("#questionTitle");
+    $questionPrompt.text(`Hint: ${question.title}`);
+
+    let $wrongOne = $("#wrongAnswerOne");
+    $wrongOne.text(question["wrong_one"]);
+
+    let $wrongTwo = $("#wrongAnswerTwo");
+    $wrongTwo.text(question["wrong_two"]);
+
+    let $correct = $("#rightAnswer");
+    $correct.text(question["correct"]);
+}
+
+function messageHandler(msg) {
+    if (msg.origin != "https://classroom.google.com") {
+        return;
+    }
+
+    renderQuestionDetails(msg.data);
+}
+
 $(document).ready(() => {
+    window.addEventListener("message", (m) => messageHandler(m));
+
     //////////////////// selectors ////////////////////
     // elements
     let $overlay = $("#overlay");
@@ -96,7 +120,6 @@ $(document).ready(() => {
                     $(".cup").removeClass("avoid-clicks");
 
                     // Show the question prompt and options
-                    $questionPrompt.text("Here is a hint");
                     $questionPrompt.show();
                     $options.show();
                 }
