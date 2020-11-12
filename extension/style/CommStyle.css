@@ -83,6 +83,15 @@
     border: none;
 }
 
+/* Overlay Game iframe */
+#gameIframe {
+    z-index: 4000;
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
 /* Override SweetAlert2 CSS */
 .swal2-container {
     z-index: 10000 !important;

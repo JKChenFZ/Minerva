@@ -1,6 +1,14 @@
 import { GVars, CONSTANTS } from "./GlobalVariablesAndConstants.js";
 import Swal from "sweetalert2";
 
+function setupPostLectureGame() {
+    let siteBody = document.getElementsByTagName("BODY")[0];
+    let gameIframe = document.createElement("iframe");
+    gameIframe.id = "gameIframe";
+    gameIframe.src = chrome.extension.getURL("PostLectureGame.html");
+    siteBody.appendChild(gameIframe);
+}
+
 async function videoFinishedHandler() {
     // eslint-disable-next-line no-unused-vars
     let promise = new Promise((resolve, reject) => {
@@ -15,11 +23,14 @@ async function videoFinishedHandler() {
 
     let result = await promise;
     if (result.status) {
-        Swal.fire({
+        let alert = Swal.fire({
             icon: "success",
             text: `Great, you just finished another video. Your current coin balance is ${result.newBalance}`,
         });
+        await alert;
     }
+
+    setupPostLectureGame();
 }
 
 async function saveVideoInfo() {
