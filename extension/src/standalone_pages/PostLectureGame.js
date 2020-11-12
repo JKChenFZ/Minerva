@@ -6,6 +6,12 @@ $(document).ready(() => {
     let $tapToStart = $("#tap-to-start");
     let $cups = $(".cup .main path");
     
+    let $questionPrompt = $("#questionTitle");
+    $questionPrompt.hide();
+
+    let $options = $(".answer-option");
+    $options.hide();
+    
     // initial sizes
     let ballHeight = $("#ball").height();
     let cupTop = $(".cup").offset().top;
@@ -36,7 +42,7 @@ $(document).ready(() => {
             "transition": `${time + 100}ms`,
             "transform": `translateY(-${100 - ballHeight}px)`
         });
-      
+
         // cups down
         setTimeout(() => {
             $cups.css("transform", "translateY(100px)");
@@ -88,6 +94,11 @@ $(document).ready(() => {
 
                     // enable to click on cups
                     $(".cup").removeClass("avoid-clicks");
+
+                    // Show the question prompt and options
+                    $questionPrompt.text("Here is a hint");
+                    $questionPrompt.show();
+                    $options.show();
                 }
 
             }, time * 2 + 50);
@@ -99,6 +110,11 @@ $(document).ready(() => {
     $(".cup").click(() => {
         // disable to click on cups
         $(".cup").addClass("avoid-clicks");
+
+        // options.up
+        $options.css({
+            "transform": "translateY(-100px)"
+        });
 
         // cups up
         $cups.css({
