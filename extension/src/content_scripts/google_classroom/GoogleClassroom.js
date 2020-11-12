@@ -1,5 +1,6 @@
 import { addControlButtons } from "./ControlButtons.js";
 import { addYoutubeIframe } from "./YoutubeIframe.js";
+import { handleMessages } from "./PostLectureGameHandler";
 import { integrateWebcam } from "./Webcam.js";
 import { settingUpModel } from "./FacialDetection.js";
 
@@ -45,6 +46,7 @@ function hijackYoutubeLinkClicks(e) {
 async function main() {
     await settingUpModel();
     window.addEventListener("click", hijackYoutubeLinkClicks);
+    window.addEventListener("message", handleMessages);
     console.log("Google Classroom Overlay registered");
 }
 

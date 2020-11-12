@@ -1,6 +1,79 @@
 import { GVars, CONSTANTS } from "./GlobalVariablesAndConstants.js";
 import Swal from "sweetalert2";
 
+function setupPostLectureGame() {
+    let siteBody = document.getElementsByTagName("BODY")[0];
+    let gameIframe = document.createElement("iframe");
+    gameIframe.id = "gameIframe";
+    gameIframe.src = chrome.extension.getURL("PostLectureGame.html");
+
+    siteBody.appendChild(gameIframe);
+    GVars.gameIframe = gameIframe;
+
+    // Send questions and answers to the game iframe
+    // Timeout creates a buffer time for the receiver to be ready
+    setTimeout(() => {
+        gameIframe.contentWindow.postMessage({
+            "videoID": window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID),
+            "title": window.localStorage.getItem(CONSTANTS.QUESTION_TITLE),
+            "correct": window.localStorage.getItem(CONSTANTS.QUESTION_CORRECT_ANSWER),
+            "wrong_one": window.localStorage.getItem(CONSTANTS.QUESTION_WRONG_ANSWER_ONE),
+            "wrong_two": window.localStorage.getItem(CONSTANTS.QUESTION_WRONG_ANSWER_TWO)
+        }, "*");
+    }, 2000);
+}
+
+async function getPostLectureQuestion() {
+    // eslint-disable-next-line no-unused-vars
+    let response = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "GetPostLectureQuestions",
+            videoID: window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID)
+        }, (response) => {
+            resolve(response);
+        });
+    });
+
+    let result = await response;
+    if (result.status) {
+        // Save the questions to local storage for future uses
+        window.localStorage.setItem(CONSTANTS.QUESTION_TITLE, result["question"]);
+        window.localStorage.setItem(CONSTANTS.QUESTION_CORRECT_ANSWER, result["correct_answer"]);
+        window.localStorage.setItem(CONSTANTS.QUESTION_WRONG_ANSWER_ONE, result["wrong_answer_one"]);
+        window.localStorage.setItem(CONSTANTS.QUESTION_WRONG_ANSWER_TWO, result["wrong_answer_two"]);
+
+        return true;
+    }
+    
+    console.error("Unable to retrieve post lecture questions for current video");
+    return false;
+}
+
+async function generateVideoFinishAlert(amount) {
+    // We need to retrieve the question to know whether we should
+    // render the button in the alert box
+    let hasQuestions = await getPostLectureQuestion();
+    let alertBaseline = {
+        icon: "success",
+        title: `Received ${amount} coins`,
+        text: "Good job for finishing this video.",
+        showCancelButton: true,
+        cancelButtonText: "Close",
+        cancelButtonColor: "#3085d6",
+        showConfirmButton: false,
+    };
+
+    if (hasQuestions) {
+        alertBaseline.text += " Play a game and earn more coins?";
+        alertBaseline.cancelButtonColor = "#aaa",
+        alertBaseline.showConfirmButton = true;
+        alertBaseline.confirmButtonText = "Yes!";
+        alertBaseline.reverseButtons = true;
+    }
+
+    return alertBaseline;
+}
+
 async function videoFinishedHandler() {
     // eslint-disable-next-line no-unused-vars
     let promise = new Promise((resolve, reject) => {
@@ -15,10 +88,12 @@ async function videoFinishedHandler() {
 
     let result = await promise;
     if (result.status) {
-        Swal.fire({
-            icon: "success",
-            text: `Great, you just finished another video. Your current coin balance is ${result.newBalance}`,
-        });
+        let alertOptions = await generateVideoFinishAlert(result["earned_amount"]);
+        let alert = Swal.fire(alertOptions);
+        let userClick = await alert;
+        if (userClick.isConfirmed) {
+            setupPostLectureGame();
+        }
     }
 }
 

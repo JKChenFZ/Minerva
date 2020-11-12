@@ -87,6 +87,7 @@ router.post("/finishVideo", async function (req, res) {
     let status = true;
     let newBalance = null;
     let newTime = null;
+    let actualCoinIncrement = null;
     let studentName = req.body["student_name"];
     let newIncrement = req.body["increment"];
     let videoID = req.body["videoID"];
@@ -99,17 +100,24 @@ router.post("/finishVideo", async function (req, res) {
         let watchTimesKey = `${videoID}-${studentName}-watch-times`;
         let newWatchTimes = await incrAsync(watchTimesKey);
         let discountedIncrement = Math.trunc(newIncrement / newWatchTimes);
+        actualCoinIncrement = discountedIncrement;
         let balanceResult = await incrByAsync(`${studentName}-balance`, discountedIncrement);
         let timeResult = await incrByAsync(`${studentName}-time`, discountedIncrement);
 
         newBalance = parseInt(balanceResult);
-        newTime = parseInt(timeResult); 
+        newTime = parseInt(timeResult);
+        console.log(`[Endpoint] ${studentName} now has watched ${videoID} ${newWatchTimes} times, awarded with ${discountedIncrement} as compared to original amount ${newIncrement}`);
     } catch (e) {
         console.error(`[Endpoint] addStudentBalance failed, ${e}`);
         status = false;
     }
 
-    res.json({ status, newBalance, newTime });
+    res.json({
+        status,
+        newBalance,
+        newTime,
+        "earned_amount": actualCoinIncrement
+    });
 });
 
 router.post("/purchaseSticker", async function (req, res) {
@@ -160,21 +168,35 @@ router.post("/purchaseSticker", async function (req, res) {
 
 router.post("/answerQuestionCorrect", async function (req, res) {
     let status = true;
+    let discountAmount = null;
     let studentName = req.body["student_name"];
+    let videoID = req.body["videoID"];
 
     try {
-        if (isNullOrUndefined(studentName)) {
+        if (includesNullOrUndefined([studentName, videoID])) {
             throw new Error("Incomplete parameters");
         }
 
-        let key = `${studentName}-correct-question-count`;
-        await incrAsync(key);
+        let totalCorrectCountKey = `${studentName}-correct-question-count`;
+        await incrAsync(totalCorrectCountKey);
+
+        let videoCorrectCountKey = `${studentName}-${videoID}-correct-question-count`;
+        let videoCorrectCountVal = await incrAsync(videoCorrectCountKey);
+
+        discountAmount = Math.trunc(5000 / videoCorrectCountVal);
+        let studentBalanceKey = `${studentName}-balance`;
+        let newBalance = await incrByAsync(studentBalanceKey, discountAmount);
+
+        console.log(`[Endpoint] ${studentName} correctly answered a question on ${videoID}, awarded with ${discountAmount} and the new balance is ${newBalance}`);
     } catch (e) {
         console.error(`[Endpoint] answerQuestionCorrect failed, ${e}`);
         status = false;
     }
 
-    res.json({ status });
+    res.json({
+        status,
+        "earned_amount": discountAmount
+    });
 });
 
 router.post("/answerQuestionIncorrect", async function (req, res) {
@@ -187,7 +209,8 @@ router.post("/answerQuestionIncorrect", async function (req, res) {
         }
 
         let key = `${studentName}-incorrect-question-count`;
-        await incrAsync(key);
+        let incorrectCount = await incrAsync(key);
+        console.log(`[Endpoint] ${studentName} answered a question incorrectly, total count ${incorrectCount}`);
     } catch (e) {
         console.error(`[Endpoint] answerQuestionIncorrect failed, ${e}`);
         status = false;

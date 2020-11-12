@@ -49,6 +49,47 @@ async function addActiveQuestion(videoID, timestamp, questionText) {
     }
 }
 
+async function answerQuestionCorrectly(videoID) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = POST_REQUEST;
+
+    try {
+        let studentHandle = await getStudentHandle();
+        requestOption.body = JSON.stringify({
+            "student_name": studentHandle,
+            "videoID": videoID
+        });
+        let result = await fetch(`http://${API_HOST}/student/answerQuestionCorrect`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
+async function answerQuestionIncorrectly() {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = POST_REQUEST;
+
+    try {
+        let studentHandle = await getStudentHandle();
+        requestOption.body = JSON.stringify({
+            "student_name": studentHandle
+        });
+        let result = await fetch(`http://${API_HOST}/student/answerQuestionIncorrect`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function fetchVideos() {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = GET_REQUEST;
@@ -77,6 +118,25 @@ async function finishVideo(videoID, increment) {
             "increment": increment,
         });
         let result = await fetch(`http://${API_HOST}/student/finishVideo`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
+async function getPostLectureQuestion(videoID) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = GET_REQUEST;
+
+    try {
+        let result = await fetch(
+            `http://${API_HOST}/video/getPostLectureQuestions?videoID=${videoID}`,
+            requestOption
+        );
         let parsed = await result.json();
 
         return parsed;
@@ -152,8 +212,11 @@ async function setNewFreeHours(hourStart, hourEnd) {
 
 export {
     addActiveQuestion,
+    answerQuestionCorrectly,
+    answerQuestionIncorrectly,
     fetchVideos,
     finishVideo,
+    getPostLectureQuestion,
     getStudentFreeHours,
     getStudentHandle,
     saveVideoInfo,

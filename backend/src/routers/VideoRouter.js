@@ -180,4 +180,40 @@ router.get("/getAllQuestions", async function (req, res) {
     });
 });
 
+router.get("/getPostLectureQuestions", async function (req, res) {
+    let status = true;
+    let questionText = null;
+    let correctAnswer = null;
+    let wrongOptionOne = null;
+    let wrongOptionTwo = null;
+    let videoID = req.query.videoID; 
+
+    try {
+        if (isNullOrUndefined(videoID)) {
+            throw new Error("Incomplete parameters");
+        }
+
+        // This is a stub endpoint
+        if (videoID != "vd0fMpAIs1s") {
+            throw new Error("Not implemented endpoint");
+        }
+
+        questionText = "Which of the following is a southern colony?";
+        correctAnswer = "Georgia";
+        wrongOptionOne = "New York";
+        wrongOptionTwo = "Connecticut";
+    } catch (e) {
+        console.error(`[Endpoint] getPostLectureQuestions failed, ${e}`);
+        status = false;
+    }
+
+    res.json({
+        status,
+        "question": questionText,
+        "correct_answer": correctAnswer,
+        "wrong_answer_one": wrongOptionOne,
+        "wrong_answer_two": wrongOptionTwo
+    });
+});
+
 export { router as VideoRouter };
