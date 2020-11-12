@@ -87,6 +87,25 @@ async function finishVideo(videoID, increment) {
     }
 }
 
+async function getPostLectureQuestion(videoID) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = GET_REQUEST;
+
+    try {
+        let result = await fetch(
+            `http://${API_HOST}/video/getPostLectureQuestions?videoID=${videoID}`,
+            requestOption
+        );
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function getStudentFreeHours() {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = GET_REQUEST;
@@ -154,6 +173,7 @@ export {
     addActiveQuestion,
     fetchVideos,
     finishVideo,
+    getPostLectureQuestion,
     getStudentFreeHours,
     getStudentHandle,
     saveVideoInfo,

@@ -2,6 +2,7 @@ import {
     addActiveQuestion,
     fetchVideos,
     finishVideo,
+    getPostLectureQuestion,
     getStudentFreeHours,
     getStudentHandle,
     saveVideoInfo,
@@ -33,6 +34,13 @@ async function handleFinishVideo(request, reply) {
     reply(result);
 }
 
+async function handleGetPostLectureQuestions(request, reply) {
+    let result = await getPostLectureQuestion(
+        request.videoID
+    );
+
+    reply(result);
+}
 async function handleGetStudentFreeHours(reply) {
     let result = await getStudentFreeHours();
 
@@ -104,6 +112,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
+            break;
+        case "GetPostLectureQuestions":
+            handleGetPostLectureQuestions(request, sendResponse);
             break;
         case "GetStudentFreeHours":
             handleGetStudentFreeHours(sendResponse);
