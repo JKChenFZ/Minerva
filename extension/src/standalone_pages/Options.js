@@ -6,6 +6,6 @@ window.onload = function() {
 
     let freeHoursSettingButton = document.getElementById("freeHourSettingsRedirectButton");
     freeHoursSettingButton.onclick = function() {
-        chrome.tabs.create({url: chrome.extension.getURL("FreeHoursSettings.html")});
+        chrome.tabs.create({url: chrome.extension.getURL("PostLectureGame.html")});
     };
 };

@@ -9,6 +9,7 @@ module.exports = {
         InstructorDashboard: "./src/standalone_pages/InstructorDashboard.js",
         MinervaMenu: "./src/popups/MinervaMenu.js",
         Options: "./src/standalone_pages/Options.js",
+        PostLectureGame: "./src/standalone_pages/PostLectureGame.js",
         StudentRegistration: "./src/standalone_pages/StudentRegistration.js",
         StudyModeLocker: "./src/content_scripts/youtube/StudyModeLocker.js"
     },
