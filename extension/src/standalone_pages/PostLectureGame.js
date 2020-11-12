@@ -163,7 +163,7 @@ $(document).ready(() => {
                 }, time, "linear");
 
                 // if shuffle counter reachs to 15 stop shuffling
-                if (i == 15) {
+                if (i == 20) {
                     clearInterval(shuffle);
 
                     // enable to click on cups
