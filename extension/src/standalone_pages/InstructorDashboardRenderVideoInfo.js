@@ -82,14 +82,14 @@ function renderActiveFeedback(video, response) {
         return a.timestamp - b.timestamp;
     });
     let labels = response.active_questions.flatMap((question) => {
-        if (question.timestamp !== null) {
+        if (question.timestamp !== null && question.timestamp <= video.video_duration) {
             return [question.timestamp];
         } else {
             return [];
         }
     });
     let amounts = response.active_questions.flatMap(question => {
-        if (question.count != null) {
+        if (question.count != null && question.timestamp <= video.video_duration) {
             return [question.count];
         } else {
             return [];
@@ -150,16 +150,20 @@ function renderActiveFeedback(video, response) {
 
 function renderPassiveFeedback(video, response) {
     let color= "#5959e6";
-
+    console.debug(video);
     let passiveChart = document.getElementById(`passiveFeedback_${video.videoID}`).getContext("2d");
     response.passive_question.sort((a, b) => {
         return a.timestamp - b.timestamp;
     });
-    let transformedData = response.passive_question.map((question) => { 
-        return { x: question.timestamp, y: question.count };
+    let transformedData = response.passive_question.flatMap((question) => { 
+        if (question.timestamp !== null && question.timestamp <= video.video_duration) {
+            return [question.count];
+        } else {
+            return [];
+        }
     });
     let labels = response.passive_question.flatMap((question) => {
-        if (question.timestamp !== null) {
+        if (question.timestamp !== null && question.timestamp <= video.video_duration) {
             return [question.timestamp];
         } else {
             return [];
@@ -188,13 +192,14 @@ function renderPassiveFeedback(video, response) {
             },
             scales: {
                 xAxes: [{
+                    gridLines: { display: false },
                     scaleLabel: {
                         display: true,
                         labelString: "Timestamp"
                     },
                     distribution: "linear",
                     ticks: {
-                        display: false
+                        display: true,
                     },
                 }],
                 yAxes: [{
@@ -204,6 +209,7 @@ function renderPassiveFeedback(video, response) {
                     },
                     ticks: {
                         beginAtZero: true,
+
                     }
                 }]
             }
