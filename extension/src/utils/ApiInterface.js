@@ -205,7 +205,6 @@ async function saveVideoInfo(videoID, videoName, videoDuration) {
     }
 }
 
-<<<<<<< HEAD
 async function setNewFreeHours(hourStart, hourEnd) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
@@ -240,6 +239,3 @@ export {
     saveVideoInfo,
     setNewFreeHours
 };
-=======
-export { addActiveQuestion, fetchVideos, fetchStudentRankings, finishVideo, saveVideoInfo };
->>>>>>> c93c006... WIP
