@@ -1,5 +1,5 @@
 name: Auto Comment
-on: [issues]
+on: [issues, pull_request]
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -7,6 +7,8 @@ jobs:
       - uses: bubkoo/auto-comment@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pullRequestReviewRequested: |
+            Awesome. Make sure you include the corresponding screenshots if have UI changes
           issuesOpened: |
             👋 Before you start, read the following guideline\n
             
