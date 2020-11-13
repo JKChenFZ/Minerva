@@ -151,6 +151,9 @@ chrome.runtime.onMessage.addListener(
         case "FetchVideos":
             handleFetchVideos(sendResponse);
             break;
+        case "FetchVideoFeedback":
+            handleFetchVideoFeedback(request, sendResponse);
+            break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
             break;
@@ -166,9 +169,6 @@ chrome.runtime.onMessage.addListener(
         case "MuteCurrentTab":
             handleMuteCurrentTab();
             sendResponse({ status: true });
-        case "FetchVideoFeedback":
-            handleFetchVideoFeedback(request, sendResponse);
-            break;
         case "SaveVideoInfo":
             handleSaveVideoInfo(request, sendResponse);
             break;
