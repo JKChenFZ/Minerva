@@ -46,6 +46,7 @@ async function getPostLectureQuestion() {
     }
     
     console.error("Unable to retrieve post lecture questions for current video");
+    
     return false;
 }
 
