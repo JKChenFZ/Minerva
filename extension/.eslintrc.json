@@ -33,7 +33,8 @@
         "comma-spacing": ["error", { "before": false, "after": true }],
         "space-before-function-paren": ["error", "never"],
         "no-multiple-empty-lines": ["error", {"max": 1, "maxEOF": 0}],
-        "newline-before-return": "error"
+        "newline-before-return": "error",
+        "space-infix-ops": "error"
     },
     "globals": {
         "chrome": false,
