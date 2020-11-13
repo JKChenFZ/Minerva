@@ -122,7 +122,6 @@ async function fetchStudentRankings() {
     }
 }
 
-
 async function finishVideo(videoID, increment) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
