@@ -2,7 +2,7 @@ function renderStudentRankings(classRankingBody, response) {
     response.sort((a, b) => {
         return b.time - a.time;
     });
-    console.log(response);
+    console.debug(response);
     response.forEach(function(student, index) {
         let tableRow = document.createElement("TR");
         let rank = tableRow.insertCell(0);
