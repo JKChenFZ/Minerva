@@ -232,6 +232,7 @@ export {
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
     fetchVideos,
+    fetchStudentRankings,
     finishVideo,
     getPostLectureQuestion,
     getStudentFreeHours,
