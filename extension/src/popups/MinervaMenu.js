@@ -14,7 +14,7 @@ window.onload = function() {
         }
     });
     let images = ["golden_star.jpg", "pencil.jpg", "ruler.jpg"];
-    for (var i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 3; i++) {
         let image = document.getElementById(`item-${i}-image`);
         let imgURL = chrome.extension.getURL(`images/${images[i - 1]}`);
         image.src = imgURL;
