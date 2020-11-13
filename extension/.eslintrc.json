@@ -34,7 +34,8 @@
         "space-before-function-paren": ["error", "never"],
         "no-multiple-empty-lines": ["error", {"max": 1, "maxEOF": 0}],
         "newline-before-return": "error",
-        "space-infix-ops": "error"
+        "space-infix-ops": "error",
+        "no-var": "error"
     },
     "globals": {
         "chrome": false,
