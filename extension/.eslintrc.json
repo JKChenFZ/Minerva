@@ -31,7 +31,9 @@
         "no-empty-function": "error",
         "no-undef": "error",
         "comma-spacing": ["error", { "before": false, "after": true }],
-        "space-before-function-paren": ["error", "never"]
+        "space-before-function-paren": ["error", "never"],
+        "no-multiple-empty-lines": ["error", {"max": 1, "maxEOF": 0}],
+        "newline-before-return": "error"
     },
     "globals": {
         "chrome": false,
