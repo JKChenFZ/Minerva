@@ -81,20 +81,9 @@ function renderActiveFeedback(video, response) {
     response.active_questions.sort((a, b) => {
         return a.timestamp - b.timestamp;
     });
-    let labels = response.active_questions.flatMap((question) => {
-        if (question.timestamp !== null && question.timestamp <= video.video_duration) {
-            return [question.timestamp];
-        } else {
-            return [];
-        }
-    });
-    let amounts = response.active_questions.flatMap(question => {
-        if (question.count != null && question.timestamp <= video.video_duration) {
-            return [question.count];
-        } else {
-            return [];
-        }
-    });
+    let filteredData = response.active_questions.filter(question => question.timestamp !== null && question.count !== null);
+    let amounts = filteredData.map(question => question.count);
+    let labels = filteredData.map(question => question.timestamp);
     let questionsMap = new Map();
     labels.forEach((timestamp) => {
         questionsMap[timestamp] = response.active_questions_text.filter(question => question.timestamp === timestamp);
@@ -155,21 +144,10 @@ function renderPassiveFeedback(video, response) {
     response.passive_question.sort((a, b) => {
         return a.timestamp - b.timestamp;
     });
-    let transformedData = response.passive_question.flatMap((question) => { 
-        if (question.timestamp !== null && question.timestamp <= video.video_duration) {
-            return [question.count];
-        } else {
-            return [];
-        }
-    });
-    let labels = response.passive_question.flatMap((question) => {
-        if (question.timestamp !== null && question.timestamp <= video.video_duration) {
-            return [question.timestamp];
-        } else {
-            return [];
-        }
-    });
-    console.debug(transformedData);
+    let filteredData = response.passive_question.filter(question => question.timestamp !== null && question.count !== null);
+    let amounts = filteredData.map(question => question.count);
+    let labels = filteredData.map(question => question.timestamp);
+    console.debug(filteredData);
     new Chart(passiveChart, {
         type: "line",
         data: {
@@ -181,7 +159,7 @@ function renderPassiveFeedback(video, response) {
                 pointBorderColor: color,
                 pointHoverBackgroundColor:color,
                 pointHoverBorderColor: color,
-                data: transformedData
+                data: amounts
             }],
         },
         options: {
