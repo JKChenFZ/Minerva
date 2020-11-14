@@ -3,6 +3,7 @@ import {
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
     fetchVideos,
+    fetchStudentRankings,
     finishVideo,
     getPostLectureQuestion,
     getStudentFreeHours,
@@ -37,6 +38,12 @@ async function handleAnswerQuestionIncorrectly(request, reply) {
 
 async function handleFetchVideos(reply) {
     let result = await fetchVideos();
+
+    reply(result);
+}
+
+async function handleFetchStudentRankings(request, reply) {
+    let result = await fetchStudentRankings();
 
     reply(result);
 }
@@ -131,6 +138,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "FetchVideos":
             handleFetchVideos(sendResponse);
+            break;
+        case "FetchStudentRankings":
+            handleFetchStudentRankings(request, sendResponse);
             break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
