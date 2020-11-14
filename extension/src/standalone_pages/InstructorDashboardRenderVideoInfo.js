@@ -15,6 +15,7 @@ function displayStudents(tooltipItem) {
     let date = new Date(null);
     date.setSeconds(time); 
     let result = date.toISOString().substr(11, 8);
+
     return result;
 }
 
@@ -76,7 +77,7 @@ function renderVideoAccordian(document, videoObjects) {
 }
 
 function renderActiveFeedback(video, response) {
-    let color= "#5959e6";
+    let color = "#5959e6";
     let activeChart = document.getElementById(`activeFeedback_${video.videoID}`).getContext("2d");
     response.active_questions.sort((a, b) => {
         return a.timestamp - b.timestamp;
@@ -138,7 +139,7 @@ function renderActiveFeedback(video, response) {
 }
 
 function renderPassiveFeedback(video, response) {
-    let color= "#5959e6";
+    let color = "#5959e6";
     console.debug(video);
     let passiveChart = document.getElementById(`passiveFeedback_${video.videoID}`).getContext("2d");
     response.passive_question.sort((a, b) => {
