@@ -2,8 +2,9 @@ import {
     addActiveQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
-    fetchVideos,
     fetchStudentRankings,
+    fetchVideos,
+    fetchVideoFeedback,
     finishVideo,
     getPostLectureQuestion,
     getStudentFreeHours,
@@ -36,14 +37,22 @@ async function handleAnswerQuestionIncorrectly(request, reply) {
     reply(result);
 }
 
+async function handleFetchStudentRankings(request, reply) {
+    let result = await fetchStudentRankings();
+
+    reply(result);
+}
+
 async function handleFetchVideos(reply) {
     let result = await fetchVideos();
 
     reply(result);
 }
 
-async function handleFetchStudentRankings(request, reply) {
-    let result = await fetchStudentRankings();
+async function handleFetchVideoFeedback(request, reply) {
+    let result = await fetchVideoFeedback(
+        request.videoID
+    );
 
     reply(result);
 }
@@ -136,11 +145,14 @@ chrome.runtime.onMessage.addListener(
         case "AnswerQuestionIncorrectly":
             handleAnswerQuestionIncorrectly(request, sendResponse);
             break;
+        case "FetchStudentRankings":
+            handleFetchStudentRankings(request, sendResponse);
+            break;
         case "FetchVideos":
             handleFetchVideos(sendResponse);
             break;
-        case "FetchStudentRankings":
-            handleFetchStudentRankings(request, sendResponse);
+        case "FetchVideoFeedback":
+            handleFetchVideoFeedback(request, sendResponse);
             break;
         case "FinishVideo":
             handleFinishVideo(request, sendResponse);
