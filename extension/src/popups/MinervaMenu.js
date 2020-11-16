@@ -1,6 +1,7 @@
-import { renderStudentRankings } from "./MinervaMenuRenderInfo.js";
+import { renderCurrentStudentInfo, renderStudentRankings } from "./MinervaMenuRenderInfo.js";
 
 function transitionToMainMenu(studentName) {
+    diplayCurrentStudentInfo(studentName);
     $("#minervaMenuCollapseCard").collapse("show");
     $("#studentCollapseCard").collapse("hide");
     let studentNamePanel = document.getElementById("studentName-youPanel");
@@ -17,6 +18,21 @@ function displayClassRankings() {
         } else {
             let navRanking = document.getElementById("nav-ranking");
             navRanking.innerHTML = "No students";
+        }
+    });
+}
+
+function diplayCurrentStudentInfo(studentName) {
+    let studentInfoBody = document.getElementById("card-body-youPanel");
+    let ownedBadgesBody = document.getElementById("side-bar-owned-badges");
+    chrome.runtime.sendMessage({
+        type: "FetchCurrentStudentInfo",
+        studentName: studentName
+    }, (response) => {
+        if (response.status) {
+            renderCurrentStudentInfo(ownedBadgesBody, studentInfoBody, response);
+        } else {
+            studentInfoBody.innerHTML = "No information could be found";
         }
     });
 }

@@ -113,6 +113,22 @@ async function answerQuestionIncorrectly() {
     }
 }
 
+async function fetchCurrentStudentInfo(studentName) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = GET_REQUEST;
+
+    try {
+        let result = await fetch(`http://${API_HOST}/student/getStudentProfile?student_name=${studentName}`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function fetchStudentRankings() {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = GET_REQUEST;
@@ -270,6 +286,7 @@ export {
     addNewVideoQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
+    fetchCurrentStudentInfo,
     fetchStudentRankings,
     fetchVideos,
     fetchVideoFeedback,

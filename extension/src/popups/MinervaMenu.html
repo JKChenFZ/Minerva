@@ -16,71 +16,101 @@
   <body>
     <div id="extensionBody">
       <div class="collapse" id="minervaMenuCollapseCard">
-        <div class="card card-body">
-          <ul class="nav nav-pills justify-content-center">
-            <li class="nav-item">
-              <a class="nav-link active" id="you-tab" data-toggle="tab" href="#nav-you" role="tab" aria-controls="you"
-                aria-selected="true">You</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="ranking-tab" data-toggle="tab" href="#nav-ranking" role="tab" aria-controls="ranking"
-                aria-selected="false">Ranking</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="store-tab" data-toggle="tab" href="#nav-store" role="tab" aria-controls="store"
-                aria-selected="false">Store</a>
-            </li>
-          </ul>
-          <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active overflow-auto" id="nav-you" role="tabpanel" aria-labelledby="nav-you-tab">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title" id="studentName-youPanel" ></h5>
-                  <p class="card-text">Total minutes watched: 69:42</p>
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <div class="card-body" id="side-bar-owned-badges"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="card card-body">
+                <ul class="nav nav-pills justify-content-center">
+                  <li class="nav-item">
+                    <a class="nav-link active" id="you-tab" data-toggle="tab" href="#nav-you" role="tab" aria-controls="you"
+                      aria-selected="true">You</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="ranking-tab" data-toggle="tab" href="#nav-ranking" role="tab" aria-controls="ranking"
+                      aria-selected="false">Ranking</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="store-tab" data-toggle="tab" href="#nav-store" role="tab" aria-controls="store"
+                      aria-selected="false">Store</a>
+                  </li>
+                </ul>
+                <div class="tab-content" id="nav-tabContent">
+                  <div class="tab-pane fade show active overflow-auto" id="nav-you" role="tabpanel" aria-labelledby="nav-you-tab">
+                    <div class="card">
+                      <h5 class="card-title" id="studentName-youPanel"></h5>
+                      <div class="container">
+                        <div class="row">
+                          <div class="col">
+                            <img class="icon" src="images/clock.png" width="15" height="15" title="Time Watched">
+                            <p class="font-weight-light" id="time-record"></p>
+                          </div>
+                          <div class="col">
+                            <img class="icon" src="images/coin.png" width="15" height="15" data-toggle="tooltip" title="Coin Balance">
+                            <p class="font-weight-light" id="coin-balance"></p>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <img class="icon" src="images/green_check.png"  width="15" height="15" data-toggle="tooltip" title="Questions answered correctly">
+                            <p class="font-weight-light" id="correct-count"></p>
+                          </div>
+                          <div class="col">
+                            <img class="icon" src="images/red_x.png"  width="15" height="15" data-toggle="tooltip" title="Questions answered incorrectly">
+                            <p class="font-weight-light" id="incorrect-count"></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade overflow-auto" id="nav-ranking" role="tabpanel" aria-labelledby="nav-ranking-tab">
+                    <table id="class-ranking"class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody id="class-ranking-body">
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="tab-pane fade overflow-auto" id="nav-store" role="tabpanel" aria-labelledby="nav-store-tab">
+                    Hello students! This is what have for sale!
+                    <table id="store-table"class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Price</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Item</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>50</td>
+                          <td>Golden Star</td>
+                          <td><img id="item-1-image"></img></td>
+                        </tr>
+                        <tr>
+                          <td>20</td>
+                          <td>Pencil</td>
+                          <td><img id="item-2-image"></img></td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td>Ruler</td>
+                          <td><img id="item-3-image"></img></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="tab-pane fade overflow-auto" id="nav-ranking" role="tabpanel" aria-labelledby="nav-ranking-tab">
-              <table id="class-ranking"class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Amount</th>
-                  </tr>
-                </thead>
-                <tbody id="class-ranking-body">
-                </tbody>
-              </table>
-            </div>
-            <div class="tab-pane fade overflow-auto" id="nav-store" role="tabpanel" aria-labelledby="nav-store-tab">
-              Hello students! This is what have for sale!
-              <table id="store-table"class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Price</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Item</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>50</td>
-                    <td>Golden Star</td>
-                    <td><img id="item-1-image"></img></td>
-                  </tr>
-                  <tr>
-                    <td>20</td>
-                    <td>Pencil</td>
-                    <td><img id="item-2-image"></img></td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>Ruler</td>
-                    <td><img id="item-3-image"></img></td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
