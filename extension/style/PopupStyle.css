@@ -1,11 +1,20 @@
 /* Popup CSS */
 
+#extensionBody {
+    width: 400px;
+}
+
 #studentCollapseCard {
     min-width: 300px;
 }
 
 #registerStudentCard {
     width: 300px;
+}
+
+.tab-content { 
+    display: flex;
+    justify-content: center;
 }
 
 .tab-pane {

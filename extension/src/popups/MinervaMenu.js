@@ -24,11 +24,12 @@ function displayClassRankings() {
 
 function diplayCurrentStudentInfo(studentName) {
     let studentInfoBody = document.getElementById("card-body-youPanel");
+    let ownedBadgesBody = document.getElementById("side-bar-owned-badges");
     chrome.runtime.sendMessage({
         type: "FetchCurrentStudentInfo"
     }, (response) => {
         if (response.status) {
-            renderCurrentStudentInfo(studentInfoBody, response);
+            renderCurrentStudentInfo(ownedBadgesBody, studentInfoBody, response);
         } else {
             studentInfoBody.innerHTML = "No information could be found";
         }

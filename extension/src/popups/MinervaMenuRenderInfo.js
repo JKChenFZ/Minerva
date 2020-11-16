@@ -1,16 +1,25 @@
-function renderCurrentStudentInfo(studentInfoBody, response) {
+function renderCurrentStudentInfo(ownedBadgesBody, studentInfoBody, response) {
+    response.owned_badges = ["golden_star", "pencil"];
     console.debug(response);
-    let time = document.getElementById("time-balance");
+    let time = document.getElementById("time-record");
     time.innerText = secondToHoursAndMinutes(response.time_record);
 
     let coin_balance = document.getElementById("coin-balance");
     coin_balance.innerText = secondToHoursAndMinutes(response.coin_balance);
 
     let correct_count = document.getElementById("correct-count");
-    correct_count.innerText = secondToHoursAndMinutes(response.correct_count);
+    correct_count.innerText = response.correct_count;
 
     let incorrect_count = document.getElementById("incorrect-count");
-    incorrect_count.innerText = secondToHoursAndMinutes(response.incorrect_count);
+    incorrect_count.innerText = response.incorrect_count;
+
+    response.owned_badges.forEach((badge) => {
+        let image = document.createElement("img");
+        image.src = chrome.extension.getURL(`images/${badge}.jpg`);
+        image.width = "25";
+        image.height = "25";
+        ownedBadgesBody.appendChild(image);
+    });
 }
 
 function renderStudentRankings(classRankingBody, response) {
