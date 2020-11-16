@@ -4,14 +4,14 @@ function renderCurrentStudentInfo(ownedBadgesBody, studentInfoBody, response) {
     let time = document.getElementById("time-record");
     time.innerText = secondToHoursAndMinutes(response.time_record);
 
-    let coin_balance = document.getElementById("coin-balance");
-    coin_balance.innerText = secondToHoursAndMinutes(response.coin_balance);
+    let coinBalance = document.getElementById("coin-balance");
+    coinBalance.innerText = secondToHoursAndMinutes(response.coin_balance);
 
-    let correct_count = document.getElementById("correct-count");
-    correct_count.innerText = response.correct_count;
+    let correctCount = document.getElementById("correct-count");
+    correctCount.innerText = response.correct_count;
 
-    let incorrect_count = document.getElementById("incorrect-count");
-    incorrect_count.innerText = response.incorrect_count;
+    let incorrectCount = document.getElementById("incorrect-count");
+    incorrectCount.innerText = response.incorrect_count;
 
     response.owned_badges.forEach((badge) => {
         let image = document.createElement("img");

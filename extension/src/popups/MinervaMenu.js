@@ -26,7 +26,8 @@ function diplayCurrentStudentInfo(studentName) {
     let studentInfoBody = document.getElementById("card-body-youPanel");
     let ownedBadgesBody = document.getElementById("side-bar-owned-badges");
     chrome.runtime.sendMessage({
-        type: "FetchCurrentStudentInfo"
+        type: "FetchCurrentStudentInfo",
+        studentName: studentName
     }, (response) => {
         if (response.status) {
             renderCurrentStudentInfo(ownedBadgesBody, studentInfoBody, response);

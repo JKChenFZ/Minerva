@@ -156,7 +156,7 @@ chrome.runtime.onMessage.addListener(
             break;
         case "FetchCurrentStudentInfo":
             handleFetchCurrentStudentInfo(request, sendResponse);
-            break
+            break;
         case "FetchStudentRankings":
             handleFetchStudentRankings(request, sendResponse);
             break;
