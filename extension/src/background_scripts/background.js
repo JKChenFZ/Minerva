@@ -52,10 +52,8 @@ async function handleAnswerQuestionIncorrectly(request, reply) {
     reply(result);
 }
 
-async function handleFetchCurrentStudentInfo(request, reply) {
-    let result = await fetchCurrentStudentInfo(
-        request.studentName
-    );
+async function handleFetchCurrentStudentInfo(reply) {
+    let result = await fetchCurrentStudentInfo();
 
     reply(result);
 }
@@ -195,7 +193,7 @@ chrome.runtime.onMessage.addListener(
             handleAnswerQuestionIncorrectly(request, sendResponse);
             break;
         case "FetchCurrentStudentInfo":
-            handleFetchCurrentStudentInfo(request, sendResponse);
+            handleFetchCurrentStudentInfo(sendResponse);
             break;
         case "FetchStudentRankings":
             handleFetchStudentRankings(request, sendResponse);

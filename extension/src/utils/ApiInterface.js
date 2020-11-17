@@ -5,17 +5,17 @@ const STUDENT_NAME = "student_name";
 const stickers = [ 
     {
         id: "golden_star", 
-        price: 50,
+        price: 5000000,
         name: "Gold Star"
     }, 
     { 
         id: "pencil",
-        price: 20,
+        price: 2000000,
         name: "Cool Pencil"
     }, 
     {   
         id: "ruler",
-        price: 10,
+        price: 1000000,
         name: "New Ruler"
     }
 ];
@@ -258,6 +258,10 @@ async function getStudentFreeHours() {
 
         return { status: false };
     }
+}
+
+async function getStudentName() {
+    return getStudentHandle()
 }
 
 async function saveVideoInfo(videoID, videoName, videoDuration) {

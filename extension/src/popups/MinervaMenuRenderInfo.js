@@ -4,7 +4,6 @@ function filterAvailableStoreStickers(studentOwnedStickers) {
     }, (storeStickers) => {
         let availableStickers = storeStickers.filter(sticker => !studentOwnedStickers.includes(sticker.id));
         console.debug(storeStickers, studentOwnedStickers);
-
         renderAvailableStoreStickers(availableStickers);
     });        
 }

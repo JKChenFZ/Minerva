@@ -2,48 +2,77 @@ import { filterAvailableStoreStickers, renderCurrentStudentInfo, renderStudentRa
 import { getStudentHandle } from "../utils/ApiInterface.js";
 
 function transitionToMainMenu(studentName) {
-    diplayCurrentStudentInfo(studentName);
+    if (!studentName.status) {
+        chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
+        return;
+    }
     $("#minervaMenuCollapseCard").collapse("show");
     $("#studentCollapseCard").collapse("hide");
     let studentNamePanel = document.getElementById("studentName-youPanel");
-    studentNamePanel.innerText = "Hi " + studentName;
+    studentNamePanel.innerText = "Hi " + studentName.name;
 }
 
-function displayClassRankings() {
+async function displayClassRankings() {
     let classRankingBody = document.getElementById("class-ranking-body");
-    chrome.runtime.sendMessage({
-        type: "FetchStudentRankings"
-    }, (response) => {
-        if (response.status) {
-            renderStudentRankings(classRankingBody, response.studentInfo);
-        } else {
-            let navRanking = document.getElementById("nav-ranking");
-            navRanking.innerHTML = "No students";
-        }
+    let result = await getStudentRankingsPromise();
+    
+    if (result.status) {
+        renderStudentRankings(classRankingBody, result.studentInfo);
+    } else {
+        let navRanking = document.getElementById("nav-ranking");
+        navRanking.innerHTML = "No students";
+    }
+}
+
+async function diplayCurrentStudentInfo(studentName) {
+    if (!studentName.status) {
+        return;
+    }
+    let result = await getStudentInfoPromise();
+
+    if (result.status) {
+        renderCurrentStudentInfo(result);
+        filterAvailableStoreStickers(result.owned_badges);
+    } else {
+        let studentInfoBody = document.getElementById("card-body-youPanel");
+        studentInfoBody.innerHTML = "No information could be found";
+    }
+}
+
+async function getNamePromise() {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "GetStudentName"
+        }, (response) => {
+            resolve(response);
+        });
     });
 }
 
-function diplayCurrentStudentInfo(studentName) {
-    chrome.runtime.sendMessage({
-        type: "FetchCurrentStudentInfo",
-        studentName: studentName
-    }, (response) => {
-        if (response.status) {
-            renderCurrentStudentInfo(response);
-            filterAvailableStoreStickers(response.owned_badges);
-        } else {
-            let studentInfoBody = document.getElementById("card-body-youPanel");
-            studentInfoBody.innerHTML = "No information could be found";
-        }
+async function getStudentInfoPromise() {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "FetchCurrentStudentInfo"
+        }, (response) => {
+            resolve(response);
+        });
     });
 }
 
-window.onload = function() {
-    let studentHandle = getStudentHandle();
-    studentHandle.then((studentName) => {
-        transitionToMainMenu(studentName);
-    }, (reject) => {
-        chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
+async function getStudentRankingsPromise() {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            type: "FetchStudentRankings"
+        }, (response) => {
+            resolve(response);
+        });
     });
+}
+
+window.onload = async function() {
     displayClassRankings();
+
+    let name = await getNamePromise();
+    transitionToMainMenu(name);
+    diplayCurrentStudentInfo(name);
 };
