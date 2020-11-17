@@ -1,18 +1,48 @@
-function renderCurrentStudentInfo(ownedBadgesBody, studentInfoBody, response) {
-    response.owned_badges = ["golden_star", "pencil"];
+function renderAvailableStoreStickers(studentOwnedStickers) {
+    chrome.runtime.sendMessage({
+        type: "GetStickers"
+    }, (storeStickers) => {
+        var arr = [1,2,3,4],
+        brr = [2,4],
+        availableStickers = storeStickers.filter(f => !studentOwnedStickers.includes(f));
+        console.log(res);
+    });        
+}
+
+function asd() {
+    let storeStickerBody = document.getElementById("store-sticker-body");
+
+    let tableRow = document.createElement("TR");
+    let itemPrice = tableRow.insertCell(0);
+    let itemName = tableRow.insertCell(1);
+    let itemImage = tableRow.insertCell(2);
+
+    let image = document.getElementById(`item-${i}-image`);
+    let imgURL = chrome.extension.getURL(`images/${images[i - 1]}`);
+
+    image.src = imgURL;
+    image.width = "50";
+    image.height = "50";
+
+    itemImage.appendChild(image);
+    storeStickerBody.append(tableRow);
+}
+
+function renderCurrentStudentInfo(response) {
     console.debug(response);
     let time = document.getElementById("time-record");
-    time.innerText = secondToHoursAndMinutes(response.time_record);
+    time.innerText = secondToHoursAndMinutes(zeroIfNull(response.time_record));
 
     let coinBalance = document.getElementById("coin-balance");
-    coinBalance.innerText = secondToHoursAndMinutes(response.coin_balance);
+    coinBalance.innerText = secondToHoursAndMinutes(zeroIfNull(response.coin_balance));
 
     let correctCount = document.getElementById("correct-count");
-    correctCount.innerText = response.correct_count;
+    correctCount.innerText = zeroIfNull(response.correct_count);
 
     let incorrectCount = document.getElementById("incorrect-count");
-    incorrectCount.innerText = response.incorrect_count;
+    incorrectCount.innerText = zeroIfNull(response.incorrect_count);
 
+    let ownedBadgesBody = document.getElementById("side-bar-owned-badges");
     response.owned_badges.forEach((badge) => {
         let image = document.createElement("img");
         image.src = chrome.extension.getURL(`images/${badge}.jpg`);
@@ -46,6 +76,10 @@ function secondToHoursAndMinutes(time) {
     // ISOString format 2011-10-05T14:48:00.000Z
     // Start at index 11 and grab 5 characters.
     return date.toISOString().substr(11, 5);
+}
+
+function zeroIfNull(input) {
+    return input ? input : "0";
 }
 
 export { renderCurrentStudentInfo, renderStudentRankings };

@@ -1,4 +1,4 @@
-import { renderCurrentStudentInfo, renderStudentRankings } from "./MinervaMenuRenderInfo.js";
+import { renderAvailableStoreStickers, renderCurrentStudentInfo, renderStudentRankings } from "./MinervaMenuRenderInfo.js";
 
 function transitionToMainMenu(studentName) {
     diplayCurrentStudentInfo(studentName);
@@ -23,35 +23,26 @@ function displayClassRankings() {
 }
 
 function diplayCurrentStudentInfo(studentName) {
-    let studentInfoBody = document.getElementById("card-body-youPanel");
-    let ownedBadgesBody = document.getElementById("side-bar-owned-badges");
     chrome.runtime.sendMessage({
         type: "FetchCurrentStudentInfo",
         studentName: studentName
     }, (response) => {
         if (response.status) {
-            renderCurrentStudentInfo(ownedBadgesBody, studentInfoBody, response);
+            renderCurrentStudentInfo(response);
+            renderAvailableStoreStickers(response)
         } else {
+            let studentInfoBody = document.getElementById("card-body-youPanel");
             studentInfoBody.innerHTML = "No information could be found";
         }
     });
 }
 
 window.onload = function() {
-    chrome.storage.local.get(["student_name"], (result) => {
-        if (result.hasOwnProperty("student_name")) {
-            transitionToMainMenu(result["student_name"]);
-        } else {
-            chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
-        }
+    let studentHandle = getStudentHandle();
+    studentHandle.then((studentName) => {
+        transitionToMainMenu(studentName);
+    }, (reject) => {
+        chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
     });
     displayClassRankings();
-    let images = ["golden_star.jpg", "pencil.jpg", "ruler.jpg"];
-    for (let i = 1; i <= 3; i++) {
-        let image = document.getElementById(`item-${i}-image`);
-        let imgURL = chrome.extension.getURL(`images/${images[i - 1]}`);
-        image.src = imgURL;
-        image.width = "50";
-        image.height = "50";
-    }
 };

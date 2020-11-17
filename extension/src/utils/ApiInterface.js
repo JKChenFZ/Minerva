@@ -2,6 +2,23 @@ const API_HOST = "localhost:3000";
 const GET_REQUEST = "GET";
 const POST_REQUEST = "POST";
 const STUDENT_NAME = "student_name";
+const stickers = [ 
+    {
+        id: "gold_star", 
+        price: 50,
+        name: "Gold Star"
+    }, 
+    { 
+        id: "pencil",
+        price: 20,
+        name: "Cool Pencil"
+    }, 
+    {   
+        id: "ruler",
+        price: 10,
+        name: "New Ruler"
+    }
+];
 
 function getBaselineFetchOptions() {
     return {
@@ -11,6 +28,10 @@ function getBaselineFetchOptions() {
             "Content-Type": "application/json"
         }
     };
+}
+
+function getStickers() {
+    return stickers;
 }
 
 function getStudentHandle() {
@@ -113,12 +134,13 @@ async function answerQuestionIncorrectly() {
     }
 }
 
-async function fetchCurrentStudentInfo(studentName) {
+async function fetchCurrentStudentInfo() {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = GET_REQUEST;
 
     try {
-        let result = await fetch(`http://${API_HOST}/student/getStudentProfile?student_name=${studentName}`, requestOption);
+        let studentHandle = await getStudentHandle();
+        let result = await fetch(`http://${API_HOST}/student/getStudentProfile?student_name=${studentHandle}`, requestOption);
         let parsed = await result.json();
 
         return parsed;
@@ -292,6 +314,7 @@ export {
     fetchVideoFeedback,
     finishVideo,
     getPostLectureQuestion,
+    getStickers,
     getStudentFreeHours,
     getStudentHandle,
     saveVideoInfo,
