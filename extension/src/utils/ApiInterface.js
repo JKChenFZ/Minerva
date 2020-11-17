@@ -4,7 +4,7 @@ const POST_REQUEST = "POST";
 const STUDENT_NAME = "student_name";
 const stickers = [ 
     {
-        id: "gold_star", 
+        id: "golden_star", 
         price: 50,
         name: "Gold Star"
     }, 

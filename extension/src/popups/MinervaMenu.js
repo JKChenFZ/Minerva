@@ -1,4 +1,5 @@
-import { renderAvailableStoreStickers, renderCurrentStudentInfo, renderStudentRankings } from "./MinervaMenuRenderInfo.js";
+import { filterAvailableStoreStickers, renderCurrentStudentInfo, renderStudentRankings } from "./MinervaMenuRenderInfo.js";
+import { getStudentHandle } from "../utils/ApiInterface.js";
 
 function transitionToMainMenu(studentName) {
     diplayCurrentStudentInfo(studentName);
@@ -29,7 +30,7 @@ function diplayCurrentStudentInfo(studentName) {
     }, (response) => {
         if (response.status) {
             renderCurrentStudentInfo(response);
-            renderAvailableStoreStickers(response)
+            filterAvailableStoreStickers(response.owned_badges);
         } else {
             let studentInfoBody = document.getElementById("card-body-youPanel");
             studentInfoBody.innerHTML = "No information could be found";

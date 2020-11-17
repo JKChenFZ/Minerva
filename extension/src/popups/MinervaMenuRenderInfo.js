@@ -1,31 +1,35 @@
-function renderAvailableStoreStickers(studentOwnedStickers) {
+function filterAvailableStoreStickers(studentOwnedStickers) {
     chrome.runtime.sendMessage({
         type: "GetStickers"
     }, (storeStickers) => {
-        var arr = [1,2,3,4],
-        brr = [2,4],
-        availableStickers = storeStickers.filter(f => !studentOwnedStickers.includes(f));
-        console.log(res);
+        let availableStickers = storeStickers.filter(sticker => !studentOwnedStickers.includes(sticker.id));
+        console.debug(storeStickers, studentOwnedStickers);
+
+        renderAvailableStoreStickers(availableStickers);
     });        
 }
 
-function asd() {
+function renderAvailableStoreStickers(availableStickers) {
     let storeStickerBody = document.getElementById("store-sticker-body");
 
-    let tableRow = document.createElement("TR");
-    let itemPrice = tableRow.insertCell(0);
-    let itemName = tableRow.insertCell(1);
-    let itemImage = tableRow.insertCell(2);
+    availableStickers.forEach((sticker) => {
+        let tableRow = document.createElement("TR");
+        let itemPrice = tableRow.insertCell(0);
+        itemPrice.innerText = sticker.price;
 
-    let image = document.getElementById(`item-${i}-image`);
-    let imgURL = chrome.extension.getURL(`images/${images[i - 1]}`);
+        let itemName = tableRow.insertCell(1);
+        itemName.innerText = sticker.name;
 
-    image.src = imgURL;
-    image.width = "50";
-    image.height = "50";
+        let itemImage = tableRow.insertCell(2);
+        let image = document.createElement("img");
+        let imgURL = chrome.extension.getURL(`images/${sticker.id}.jpg`);
+        image.src = imgURL;
+        image.width = "50";
+        image.height = "50";
 
-    itemImage.appendChild(image);
-    storeStickerBody.append(tableRow);
+        itemImage.appendChild(image);
+        storeStickerBody.append(tableRow);
+    });
 }
 
 function renderCurrentStudentInfo(response) {
@@ -34,7 +38,7 @@ function renderCurrentStudentInfo(response) {
     time.innerText = secondToHoursAndMinutes(zeroIfNull(response.time_record));
 
     let coinBalance = document.getElementById("coin-balance");
-    coinBalance.innerText = secondToHoursAndMinutes(zeroIfNull(response.coin_balance));
+    coinBalance.innerText = zeroIfNull(response.coin_balance);
 
     let correctCount = document.getElementById("correct-count");
     correctCount.innerText = zeroIfNull(response.correct_count);
@@ -82,4 +86,4 @@ function zeroIfNull(input) {
     return input ? input : "0";
 }
 
-export { renderCurrentStudentInfo, renderStudentRankings };
+export { filterAvailableStoreStickers, renderCurrentStudentInfo, renderStudentRankings };
