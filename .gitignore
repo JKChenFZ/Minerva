@@ -11,3 +11,7 @@ node_modules/
 
 # DS_store
 .DS_Store
+
+backend/py_scripts/env/
+
+.vscode/
