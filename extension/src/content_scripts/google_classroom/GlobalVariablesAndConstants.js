@@ -1,4 +1,6 @@
 let variables = {
+    // Functionality Knob
+    teacherMode: null,
     // Embedded Youtube Player
     player: null,
     // Webcam & Canvas
@@ -9,7 +11,10 @@ let variables = {
     // Facial Expression
     model: null,
     // Post lecture iframe
-    gameIframe: null
+    gameIframe: null,
+    // DOM Obserser
+    observer: null,
+    modifiedURL: []
 };
 
 const constants = {
