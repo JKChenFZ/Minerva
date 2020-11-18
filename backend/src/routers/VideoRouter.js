@@ -193,15 +193,17 @@ router.get("/getPostLectureQuestions", async function (req, res) {
             throw new Error("Incomplete parameters");
         }
 
-        // This is a stub endpoint
-        if (videoID != "vd0fMpAIs1s") {
-            throw new Error("Not implemented endpoint");
+        let key = `${videoID}-post-lecture-question`;
+        let val = await mgetAsync([key]);
+        if (val.length === 0) {
+            throw new Error(`Questions Not found for ${videoID}`);
         }
 
-        questionText = "Which of the following is a southern colony?";
-        correctAnswer = "Georgia";
-        wrongOptionOne = "New York";
-        wrongOptionTwo = "Connecticut";
+        let parsedResult = val[0].split("-<>-");
+        questionText = parsedResult[0];
+        correctAnswer = parsedResult[1];
+        wrongOptionOne = parsedResult[2];
+        wrongOptionTwo = parsedResult[3];
     } catch (e) {
         console.error(`[Endpoint] getPostLectureQuestions failed, ${e}`);
         status = false;
@@ -214,6 +216,32 @@ router.get("/getPostLectureQuestions", async function (req, res) {
         "wrong_answer_one": wrongOptionOne,
         "wrong_answer_two": wrongOptionTwo
     });
+});
+
+router.post("/AddPostLectureQuestions", async function (req, res) {
+    let status = true;
+    let videoID = req.body.videoID;
+    let question = req.body.question;
+    let correct = req.body.correct;
+    let wrong = req.body.wrong;
+    let anotherWrong = req.body["another_wrong"];
+
+    try {
+        if (includesNullOrUndefined([videoID, question, correct, wrong, anotherWrong])) {
+            throw new Error("Incomplete parameters");
+        }
+
+        let key = `${videoID}-post-lecture-question`;
+        let value = `${question}-<>-${correct}-<>-${wrong}-<>-${anotherWrong}`;
+        await setAsync(key, value);
+
+        console.log(`[Endpoint:AddPostLectureQuestions] set ${value} to ${key}`);
+    } catch (e) {
+        console.error(`[Endpoint] AddPostLectureQuestions failed, ${e}`);
+        status = false;
+    }
+
+    res.json({ status });
 });
 
 export { router as VideoRouter };

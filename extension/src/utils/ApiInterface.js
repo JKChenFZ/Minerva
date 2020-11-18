@@ -49,6 +49,29 @@ async function addActiveQuestion(videoID, timestamp, questionText) {
     }
 }
 
+async function addNewVideoQuestion(videoID, question, correct, wrong, anotherWrong) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = POST_REQUEST;
+
+    try {
+        requestOption.body = JSON.stringify({
+            "videoID": videoID,
+            question,
+            correct,
+            wrong,
+            "another_wrong": anotherWrong
+        });
+        let result = await fetch(`http://${API_HOST}/video/AddPostLectureQuestions`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function answerQuestionCorrectly(videoID) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
@@ -244,6 +267,7 @@ async function setNewFreeHours(hourStart, hourEnd) {
 
 export {
     addActiveQuestion,
+    addNewVideoQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
     fetchStudentRankings,

@@ -96,3 +96,19 @@
 .swal2-container {
     z-index: 10000 !important;
 }
+
+/* Google Classroom Add Question Button */
+.add-question-button {
+    margin-top: 10px;
+    margin-right: 5px;
+    line-height: 30px;
+    font-weight: bold;
+    padding: 0 20px;
+    background: salmon;
+    border: none;
+}
+
+.add-question-button:hover {
+    background: lightsalmon;
+    cursor: pointer;
+}

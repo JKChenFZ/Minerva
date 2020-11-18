@@ -1,5 +1,6 @@
 import {
     addActiveQuestion,
+    addNewVideoQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
     fetchStudentRankings,
@@ -18,6 +19,18 @@ async function handleAddActiveQuestion(request, reply) {
         request.videoID,
         request.timestamp,
         request.questionText
+    );
+
+    reply(result);
+}
+
+async function handleAddNewVideoQuestion(request, reply) {
+    let result = await addNewVideoQuestion(
+        request.videoID,
+        request.question,
+        request.correct,
+        request.wrong,
+        request["another_wrong"]
     );
 
     reply(result);
@@ -95,10 +108,26 @@ async function handleGetStudentName(reply) {
     });
 }
 
-function handleMuteCurrentTab() {
-    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
-        chrome.tabs.update(tabs[0].id, { "muted": true });
+async function handleGetTeacherMode(reply) {
+    // eslint-disable-next-line no-unused-vars
+    await new Promise((resolve, reject) => {
+        // Before the state becomes available, teacher mode is always on
+        resolve(true);
     });
+
+    reply({ status: true });
+}
+
+async function handleMuteCurrentTab(reply) {
+    // eslint-disable-next-line no-unused-vars
+    await new Promise((resolve, reject) => {
+        chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+            chrome.tabs.update(tabs[0].id, { "muted": true });
+            resolve();
+        });
+    });
+
+    reply({ status: true });
 }
 
 async function handleSaveVideoInfo(request, reply) {
@@ -139,6 +168,9 @@ chrome.runtime.onMessage.addListener(
         case "AddActiveQuestion":
             handleAddActiveQuestion(request, sendResponse);
             break;
+        case "AddNewVideoQuestion":
+            handleAddNewVideoQuestion(request, sendResponse);
+            break;
         case "AnswerQuestionCorrectly":
             handleAnswerQuestionCorrectly(request, sendResponse);
             break;
@@ -166,9 +198,11 @@ chrome.runtime.onMessage.addListener(
         case "GetStudentName":
             handleGetStudentName(sendResponse);
             break;
+        case "GetTeacherMode":
+            handleGetTeacherMode(sendResponse);
+            break;
         case "MuteCurrentTab":
-            handleMuteCurrentTab();
-            sendResponse({ status: true });
+            handleMuteCurrentTab(sendResponse);
         case "SaveVideoInfo":
             handleSaveVideoInfo(request, sendResponse);
             break;
