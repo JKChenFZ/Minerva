@@ -50,7 +50,7 @@ async function getNamePromise() {
 }
 
 async function getStudentInfoPromise() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         chrome.runtime.sendMessage({
             type: "FetchCurrentStudentInfo"
         }, (response) => {
