@@ -1,9 +1,9 @@
 import { filterAvailableStoreStickers, renderCurrentStudentInfo, renderStudentRankings } from "./MinervaMenuRenderInfo.js";
-import { getStudentHandle } from "../utils/ApiInterface.js";
 
 function transitionToMainMenu(studentName) {
     if (!studentName.status) {
         chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
+
         return;
     }
     $("#minervaMenuCollapseCard").collapse("show");
@@ -40,7 +40,7 @@ async function diplayCurrentStudentInfo(studentName) {
 }
 
 async function getNamePromise() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         chrome.runtime.sendMessage({
             type: "GetStudentName"
         }, (response) => {
@@ -60,7 +60,7 @@ async function getStudentInfoPromise() {
 }
 
 async function getStudentRankingsPromise() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         chrome.runtime.sendMessage({
             type: "FetchStudentRankings"
         }, (response) => {

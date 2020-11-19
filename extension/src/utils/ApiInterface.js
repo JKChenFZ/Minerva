@@ -260,10 +260,6 @@ async function getStudentFreeHours() {
     }
 }
 
-async function getStudentName() {
-    return getStudentHandle()
-}
-
 async function saveVideoInfo(videoID, videoName, videoDuration) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
