@@ -1,41 +1,78 @@
-import { renderStudentRankings } from "./MinervaMenuRenderInfo.js";
+import { filterAvailableStoreStickers, renderCurrentStudentInfo, renderStudentRankings } from "./MinervaMenuRenderInfo.js";
 
 function transitionToMainMenu(studentName) {
+    if (!studentName.status) {
+        chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
+
+        return;
+    }
     $("#minervaMenuCollapseCard").collapse("show");
     $("#studentCollapseCard").collapse("hide");
     let studentNamePanel = document.getElementById("studentName-youPanel");
-    studentNamePanel.innerText = "Hi " + studentName;
+    studentNamePanel.innerText = "Hi " + studentName.name;
 }
 
-function displayClassRankings() {
+async function displayClassRankings() {
     let classRankingBody = document.getElementById("class-ranking-body");
-    chrome.runtime.sendMessage({
-        type: "FetchStudentRankings"
-    }, (response) => {
-        if (response.status) {
-            renderStudentRankings(classRankingBody, response.studentInfo);
-        } else {
-            let navRanking = document.getElementById("nav-ranking");
-            navRanking.innerHTML = "No students";
-        }
+    let result = await getStudentRankingsPromise();
+    
+    if (result.status) {
+        renderStudentRankings(classRankingBody, result.studentInfo);
+    } else {
+        let navRanking = document.getElementById("nav-ranking");
+        navRanking.innerHTML = "No students";
+    }
+}
+
+async function diplayCurrentStudentInfo(studentName) {
+    if (!studentName.status) {
+        return;
+    }
+    let result = await getStudentInfoPromise();
+
+    if (result.status) {
+        renderCurrentStudentInfo(result);
+        filterAvailableStoreStickers(result.owned_badges);
+    } else {
+        let studentInfoBody = document.getElementById("card-body-youPanel");
+        studentInfoBody.innerHTML = "No information could be found";
+    }
+}
+
+async function getNamePromise() {
+    return new Promise((resolve) => {
+        chrome.runtime.sendMessage({
+            type: "GetStudentName"
+        }, (response) => {
+            resolve(response);
+        });
     });
 }
 
-window.onload = function() {
-    chrome.storage.local.get(["student_name"], (result) => {
-        if (result.hasOwnProperty("student_name")) {
-            transitionToMainMenu(result["student_name"]);
-        } else {
-            chrome.tabs.create({url: chrome.extension.getURL("StudentRegistration.html")});
-        }
+async function getStudentInfoPromise() {
+    return new Promise((resolve) => {
+        chrome.runtime.sendMessage({
+            type: "FetchCurrentStudentInfo"
+        }, (response) => {
+            resolve(response);
+        });
     });
+}
+
+async function getStudentRankingsPromise() {
+    return new Promise((resolve) => {
+        chrome.runtime.sendMessage({
+            type: "FetchStudentRankings"
+        }, (response) => {
+            resolve(response);
+        });
+    });
+}
+
+window.onload = async function() {
     displayClassRankings();
-    let images = ["golden_star.jpg", "pencil.jpg", "ruler.jpg"];
-    for (let i = 1; i <= 3; i++) {
-        let image = document.getElementById(`item-${i}-image`);
-        let imgURL = chrome.extension.getURL(`images/${images[i - 1]}`);
-        image.src = imgURL;
-        image.width = "50";
-        image.height = "50";
-    }
+
+    let name = await getNamePromise();
+    transitionToMainMenu(name);
+    diplayCurrentStudentInfo(name);
 };

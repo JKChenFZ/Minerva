@@ -3,11 +3,13 @@ import {
     addNewVideoQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
+    fetchCurrentStudentInfo,
     fetchStudentRankings,
     fetchVideos,
     fetchVideoFeedback,
     finishVideo,
     getPostLectureQuestion,
+    getStickers,
     getStudentFreeHours,
     getStudentHandle,
     saveVideoInfo,
@@ -50,6 +52,12 @@ async function handleAnswerQuestionIncorrectly(request, reply) {
     reply(result);
 }
 
+async function handleFetchCurrentStudentInfo(reply) {
+    let result = await fetchCurrentStudentInfo();
+
+    reply(result);
+}
+
 async function handleFetchStudentRankings(request, reply) {
     let result = await fetchStudentRankings();
 
@@ -86,6 +94,13 @@ async function handleGetPostLectureQuestions(request, reply) {
 
     reply(result);
 }
+
+async function handleGetStickers(reply) {
+    let result = await getStickers();
+
+    reply(result);
+}
+
 async function handleGetStudentFreeHours(reply) {
     let result = await getStudentFreeHours();
 
@@ -177,6 +192,9 @@ chrome.runtime.onMessage.addListener(
         case "AnswerQuestionIncorrectly":
             handleAnswerQuestionIncorrectly(request, sendResponse);
             break;
+        case "FetchCurrentStudentInfo":
+            handleFetchCurrentStudentInfo(sendResponse);
+            break;
         case "FetchStudentRankings":
             handleFetchStudentRankings(request, sendResponse);
             break;
@@ -191,6 +209,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "GetPostLectureQuestions":
             handleGetPostLectureQuestions(request, sendResponse);
+            break;
+        case "GetStickers":
+            handleGetStickers(sendResponse);
             break;
         case "GetStudentFreeHours":
             handleGetStudentFreeHours(sendResponse);
