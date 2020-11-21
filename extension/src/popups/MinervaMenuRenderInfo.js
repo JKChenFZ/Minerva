@@ -11,7 +11,12 @@ async function buyStoreSticker(sticker) {
         });
     });
 
-    if (!result.status) {
+    if (result.status) {
+        Swal.fire({
+            title: `Purchased ${sticker.name}`,
+            confirmButtonText: "Close"
+        });
+    } else {
         Swal.fire({
             title: `Could not buy ${sticker.name}`,
             confirmButtonText: "Close"
