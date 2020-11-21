@@ -1,3 +1,24 @@
+import Swal from "sweetalert2";
+
+async function buyStoreSticker(sticker) {
+    let result = await new Promise((resolve) => {
+        chrome.runtime.sendMessage({
+            type: "BuySticker",
+            id: sticker.id,
+            price: sticker.price
+        }, (response) => {
+            resolve(response);
+        });
+    });
+
+    if (!result.status) {
+        Swal.fire({
+            title: `Could not buy ${sticker.name}`,
+            confirmButtonText: "Close"
+        });
+    }
+}
+
 function filterAvailableStoreStickers(studentOwnedStickers) {
     chrome.runtime.sendMessage({
         type: "GetStickers"
@@ -22,11 +43,16 @@ function renderAvailableStoreStickers(availableStickers) {
         let itemImage = tableRow.insertCell(2);
         let image = document.createElement("img");
         let imgURL = chrome.extension.getURL(`images/${sticker.id}.jpg`);
+
         image.src = imgURL;
         image.width = "50";
         image.height = "50";
 
         itemImage.appendChild(image);
+        tableRow.id = sticker.id;
+        tableRow.onclick = async function() {
+            buyStoreSticker(sticker);
+        }
         storeStickerBody.append(tableRow);
     });
 }

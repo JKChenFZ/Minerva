@@ -134,6 +134,28 @@ async function answerQuestionIncorrectly() {
     }
 }
 
+async function buySticker(stickerID, stickerPrice) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = POST_REQUEST;
+    
+    try {
+        let studentHandle = await getStudentHandle();
+        requestOption.body = JSON.stringify({
+                "student_name": studentHandle,
+                "sticker_name": stickerID,
+                "price": stickerPrice,
+        });
+        let result = await fetch(`http://${API_HOST}/student/purchaseSticker`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function fetchCurrentStudentInfo() {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = GET_REQUEST;
@@ -308,6 +330,7 @@ export {
     addNewVideoQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
+    buySticker,
     fetchCurrentStudentInfo,
     fetchStudentRankings,
     fetchVideos,

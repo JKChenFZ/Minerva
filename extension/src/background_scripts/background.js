@@ -3,6 +3,7 @@ import {
     addNewVideoQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
+    buySticker,
     fetchCurrentStudentInfo,
     fetchStudentRankings,
     fetchVideos,
@@ -52,6 +53,15 @@ async function handleAnswerQuestionIncorrectly(request, reply) {
     reply(result);
 }
 
+async function handleBuySticker(request, reply) {
+    let result = await buySticker(
+        request.id,
+        request.price
+    );
+
+    reply(result);
+}
+ 
 async function handleFetchCurrentStudentInfo(reply) {
     let result = await fetchCurrentStudentInfo();
 
@@ -191,6 +201,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "AnswerQuestionIncorrectly":
             handleAnswerQuestionIncorrectly(request, sendResponse);
+            break;
+        case "BuySticker":
+            handleBuySticker(request, sendResponse);
             break;
         case "FetchCurrentStudentInfo":
             handleFetchCurrentStudentInfo(sendResponse);
