@@ -141,9 +141,9 @@ async function buySticker(stickerID, stickerPrice) {
     try {
         let studentHandle = await getStudentHandle();
         requestOption.body = JSON.stringify({
-                "student_name": studentHandle,
-                "sticker_name": stickerID,
-                "price": stickerPrice,
+            "student_name": studentHandle,
+            "sticker_name": stickerID,
+            "price": stickerPrice,
         });
         let result = await fetch(`http://${API_HOST}/student/purchaseSticker`, requestOption);
         let parsed = await result.json();

@@ -57,7 +57,7 @@ function renderAvailableStoreStickers(availableStickers) {
         tableRow.id = sticker.id;
         tableRow.onclick = async function() {
             buyStoreSticker(sticker);
-        }
+        };
         storeStickerBody.append(tableRow);
     });
 }
