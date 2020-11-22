@@ -272,4 +272,50 @@ router.get("/getVideoContextKeywords", async function (req, res) {
     });
 });
 
+router.get("/getVideoStudentStats", async function (req, res) {
+    let status = true;
+    let videoID = req.query["videoID"];
+    let data = null;
+
+    try {
+        if (isNullOrUndefined(videoID)) {
+            throw new Error("Incomplete parameters");
+        }
+
+        let balancePattern = "*-balance";
+        let allStudentsBalanceKeys = await keysAsync(balancePattern);
+        let allStudentNames = allStudentsBalanceKeys.map((e) => {
+            return e.replace("-balance", "");
+        });
+
+        let allStudentWatchKeys = allStudentNames.map((e) => {
+            return `${videoID}-${e}-watch-times`;
+        });
+
+        let allStudentVideoQuestionKeys = allStudentNames.map((e) => {
+            return `${e}-${videoID}-correct-question-count`;
+        });
+
+        let allStudentWatchVals = await mgetAsync(allStudentWatchKeys);
+        let allStudentVideoQuestionVals = await mgetAsync(allStudentVideoQuestionKeys);
+        
+        data = allStudentVideoQuestionVals.map((e, index) => {
+            return {
+                "student_name": allStudentNames[index],
+                "watch_times": parseInt(allStudentWatchVals[index] ? allStudentWatchVals[index] : 0),
+                "question_correct_time": parseInt(e ? e : 0)
+            };
+        });
+    } catch (e) {
+        console.error(`[Endpoint] getVideoStudentStats failed, ${e}`);
+        status = false;
+    }
+
+    res.json({
+        status,
+        data
+    });
+
+});
+
 export { router as VideoRouter };
