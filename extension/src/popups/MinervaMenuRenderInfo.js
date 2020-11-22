@@ -82,7 +82,6 @@ function renderAvailableStoreStickers(availableStickers) {
         let image = document.createElement("img");
         let imgURL = chrome.extension.getURL(`images/${sticker.id}.jpg`);
 
-        // let button = document.createElement("BUTTON");
         image.setAttribute("class", "store-image");
         image.setAttribute("data-toggle", "tooltip");
         image.setAttribute("title", `Buy ${sticker.name}`);
@@ -93,7 +92,6 @@ function renderAvailableStoreStickers(availableStickers) {
         image.width = "50";
         image.height = "50";
 
-        // button.appendChild(image)
         itemImage.appendChild(image);
         tableRow.id = sticker.id;
         itemImage.onclick = async function() {
