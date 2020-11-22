@@ -49,7 +49,7 @@ def extract_keywords_with_rake(sentences, stopwords=None, print_time=True, perio
         rake = Rake(ranking_metric=ranking_metric)
     
     if period_split:
-        rake.extract_keywords_from_text(".".join(sentences))
+        rake.extract_keywords_from_text(". ".join(sentences))
     else:
         rake.extract_keywords_from_text(" ".join(sentences))
 
@@ -67,12 +67,14 @@ def extract_keywords_with_bert(
         stop_words = 'english'
 
     # Extract candidate words/phrases
-    count = CountVectorizer(ngram_range=n_gram_range, stop_words=stop_words).fit(sentences)
+    count = CountVectorizer(
+        ngram_range=n_gram_range,
+        stop_words=stop_words).fit([". ".join(sentences)])
     candidates = count.get_feature_names()
 
     # Encode sentences and candidate phrases
     model = SentenceTransformer(model_name)
-    doc_embedding = model.encode(sentences, convert_to_tensor=True)
+    doc_embedding = model.encode([". ".join(sentences)], convert_to_tensor=True)
     candidate_embeddings = model.encode(candidates, convert_to_tensor=True)
 
     # Compute Similarity via cos
@@ -91,7 +93,8 @@ if __name__ == "__main__":
     rake_keywords = extract_keywords_with_rake(segment_sentences)
 
     # Extract keywords with Bert
-    bert_keywords = extract_keywords_with_bert(segment_sentences, n_gram=(1, 3), use_stop_words=False)
+    bert_keywords = extract_keywords_with_bert(
+        segment_sentences, n_gram=(1, 3), use_stop_words=False)
 
     print(json.dumps({
         "rake": rake_keywords,
