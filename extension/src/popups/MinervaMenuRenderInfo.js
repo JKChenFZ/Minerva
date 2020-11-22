@@ -1,20 +1,20 @@
 import Swal from "sweetalert2";
 
-function addStickerToSideBar(badge) {
+function addStickerAfterPurchase(badge) {
     let ownedBadgesBody = getOwnedBagesSideBar();
     let image = document.createElement("img");
 
     image.classList.add("animate__animated");
     image.classList.add("animate__backInDown");
-    image.classList.add("animate__delay-.5s")
-    // image.style.setProperty("--animate-duration", "1s");
-    image.src = chrome.extension.getURL(`images/${(badge.id ? badge.id : badge)}.jpg`);
+    image.classList.add("animate__delay-.5s");
+
+    image.src = chrome.extension.getURL(`images/${badge.id}.jpg`);
     image.width = "25";
     image.height = "25";
     ownedBadgesBody.appendChild(image);
 
     image.addEventListener("animationend", () => {
-        image.classList.remove("animate__backInDown")
+        image.classList.remove("animate__backInDown");
         image.classList.remove("animate__delay-.5s");
         image.classList.add("animate__bounce");
         image.classList.add("animate__repeat-3");
@@ -22,7 +22,7 @@ function addStickerToSideBar(badge) {
 }
 
 function removeStickerFromStore(sticker) {
-    $(`#store-image-${sticker.id}`).tooltip('disable');
+    $(`#store-image-${sticker.id}`).tooltip("disable");
     let tableRow = document.getElementById(sticker.id);
     tableRow.addEventListener("animationend", () => {
         tableRow.remove();
@@ -48,7 +48,7 @@ async function buyStoreSticker(sticker) {
 
     if (result.status) {
         removeStickerFromStore(sticker);
-        addStickerToSideBar(sticker);
+        addStickerAfterPurchase(sticker);
     } else {
         Swal.fire({
             title: `Could not buy ${sticker.name}`,
@@ -101,7 +101,7 @@ function renderAvailableStoreStickers(availableStickers) {
         };
 
         storeStickerBody.append(tableRow);
-        $("[data-toggle=tooltip").tooltip();
+        $("[data-toggle=tooltip]").tooltip();
     });
 }
 
@@ -119,8 +119,18 @@ function renderCurrentStudentInfo(response) {
     let incorrectCount = document.getElementById("incorrect-count");
     incorrectCount.innerText = zeroIfNull(response.incorrect_count);
 
+    let ownedBadgesBody = getOwnedBagesSideBar();
     response.owned_badges.forEach((badge) => {
-        addStickerToSideBar(badge);
+        let image = document.createElement("img");
+
+        image.classList.add("animate__animated");
+        image.classList.add("animate__backInDown");
+        image.classList.add("animate__delay-.5s")
+
+        image.src = chrome.extension.getURL(`images/${badge}.jpg`);
+        image.width = "25";
+        image.height = "25";
+        ownedBadgesBody.appendChild(image);
     });
 }
 
