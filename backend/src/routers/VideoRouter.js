@@ -1,6 +1,9 @@
+import { promisify } from "util";
+import { exec } from "child_process";
 import express from "express";
 import { incrAsync, keysAsync, lrangeAsync, mgetAsync, rpushAsync, setAsync } from "../utils/Redis.js";
 import { isNullOrUndefined, includesNullOrUndefined } from "../utils/ValueChecker.js";
+const execAsync = promisify(exec);
 const router = express.Router();
 
 router.post("/saveVideoInfo", async function (req, res) {
@@ -242,6 +245,31 @@ router.post("/AddPostLectureQuestions", async function (req, res) {
     }
 
     res.json({ status });
+});
+
+router.get("/getVideoContextKeywords", async function (req, res) {
+    let status = true;
+    let videoID = req.query["videoID"];
+    let timestamp = req.query["timestamp"];
+    let duration = req.query["duration"];
+    let result = null;
+
+    try {
+        if (includesNullOrUndefined([videoID, timestamp, duration])) {
+            throw new Error("Incomplete parameters");
+        }
+        let rawResult = await execAsync(`./py_scripts/env/bin/python ./py_scripts/keyword_extraction.py ${videoID} ${timestamp} ${duration}`);
+        console.log(rawResult);
+        result = JSON.parse(rawResult.stdout); 
+    } catch (e) {
+        console.error(`[Endpoint] getVideoContextKeywords failed, ${e}`);
+        status = false;
+    }
+
+    res.json({
+        status,
+        data: result
+    });
 });
 
 export { router as VideoRouter };
