@@ -1,5 +1,40 @@
 import Swal from "sweetalert2";
 
+function addStickerToSideBar(badge) {
+    let ownedBadgesBody = getOwnedBagesSideBar();
+    let image = document.createElement("img");
+
+    image.classList.add("animate__animated");
+    image.classList.add("animate__backInDown");
+    image.classList.add("animate__delay-.5s")
+    // image.style.setProperty("--animate-duration", "1s");
+    image.src = chrome.extension.getURL(`images/${(badge.id ? badge.id : badge)}.jpg`);
+    image.width = "25";
+    image.height = "25";
+    ownedBadgesBody.appendChild(image);
+
+    image.addEventListener("animationend", () => {
+        image.classList.remove("animate__backInDown")
+        image.classList.remove("animate__delay-.5s");
+        image.classList.add("animate__bounce");
+        image.classList.add("animate__repeat-3");
+    });
+}
+
+function removeStickerFromStore(sticker) {
+    $(`#store-image-${sticker.id}`).tooltip('disable');
+    let tableRow = document.getElementById(sticker.id);
+    tableRow.addEventListener("animationend", () => {
+        tableRow.remove();
+    });
+    tableRow.classList.add("animate__animated");
+    tableRow.classList.add("animate__backOutDown");
+}
+
+function getOwnedBagesSideBar() {
+    return document.getElementById("side-bar-owned-badges");
+}
+
 async function buyStoreSticker(sticker) {
     let result = await new Promise((resolve) => {
         chrome.runtime.sendMessage({
@@ -12,10 +47,8 @@ async function buyStoreSticker(sticker) {
     });
 
     if (result.status) {
-        Swal.fire({
-            title: `Purchased ${sticker.name}`,
-            confirmButtonText: "Close"
-        });
+        removeStickerFromStore(sticker);
+        addStickerToSideBar(sticker);
     } else {
         Swal.fire({
             title: `Could not buy ${sticker.name}`,
@@ -49,16 +82,26 @@ function renderAvailableStoreStickers(availableStickers) {
         let image = document.createElement("img");
         let imgURL = chrome.extension.getURL(`images/${sticker.id}.jpg`);
 
+        // let button = document.createElement("BUTTON");
+        image.setAttribute("class", "store-image");
+        image.setAttribute("data-toggle", "tooltip");
+        image.setAttribute("title", `Buy ${sticker.name}`);
+        image.setAttribute("data-placement", "left");
+        image.setAttribute("id", `store-image-${sticker.id}`);
+
         image.src = imgURL;
         image.width = "50";
         image.height = "50";
 
+        // button.appendChild(image)
         itemImage.appendChild(image);
         tableRow.id = sticker.id;
-        tableRow.onclick = async function() {
+        itemImage.onclick = async function() {
             buyStoreSticker(sticker);
         };
+
         storeStickerBody.append(tableRow);
+        $("[data-toggle=tooltip").tooltip();
     });
 }
 
@@ -76,13 +119,8 @@ function renderCurrentStudentInfo(response) {
     let incorrectCount = document.getElementById("incorrect-count");
     incorrectCount.innerText = zeroIfNull(response.incorrect_count);
 
-    let ownedBadgesBody = document.getElementById("side-bar-owned-badges");
     response.owned_badges.forEach((badge) => {
-        let image = document.createElement("img");
-        image.src = chrome.extension.getURL(`images/${badge}.jpg`);
-        image.width = "25";
-        image.height = "25";
-        ownedBadgesBody.appendChild(image);
+        addStickerToSideBar(badge);
     });
 }
 
