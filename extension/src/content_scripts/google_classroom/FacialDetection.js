@@ -54,11 +54,7 @@ async function renderPrediction() {
             let confidenceLabel = confidence < .5 ? true : false;
             let label = prediction.dataSync()[0] < .5 ? true : false;
             console.log(label);
-            console.log(confidenceLabel);
-
-            // TODO: send passive signal to backend
-            // remember to add time check so it doesnt overflow the backend
-
+            
             if (label) {
                 sendPassiveSignal();
             }
