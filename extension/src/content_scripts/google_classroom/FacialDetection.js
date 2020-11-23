@@ -54,7 +54,7 @@ async function renderPrediction() {
             let confidenceLabel = confidence < .5 ? true : false;
             let label = prediction.dataSync()[0] < .5 ? true : false;
             console.log(label);
-            
+
             if (label) {
                 sendPassiveSignal();
             }
