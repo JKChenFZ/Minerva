@@ -224,7 +224,7 @@ async function renderPassiveFeedback(video, response) {
     let keywordsMap = new Map();
 
     labels.forEach((timestamp) => {
-        let result = getVideoContextKeyWords(keywordsMap, video, timestamp);
+        getVideoContextKeyWords(keywordsMap, video, timestamp);
     });
 
     let canvas = document.getElementById(`passiveFeedback_${video.videoID}`);
@@ -247,7 +247,7 @@ async function getVideoContextKeyWords(keywordsMap, video, timestamp) {
         timestamp: timestamp,
         duration: video.video_duration
     }, (response) => {
-        keywordsMap[timestamp] = processContextKeyWords(response)
+        keywordsMap[timestamp] = processContextKeyWords(response);
     });
 
 }
@@ -258,8 +258,10 @@ function processContextKeyWords(result) {
         let arr = string.split(" ");
         let uniqueKeywords = Array.from(new Set(arr));
         console.debug(uniqueKeywords);
+
         return uniqueKeywords.join(" ");
     } else {
+        
         return "No Context words at this timestamp";
     }
 }
