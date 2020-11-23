@@ -8,6 +8,14 @@
     width: 300px;
 }
 
+.animate__animated.animate__bounce {
+    --animate-duration: 2s;
+}
+
+.store-image {
+    cursor: pointer;
+}
+
 .tab-content { 
     display: flex;
     justify-content: center;
