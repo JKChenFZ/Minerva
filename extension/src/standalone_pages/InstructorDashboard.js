@@ -3,13 +3,10 @@ import { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian } fro
 function displayFeedback(videoObjects) {
     if (videoObjects.status) {
         videoObjects["video_info"].forEach(video => {
-            chrome.runtime.sendMessage({
-                type: "FetchVideoFeedback",
-                videoID: video.videoID
-            }, (response) => {
-                renderPassiveFeedback(video, response);
-                renderActiveFeedback(video, response);  
-            });
+            let result = await getVideoFeedback(video);
+
+            renderPassiveFeedback(video, result);
+            renderActiveFeedback(video, result);  
         });
     }
 }
@@ -23,12 +20,30 @@ function displayVideos(videoObjects) {
     }
 }
 
-window.onload = function() {
-    chrome.runtime.sendMessage({
-        type: "FetchVideos"
-    }, (response) => {
-        console.error(response);
-        displayVideos(response);
-        displayFeedback(response);
+async function getVideoFeedback(video) {
+    return new Promise((resolve) => { 
+        chrome.runtime.sendMessage({
+            type: "FetchVideoFeedback",
+            videoID: video.videoID
+        }, (response) => {
+            resolve(response);
+        });
     });
+}
+
+async function getVideosPromise() {
+    return new Promise((resolve) => { 
+        chrome.runtime.sendMessage({
+            type: "FetchVideos"
+        }, (response) => {
+            resolve(response);
+        });
+    });
+}
+
+window.onload = function() {
+    let result = await getVideosPromise();
+
+    displayVideos(result);
+    displayFeedback(result);
 };

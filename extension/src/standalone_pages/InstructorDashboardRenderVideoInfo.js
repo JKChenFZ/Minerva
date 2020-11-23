@@ -138,7 +138,16 @@ function renderActiveFeedback(video, response) {
     };
 }
 
-function renderPassiveFeedback(video, response) {
+async function processContextKeyWords(video, timestamp) {
+    let result = await getVideoContextKeyWords(video, timestamp);
+    if (result.status) {
+        return result.data.rake.join("\n") + result.data.bert.join("\n");
+    } else {
+        return "No Context words at this timestamp";
+    }
+}
+
+function async renderPassiveFeedback(video, response) {
     let color = "#5959e6";
     console.debug(video);
     let passiveChart = document.getElementById(`passiveFeedback_${video.videoID}`).getContext("2d");
@@ -148,6 +157,7 @@ function renderPassiveFeedback(video, response) {
     let filteredData = response.passive_question.filter(question => question.timestamp !== null && question.count !== null);
     let amounts = filteredData.map(question => question.count);
     let labels = filteredData.map(question => question.timestamp);
+
     console.debug(filteredData);
     new Chart(passiveChart, {
         type: "line",
@@ -193,6 +203,36 @@ function renderPassiveFeedback(video, response) {
                 }]
             }
         }
+    });
+
+    let keywordsMap = new Map();
+
+    labels.forEach((timestamp) => {
+        keywordsMap[timestamp] = createContextKeyWordTooltips(video, timestamp);
+    });
+
+    let canvas = document.getElementById(`passiveFeedback_${video.videoID}`);
+    canvas.onclick = function(evt) {
+        let firstPoint = chart.getElementAtEvent(evt)[0];
+
+        if (firstPoint) {
+            let label = chart.data.labels[firstPoint._index];
+            console.debug(label, keywordsMap[label]);
+            displayContextKeyWords(label, keywordsMap);
+        }
+    };
+}
+
+async function getVideoContextKeyWords(video, timestamp) {
+    return new Promise((resolve) => { 
+        chrome.runtime.sendMessage({
+            type: "FetchVideoContextKeyWords",
+            videoID: video.videoID,
+            timestamp: timestamp,
+            duration: video.duration
+        }, (response) => {
+            resolve(response);
+        });
     });
 }
 
