@@ -54,6 +54,7 @@ async function renderPrediction() {
             console.log(label);
             console.log(confidence);
 
+
             // TODO: send passive signal to backend
             // remember to add time check so it doesnt overflow the backend
             
