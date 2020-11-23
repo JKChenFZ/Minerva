@@ -1,8 +1,8 @@
 import { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian } from "./InstructorDashboardRenderVideoInfo.js";
 
-function displayFeedback(videoObjects) {
+async function displayFeedback(videoObjects) {
     if (videoObjects.status) {
-        videoObjects["video_info"].forEach(video => {
+        videoObjects["video_info"].forEach(async function(video){
             let result = await getVideoFeedback(video);
 
             renderPassiveFeedback(video, result);
@@ -41,7 +41,7 @@ async function getVideosPromise() {
     });
 }
 
-window.onload = function() {
+window.onload = async function() {
     let result = await getVideosPromise();
 
     displayVideos(result);

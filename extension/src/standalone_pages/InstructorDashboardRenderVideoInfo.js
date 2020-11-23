@@ -138,16 +138,32 @@ function renderActiveFeedback(video, response) {
     };
 }
 
-async function processContextKeyWords(video, timestamp) {
-    let result = await getVideoContextKeyWords(video, timestamp);
-    if (result.status) {
-        return result.data.rake.join("\n") + result.data.bert.join("\n");
+function displayContextKeyWords(label, keywordsMap) {
+    
+    if (!keywordsMap[label]) {
+        Swal.fire({
+            title: `Keywords at timestamp ${label}`,
+            html: 
+                `<html>
+                    <div class="spinner-border text-success" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </html>`,
+            confirmButtonText: "Close"
+        });
     } else {
-        return "No Context words at this timestamp";
+        Swal.fire({
+            title: `Keywords at timestamp ${label}`,
+            html: 
+                `<html>
+                    ${keywordsMap[label]}
+                </html>`,
+            confirmButtonText: "Close"
+        }); 
     }
 }
 
-function async renderPassiveFeedback(video, response) {
+async function renderPassiveFeedback(video, response) {
     let color = "#5959e6";
     console.debug(video);
     let passiveChart = document.getElementById(`passiveFeedback_${video.videoID}`).getContext("2d");
@@ -159,7 +175,7 @@ function async renderPassiveFeedback(video, response) {
     let labels = filteredData.map(question => question.timestamp);
 
     console.debug(filteredData);
-    new Chart(passiveChart, {
+    let chart = new Chart(passiveChart, {
         type: "line",
         data: {
             labels: labels,
@@ -188,7 +204,7 @@ function async renderPassiveFeedback(video, response) {
                     },
                     distribution: "linear",
                     ticks: {
-                        display: true,
+                        display: true
                     },
                 }],
                 yAxes: [{
@@ -208,7 +224,7 @@ function async renderPassiveFeedback(video, response) {
     let keywordsMap = new Map();
 
     labels.forEach((timestamp) => {
-        keywordsMap[timestamp] = createContextKeyWordTooltips(video, timestamp);
+        let result = getVideoContextKeyWords(keywordsMap, video, timestamp);
     });
 
     let canvas = document.getElementById(`passiveFeedback_${video.videoID}`);
@@ -223,17 +239,29 @@ function async renderPassiveFeedback(video, response) {
     };
 }
 
-async function getVideoContextKeyWords(video, timestamp) {
-    return new Promise((resolve) => { 
-        chrome.runtime.sendMessage({
-            type: "FetchVideoContextKeyWords",
-            videoID: video.videoID,
-            timestamp: timestamp,
-            duration: video.duration
-        }, (response) => {
-            resolve(response);
-        });
+async function getVideoContextKeyWords(keywordsMap, video, timestamp) {
+    keywordsMap[timestamp] = false;
+    chrome.runtime.sendMessage({
+        type: "FetchVideoContextKeyWords",
+        videoID: video.videoID,
+        timestamp: timestamp,
+        duration: video.video_duration
+    }, (response) => {
+        keywordsMap[timestamp] = processContextKeyWords(response)
     });
+
+}
+
+function processContextKeyWords(result) {
+    if (result.status) {
+        let string = result.data.rake.join(" ") + " " + result.data.bert.join(" ");
+        let arr = string.split(" ");
+        let uniqueKeywords = Array.from(new Set(arr));
+        console.debug(uniqueKeywords);
+        return uniqueKeywords.join(" ");
+    } else {
+        return "No Context words at this timestamp";
+    }
 }
 
 export { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian };

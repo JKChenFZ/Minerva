@@ -349,7 +349,7 @@ export {
     buySticker,
     fetchCurrentStudentInfo,
     fetchStudentRankings,
-    fetchVideoContextKeyWords
+    fetchVideoContextKeyWords,
     fetchVideos,
     fetchVideoFeedback,
     finishVideo,
