@@ -9,7 +9,8 @@ let variables = {
     ctx: null,
     canvas: null,
     // Facial Expression
-    model: null,
+    facialDetectionModel: null,
+    facialExpressionModel: null,
     // Post lecture iframe
     gameIframe: null,
     // DOM Obserser
