@@ -1,6 +1,8 @@
 import Chart from "chart.js";
 import Swal from "sweetalert2";
 
+let keywordsMap = new Map();
+
 // tooltipItem example
 // datasetIndex: 0
 // index: 1
@@ -138,7 +140,7 @@ function renderActiveFeedback(video, response) {
     };
 }
 
-function displayContextKeyWords(label, keywordsMap) {
+function displayContextKeyWords(label) {
     
     if (!keywordsMap[label]) {
         Swal.fire({
@@ -221,12 +223,6 @@ async function renderPassiveFeedback(video, response) {
         }
     });
 
-    let keywordsMap = new Map();
-
-    labels.forEach((timestamp) => {
-        getVideoContextKeyWords(keywordsMap, video, timestamp);
-    });
-
     let canvas = document.getElementById(`passiveFeedback_${video.videoID}`);
     canvas.onclick = function(evt) {
         let firstPoint = chart.getElementAtEvent(evt)[0];
@@ -234,13 +230,16 @@ async function renderPassiveFeedback(video, response) {
         if (firstPoint) {
             let label = chart.data.labels[firstPoint._index];
             console.debug(label, keywordsMap[label]);
-            displayContextKeyWords(label, keywordsMap);
+            if (!keywordsMap[label]) {
+                getVideoContextKeyWords(video, label);
+            } else {
+                displayContextKeyWords(label);
+            }
         }
     };
 }
 
-async function getVideoContextKeyWords(keywordsMap, video, timestamp) {
-    keywordsMap[timestamp] = false;
+async function getVideoContextKeyWords(video, timestamp) {
     chrome.runtime.sendMessage({
         type: "FetchVideoContextKeyWords",
         videoID: video.videoID,
@@ -248,18 +247,15 @@ async function getVideoContextKeyWords(keywordsMap, video, timestamp) {
         duration: video.video_duration
     }, (response) => {
         keywordsMap[timestamp] = processContextKeyWords(response);
+        Swal.close();
+        displayContextKeyWords(timestamp);
     });
 
 }
 
 function processContextKeyWords(result) {
     if (result.status) {
-        let string = result.data.rake.join(" ") + " " + result.data.bert.join(" ");
-        let arr = string.split(" ");
-        let uniqueKeywords = Array.from(new Set(arr));
-        console.debug(uniqueKeywords);
-
-        return uniqueKeywords.join(" ");
+        
     } else {
         
         return "No Context words at this timestamp";
