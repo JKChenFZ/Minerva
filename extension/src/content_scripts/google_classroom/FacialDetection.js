@@ -59,17 +59,16 @@ async function renderPrediction() {
             // remember to add time check so it doesnt overflow the backend
 
             if (label) {
-                let timestamp = GVars.player.getCurrentTime();
-                sendPassiveSignal(timestamp);
+                sendPassiveSignal();
             }
-                
         }
     }
 
     requestAnimationFrame(renderPrediction);
 };
 
-async function sendPassiveSignal(timestamp) {
+async function sendPassiveSignal() {
+    let timestamp = GVars.player.getCurrentTime();
     let videoID = window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID);
     
     chrome.runtime.sendMessage({

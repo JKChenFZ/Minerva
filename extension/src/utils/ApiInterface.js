@@ -89,7 +89,6 @@ async function addNewPassiveQuestion(videoID, timestamp) {
         console.error(e);
 
         return { status: false };
-    
     }
 }
 
