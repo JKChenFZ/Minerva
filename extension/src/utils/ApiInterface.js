@@ -70,6 +70,28 @@ async function addActiveQuestion(videoID, timestamp, questionText) {
     }
 }
 
+async function addNewPassiveQuestion(videoID, timestamp) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = POST_REQUEST;
+
+    try {
+        let studentHandle = await getStudentHandle();
+        requestOption.body = JSON.stringify({
+            "videoID": videoID,
+            "student_name": studentHandle,
+            "timestamp": timestamp
+        });
+        let result = await fetch(`http://${API_HOST}/video/addPassiveQuestion`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function addNewVideoQuestion(videoID, question, correct, wrong, anotherWrong) {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = POST_REQUEST;
@@ -343,6 +365,7 @@ async function setNewFreeHours(hourStart, hourEnd) {
 
 export {
     addActiveQuestion,
+    addNewPassiveQuestion,
     addNewVideoQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
