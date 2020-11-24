@@ -189,6 +189,22 @@ async function fetchStudentRankings() {
     }
 }
 
+async function fetchVideoContextKeyWords(videoID, timestamp, duration) {
+    let requestOption = getBaselineFetchOptions();
+    requestOption.method = GET_REQUEST;
+
+    try {
+        let result = await fetch(`http://${API_HOST}/video/getVideoContextKeywords?videoID=${videoID}&timestamp=${timestamp}&duration=${duration}`, requestOption);
+        let parsed = await result.json();
+
+        return parsed;
+    } catch (e) {
+        console.error(e);
+
+        return { status: false };
+    }
+}
+
 async function fetchVideos() {
     let requestOption = getBaselineFetchOptions();
     requestOption.method = GET_REQUEST;
@@ -333,6 +349,7 @@ export {
     buySticker,
     fetchCurrentStudentInfo,
     fetchStudentRankings,
+    fetchVideoContextKeyWords,
     fetchVideos,
     fetchVideoFeedback,
     finishVideo,

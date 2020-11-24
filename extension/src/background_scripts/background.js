@@ -6,6 +6,7 @@ import {
     buySticker,
     fetchCurrentStudentInfo,
     fetchStudentRankings,
+    fetchVideoContextKeyWords,
     fetchVideos,
     fetchVideoFeedback,
     finishVideo,
@@ -70,6 +71,16 @@ async function handleFetchCurrentStudentInfo(reply) {
 
 async function handleFetchStudentRankings(request, reply) {
     let result = await fetchStudentRankings();
+
+    reply(result);
+}
+
+async function handleFetchVideoContextKeyWords(request, reply) {
+    let result = await fetchVideoContextKeyWords(
+        request.videoID,
+        request.timestamp,
+        request.duration
+    );
 
     reply(result);
 }
@@ -210,6 +221,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "FetchStudentRankings":
             handleFetchStudentRankings(request, sendResponse);
+            break;
+        case "FetchVideoContextKeyWords":
+            handleFetchVideoContextKeyWords(request, sendResponse);
             break;
         case "FetchVideos":
             handleFetchVideos(sendResponse);

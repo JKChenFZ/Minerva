@@ -1,6 +1,8 @@
 import Chart from "chart.js";
 import Swal from "sweetalert2";
 
+let keywordsMap = new Map();
+
 // tooltipItem example
 // datasetIndex: 0
 // index: 1
@@ -138,7 +140,62 @@ function renderActiveFeedback(video, response) {
     };
 }
 
-function renderPassiveFeedback(video, response) {
+function displayContextKeyWords(label) {
+    
+    if (!keywordsMap[label]) {
+        Swal.fire({
+            title: `Keywords at timestamp ${label}`,
+            html: 
+                `<html>
+                    <div class="spinner-border text-success" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </html>`,
+            confirmButtonText: "Close"
+        });
+    } else {
+        Swal.fire({
+            title: `Keywords at timestamp ${label}`,
+            html: 
+                `<html>
+                    <body>
+                    <div class="container">
+                      <div class="row">
+                        <div class="col">
+                            <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                                <h5 class="card-title">Bert found these phrases</h5>
+                                <div id="berk" class="card-body"></div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                                <h5 class="card-title">Rake found these phrases</h5>
+                                <div id="rake" class="card-body"></div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    </body>
+                </html>`,
+            confirmButtonText: "Close"
+        });
+        let berkBody = document.getElementById("berk");
+        keywordsMap[label].bert.forEach((phrase) => {
+            let node = document.createElement("DIV");
+            node.innerHTML = phrase;
+            berkBody.appendChild(node);
+        });
+
+        let rakeBody = document.getElementById("rake");
+        keywordsMap[label].rake.forEach((phrase) => {
+            let node = document.createElement("DIV");
+            node.innerHTML = phrase;
+            rakeBody.appendChild(node);
+        });
+    }
+}
+
+async function renderPassiveFeedback(video, response) {
     let color = "#5959e6";
     console.debug(video);
     let passiveChart = document.getElementById(`passiveFeedback_${video.videoID}`).getContext("2d");
@@ -148,8 +205,9 @@ function renderPassiveFeedback(video, response) {
     let filteredData = response.passive_question.filter(question => question.timestamp !== null && question.count !== null);
     let amounts = filteredData.map(question => question.count);
     let labels = filteredData.map(question => question.timestamp);
+
     console.debug(filteredData);
-    new Chart(passiveChart, {
+    let chart = new Chart(passiveChart, {
         type: "line",
         data: {
             labels: labels,
@@ -160,7 +218,9 @@ function renderPassiveFeedback(video, response) {
                 pointBorderColor: color,
                 pointHoverBackgroundColor:color,
                 pointHoverBorderColor: color,
-                data: amounts
+                data: amounts,
+                pointHoverRadius: 20,
+                pointHoverBackgroundColor: "green"
             }],
         },
         options: {
@@ -178,7 +238,7 @@ function renderPassiveFeedback(video, response) {
                     },
                     distribution: "linear",
                     ticks: {
-                        display: true,
+                        display: true
                     },
                 }],
                 yAxes: [{
@@ -194,6 +254,44 @@ function renderPassiveFeedback(video, response) {
             }
         }
     });
+
+    let canvas = document.getElementById(`passiveFeedback_${video.videoID}`);
+    canvas.onclick = function(evt) {
+        let firstPoint = chart.getElementAtEvent(evt)[0];
+
+        if (firstPoint) {
+            let label = chart.data.labels[firstPoint._index];
+            console.debug(label, keywordsMap[label]);
+            if (!keywordsMap[label]) {
+                getVideoContextKeyWords(video, label);
+            }
+            displayContextKeyWords(label);
+        }
+    };
+}
+
+async function getVideoContextKeyWords(video, timestamp) {
+    chrome.runtime.sendMessage({
+        type: "FetchVideoContextKeyWords",
+        videoID: video.videoID,
+        timestamp: timestamp,
+        duration: video.video_duration
+    }, (response) => {
+        keywordsMap[timestamp] = processContextKeyWords(response);
+        if (Swal.isVisible()) {
+            Swal.close();
+        }
+        displayContextKeyWords(timestamp);
+    });
+}
+
+function processContextKeyWords(result) {
+    if (result.status) {
+        return { rake: result.data.rake, bert: result.data.bert };
+    } else {
+        
+        return { rake: ["No context words could be found"], bert: ["No context words could be found"] };
+    }
 }
 
 export { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian };

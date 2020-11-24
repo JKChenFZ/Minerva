@@ -123,7 +123,7 @@ function renderCurrentStudentInfo(response) {
 
         image.classList.add("animate__animated");
         image.classList.add("animate__backInDown");
-        image.classList.add("animate__delay-.5s")
+        image.classList.add("animate__delay-.5s");
 
         image.src = chrome.extension.getURL(`images/${badge}.jpg`);
         image.width = "25";
