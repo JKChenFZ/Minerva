@@ -30,7 +30,8 @@
   "web_accessible_resources": [
     "style/*.css",
     "images/*",
-    "*.html"
+    "*.html",
+    "json/*"
   ],
   "manifest_version": 2,
   "options_ui": {

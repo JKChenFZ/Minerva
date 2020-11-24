@@ -15,3 +15,6 @@ node_modules/
 backend/py_scripts/env/
 
 .vscode/
+
+# ignore model files in dist 
+/extension/dist/json/*

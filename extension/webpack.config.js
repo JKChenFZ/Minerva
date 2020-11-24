@@ -34,6 +34,11 @@ module.exports = {
                     context: "src/vendor_scripts",
                     from: "*.js",
                     to: "js"
+                },
+                {
+                    context: "model",
+                    from: "*",
+                    to: "json"
                 }
             ],
         }),
