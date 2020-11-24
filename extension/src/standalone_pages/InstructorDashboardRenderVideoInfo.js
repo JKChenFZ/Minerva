@@ -158,10 +158,40 @@ function displayContextKeyWords(label) {
             title: `Keywords at timestamp ${label}`,
             html: 
                 `<html>
-                    ${keywordsMap[label]}
+                    <body>
+                    <div class="container">
+                      <div class="row">
+                        <div class="col">
+                            <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                                <h5 class="card-title">Bert found these phrases</h5>
+                                <div id="berk" class="card-body"></div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                                <h5 class="card-title">Rake found these phrases</h5>
+                                <div id="rake" class="card-body"></div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    </body>
                 </html>`,
             confirmButtonText: "Close"
-        }); 
+        });
+        let berkBody = document.getElementById("berk");
+        keywordsMap[label].bert.forEach((phrase) => {
+            let node = document.createElement("DIV");
+            node.innerHTML = phrase;
+            berkBody.appendChild(node);
+        });
+
+        let rakeBody = document.getElementById("rake");
+        keywordsMap[label].rake.forEach((phrase) => {
+            let node = document.createElement("DIV");
+            node.innerHTML = phrase;
+            rakeBody.appendChild(node);
+        });
     }
 }
 
@@ -188,7 +218,9 @@ async function renderPassiveFeedback(video, response) {
                 pointBorderColor: color,
                 pointHoverBackgroundColor:color,
                 pointHoverBorderColor: color,
-                data: amounts
+                data: amounts,
+                pointHoverRadius: 20,
+                pointHoverBackgroundColor: "green"
             }],
         },
         options: {
@@ -232,9 +264,8 @@ async function renderPassiveFeedback(video, response) {
             console.debug(label, keywordsMap[label]);
             if (!keywordsMap[label]) {
                 getVideoContextKeyWords(video, label);
-            } else {
-                displayContextKeyWords(label);
             }
+            displayContextKeyWords(label);
         }
     };
 }
@@ -247,15 +278,16 @@ async function getVideoContextKeyWords(video, timestamp) {
         duration: video.video_duration
     }, (response) => {
         keywordsMap[timestamp] = processContextKeyWords(response);
-        Swal.close();
+        if (Swal.isVisible()) {
+            Swal.close();
+        }
         displayContextKeyWords(timestamp);
     });
-
 }
 
 function processContextKeyWords(result) {
     if (result.status) {
-        
+        return { rake: result.data.rake, bert: result.data.bert };
     } else {
         
         return "No Context words at this timestamp";
