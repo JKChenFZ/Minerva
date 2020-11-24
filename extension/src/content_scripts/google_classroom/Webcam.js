@@ -23,6 +23,10 @@ async function enableCamera() {
         "audio": false,
         "video": { facingMode: "user" },
     });
+
+    GVars.cameraFramerate = GVars.stream.getVideoTracks()[0].getSettings().frameRate;
+
+
     GVars.video.srcObject = GVars.stream;
   
     return new Promise((resolve) => {

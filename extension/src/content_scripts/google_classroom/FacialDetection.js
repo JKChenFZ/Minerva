@@ -1,4 +1,4 @@
-import { GVars } from "./GlobalVariablesAndConstants.js";
+import { GVars, CONSTANTS } from "./GlobalVariablesAndConstants.js";
 import { setWasmPaths } from "@tensorflow/tfjs-backend-wasm";
 import * as tf from "@tensorflow/tfjs";
 import * as blazeface from "@tensorflow-models/blazeface";
@@ -50,18 +50,35 @@ async function renderPrediction() {
             let prediction = await GVars.facialExpressionModel.predict(grayInput);
             console.log(prediction.dataSync()[0]);
             let confidence = Math.abs(prediction.dataSync()[0] - .5) / .5;
+            let confidenceLabel = confidence < .5 ? true : false;
             let label = prediction.dataSync()[0] < .5 ? true : false;
             console.log(label);
-            console.log(confidence);
+            console.log(confidenceLabel);
 
             // TODO: send passive signal to backend
             // remember to add time check so it doesnt overflow the backend
-            
+
+            if (label) {
+                let timestamp = GVars.player.getCurrentTime();
+                sendPassiveSignal(timestamp);
+            }
+                
         }
     }
 
     requestAnimationFrame(renderPrediction);
 };
+
+async function sendPassiveSignal(timestamp) {
+    let videoID = window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID);
+    
+    chrome.runtime.sendMessage({
+        type: "AddNewPassiveQuestion",
+        videoID: videoID,
+        timestamp: timestamp
+    });
+
+}
 
 async function settingUpModel() {
     setWasmPaths(WASM_PATH);
