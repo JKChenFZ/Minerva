@@ -50,6 +50,7 @@ async function renderPrediction() {
             let prediction = await GVars.facialExpressionModel.predict(grayInput);
             console.log(prediction.dataSync()[0]);
             let confidence = Math.abs(prediction.dataSync()[0] - .5) / .5;
+
             let confidenceLabel = confidence < .5 ? true : false;
             let label = prediction.dataSync()[0] < .5 ? true : false;
             console.log(label);
