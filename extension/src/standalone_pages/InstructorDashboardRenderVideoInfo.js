@@ -288,9 +288,6 @@ async function getVideoContextKeyWords(video, timestamp) {
 function processContextKeyWords(result) {
     if (result.status) {
         return { rake: result.data.rake, bert: result.data.bert };
-    } else {
-        
-        return "No Context words at this timestamp";
     }
 }
 
