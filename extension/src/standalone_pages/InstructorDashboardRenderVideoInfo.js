@@ -87,31 +87,37 @@ function handleStudentBreakdownResponse(response) {
         title: "Student Responses",
         html: 
             `<html>
-                <div id="studentBreakdown" class="card text-white bg-dark mb-3" style="max-width: 18rem;">
-                  
-                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Times Watched</th>
+                            <th scope="col">Correct Answers</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentBreakdown">
+                    </tbody>
+                </table>
             </html>`,
+        width: "800px",
         confirmButtonText: "Close"
     });
     let breakdownBody = document.getElementById("studentBreakdown");
     if (response.status) {
         response.data.forEach((student) => {
-            let container = document.createElement("DIV");
-            container.class="card-body";
-
-            let name = document.createElement("DIV")
+            let tableRow = document.createElement("TR");
+            let name = tableRow.insertCell(0);
             name.innerText = student.student_name;
 
-            let watchTimes = document.createElement("DIV");
-            watchTimes.innerText = student.watch_times;
+            let timesWatched = tableRow.insertCell(1);
+            timesWatched.innerText = student.watch_times;
 
-            let questionsCorrect = document.createElement("DIV");
-            questionsCorrect.innerText = student.question_correct_time;
+            let correctAnswers = tableRow.insertCell(2);
+            correctAnswers.innerText = student.question_correct_time;
 
-            container.appendChild(name, watchTimes, questionsCorrect);
-
-            breakdownBody.appendChild(container);
+            breakdownBody.append(tableRow);
         });
+
     } else {
         breakdownBody.innerText = "No student responses could be found"
     }
@@ -138,16 +144,22 @@ function displayStudentBreakdownForVideo(videoID) {
 }
 
 function renderVideoStudentBreakdown(videoObjects) {
-    let videoBreakdownBody = document.getElementById("nav-video-breakdown-students");
-    let containerDiv = document.createElement("DIV");
+    let videoBreakdownBody = document.getElementById("video-breakdown-list");
+
     videoObjects["video_info"].forEach(video => {
         let videoButton = document.createElement("BUTTON");
+        videoButton.type = "button";
+        videoButton.className = "btn btn-dark";
         videoButton.innerHTML = `${video.video_title}`;
         videoButton.onclick = function() {
             displayStudentBreakdownForVideo(video.id);
         }
 
-        videoBreakdownBody.append(videoButton);
+        let containerDiv = document.createElement("LI");
+        containerDiv.className = "list-group-item";
+        containerDiv.appendChild(videoButton);
+
+        videoBreakdownBody.appendChild(containerDiv);
     });
 }
 
