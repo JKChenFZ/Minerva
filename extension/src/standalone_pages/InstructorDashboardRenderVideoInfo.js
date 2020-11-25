@@ -119,7 +119,7 @@ function handleStudentBreakdownResponse(response) {
         });
 
     } else {
-        breakdownBody.innerText = "No student responses could be found"
+        breakdownBody.innerText = "No student responses could be found";
     }
 }
 
@@ -136,10 +136,10 @@ function displayStudentBreakdownForVideo(videoID) {
         confirmButtonText: "Close"
     });
     chrome.runtime.sendMessage({
-            type: "FetchStudentBreakdownVideo",
-            videoID: videoID
-        }, (response) => {
-            handleStudentBreakdownResponse(response);
+        type: "FetchStudentBreakdownVideo",
+        videoID: videoID
+    }, (response) => {
+        handleStudentBreakdownResponse(response);
     });
 }
 
@@ -153,7 +153,7 @@ function renderVideoStudentBreakdown(videoObjects) {
         videoButton.innerHTML = `${video.video_title}`;
         videoButton.onclick = function() {
             displayStudentBreakdownForVideo(video.id);
-        }
+        };
 
         let containerDiv = document.createElement("LI");
         containerDiv.className = "list-group-item";
