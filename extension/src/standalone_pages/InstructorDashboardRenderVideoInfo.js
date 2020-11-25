@@ -78,13 +78,14 @@ function renderVideoAccordian(document, videoObjects) {
     document.getElementById("nav-videos").appendChild(accordianDiv);
 }
 
-function handleStudentBreakdownResponse(response) {
+function handleStudentBreakdownResponse(video, response) {
     if (Swal.isVisible()) {
         Swal.close();
     }
+    let csvOutput = "data:text/csv;charset=utf-8,Student Name,Times Watched,Correct Answers\n"
 
     Swal.fire({
-        title: "Student Responses",
+        title: `Student Responses for ${video.video_title}`,
         html: 
             `<html>
                 <table class="table">
@@ -100,8 +101,22 @@ function handleStudentBreakdownResponse(response) {
                 </table>
             </html>`,
         width: "800px",
-        confirmButtonText: "Close"
+        confirmButtonText: "Close",
+        showCancelButton: true,
+        cancelButtonText: "Download CSV"
+    }).then((result) => {
+        console.debug(result);
+        if (result.isDismissed) {
+            let encodedUri = encodeURI(csvOutput);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${video.video_title}_student_breakdown.csv`);
+            document.body.appendChild(link);
+
+            link.click();
+        }
     });
+
     let breakdownBody = document.getElementById("studentBreakdown");
     if (response.status) {
         response.data.forEach((student) => {
@@ -115,15 +130,15 @@ function handleStudentBreakdownResponse(response) {
             let correctAnswers = tableRow.insertCell(2);
             correctAnswers.innerText = student.question_correct_time;
 
+            csvOutput += `${student.student_name},${student.watch_times},${student.question_correct_time}\n`
             breakdownBody.append(tableRow);
         });
-
     } else {
         breakdownBody.innerText = "No student responses could be found";
     }
 }
 
-function displayStudentBreakdownForVideo(videoID) {
+function displayStudentBreakdownForVideo(video) {
 
     Swal.fire({
         title: "Student Responses",
@@ -137,9 +152,9 @@ function displayStudentBreakdownForVideo(videoID) {
     });
     chrome.runtime.sendMessage({
         type: "FetchStudentBreakdownVideo",
-        videoID: videoID
+        videoID: video.videoID
     }, (response) => {
-        handleStudentBreakdownResponse(response);
+        handleStudentBreakdownResponse(video, response);
     });
 }
 
@@ -152,7 +167,7 @@ function renderVideoStudentBreakdown(videoObjects) {
         videoButton.className = "btn btn-dark";
         videoButton.innerHTML = `${video.video_title}`;
         videoButton.onclick = function() {
-            displayStudentBreakdownForVideo(video.id);
+            displayStudentBreakdownForVideo(video);
         };
 
         let containerDiv = document.createElement("LI");
