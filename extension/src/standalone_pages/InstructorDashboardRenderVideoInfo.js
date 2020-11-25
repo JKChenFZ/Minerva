@@ -78,6 +78,79 @@ function renderVideoAccordian(document, videoObjects) {
     document.getElementById("nav-videos").appendChild(accordianDiv);
 }
 
+function handleStudentBreakdownResponse(response) {
+    if (Swal.isVisible()) {
+        Swal.close();
+    }
+
+    Swal.fire({
+        title: "Student Responses",
+        html: 
+            `<html>
+                <div id="studentBreakdown" class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+                  
+                </div>
+            </html>`,
+        confirmButtonText: "Close"
+    });
+    let breakdownBody = document.getElementById("studentBreakdown");
+    if (response.status) {
+        response.data.forEach((student) => {
+            let container = document.createElement("DIV");
+            container.class="card-body";
+
+            let name = document.createElement("DIV")
+            name.innerText = student.student_name;
+
+            let watchTimes = document.createElement("DIV");
+            watchTimes.innerText = student.watch_times;
+
+            let questionsCorrect = document.createElement("DIV");
+            questionsCorrect.innerText = student.question_correct_time;
+
+            container.appendChild(name, watchTimes, questionsCorrect);
+
+            breakdownBody.appendChild(container);
+        });
+    } else {
+        breakdownBody.innerText = "No student responses could be found"
+    }
+}
+
+function displayStudentBreakdownForVideo(videoID) {
+
+    Swal.fire({
+        title: "Student Responses",
+        html: 
+            `<html>
+                <div class="spinner-border text-success" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </html>`,
+        confirmButtonText: "Close"
+    });
+    chrome.runtime.sendMessage({
+            type: "FetchStudentBreakdownVideo",
+            videoID: videoID
+        }, (response) => {
+            handleStudentBreakdownResponse(response);
+    });
+}
+
+function renderVideoStudentBreakdown(videoObjects) {
+    let videoBreakdownBody = document.getElementById("nav-video-breakdown-students");
+    let containerDiv = document.createElement("DIV");
+    videoObjects["video_info"].forEach(video => {
+        let videoButton = document.createElement("BUTTON");
+        videoButton.innerHTML = `${video.video_title}`;
+        videoButton.onclick = function() {
+            displayStudentBreakdownForVideo(video.id);
+        }
+
+        videoBreakdownBody.append(videoButton);
+    });
+}
+
 function renderActiveFeedback(video, response) {
     let color = "#5959e6";
     let activeChart = document.getElementById(`activeFeedback_${video.videoID}`).getContext("2d");
@@ -294,4 +367,4 @@ function processContextKeyWords(result) {
     }
 }
 
-export { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian };
+export { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian, renderVideoStudentBreakdown };

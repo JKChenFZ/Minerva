@@ -1,4 +1,4 @@
-import { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian } from "./InstructorDashboardRenderVideoInfo.js";
+import { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian, renderVideoStudentBreakdown } from "./InstructorDashboardRenderVideoInfo.js";
 
 async function displayFeedback(videoObjects) {
     if (videoObjects.status) {
@@ -6,7 +6,7 @@ async function displayFeedback(videoObjects) {
             let result = await getVideoFeedback(video);
 
             renderPassiveFeedback(video, result);
-            renderActiveFeedback(video, result);  
+            renderActiveFeedback(video, result); 
         });
     }
 }
@@ -17,6 +17,7 @@ function displayVideos(videoObjects) {
         videoNav.innerText = "No videos could be found";
     } else {
         renderVideoAccordian(document, videoObjects);
+        renderVideoStudentBreakdown(videoObjects);
     }
 }
 

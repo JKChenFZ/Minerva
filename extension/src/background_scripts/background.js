@@ -5,6 +5,7 @@ import {
     answerQuestionIncorrectly,
     buySticker,
     fetchCurrentStudentInfo,
+    fetchStudentBreakdownVideo,
     fetchStudentRankings,
     fetchVideoContextKeyWords,
     fetchVideos,
@@ -65,6 +66,14 @@ async function handleBuySticker(request, reply) {
  
 async function handleFetchCurrentStudentInfo(reply) {
     let result = await fetchCurrentStudentInfo();
+
+    reply(result);
+}
+
+async function handleFetchStudentBreakdownVideo(request, reply) {
+    let result = await fetchStudentBreakdownVideo(
+        request.videoID
+    );
 
     reply(result);
 }
@@ -218,6 +227,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "FetchCurrentStudentInfo":
             handleFetchCurrentStudentInfo(sendResponse);
+            break;
+        case "FetchStudentBreakdownVideo":
+            handleFetchStudentBreakdownVideo(request, sendResponse);
             break;
         case "FetchStudentRankings":
             handleFetchStudentRankings(request, sendResponse);
