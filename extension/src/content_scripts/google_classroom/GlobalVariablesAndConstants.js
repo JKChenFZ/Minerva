@@ -11,6 +11,7 @@ let variables = {
     // Facial Expression
     facialDetectionModel: null,
     facialExpressionModel: null,
+    postPassiveQuestionLeakyBucket: null,
     // Post lecture iframe
     gameIframe: null,
     // DOM Obserser
