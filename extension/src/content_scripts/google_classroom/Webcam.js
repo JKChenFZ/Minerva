@@ -23,7 +23,6 @@ async function enableCamera() {
         "audio": false,
         "video": { facingMode: "user" },
     });
-
     GVars.video.srcObject = GVars.stream;
   
     return new Promise((resolve) => {
