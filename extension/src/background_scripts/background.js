@@ -1,5 +1,6 @@
 import {
     addActiveQuestion,
+    addNewPassiveQuestion,
     addNewVideoQuestion,
     answerQuestionCorrectly,
     answerQuestionIncorrectly,
@@ -35,6 +36,15 @@ async function handleAddNewVideoQuestion(request, reply) {
         request.correct,
         request.wrong,
         request["another_wrong"]
+    );
+
+    reply(result);
+}
+
+async function handleAddNewPassiveQuestion(request, reply) {
+    let result = await addNewPassiveQuestion(
+        request.videoID,
+        request.timestamp
     );
 
     reply(result);
@@ -206,6 +216,9 @@ chrome.runtime.onMessage.addListener(
             break;
         case "AddNewVideoQuestion":
             handleAddNewVideoQuestion(request, sendResponse);
+            break;
+        case "AddNewPassiveQuestion":
+            handleAddNewPassiveQuestion(request, sendResponse);
             break;
         case "AnswerQuestionCorrectly":
             handleAnswerQuestionCorrectly(request, sendResponse);

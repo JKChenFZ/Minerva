@@ -1,7 +1,8 @@
-import { GVars } from "./GlobalVariablesAndConstants.js";
+import { GVars, CONSTANTS } from "./GlobalVariablesAndConstants.js";
 import { setWasmPaths } from "@tensorflow/tfjs-backend-wasm";
 import * as tf from "@tensorflow/tfjs";
 import * as blazeface from "@tensorflow-models/blazeface";
+import { LeakyBucket } from "ts-leaky-bucket";
 
 const WASM_PATH = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/";
 
@@ -48,26 +49,42 @@ async function renderPrediction() {
             
             // expression prediction
             let prediction = await GVars.facialExpressionModel.predict(grayInput);
-            console.log(prediction.dataSync()[0]);
-            let confidence = Math.abs(prediction.dataSync()[0] - .5) / .5;
-            let label = prediction.dataSync()[0] < .5 ? true : false;
-            console.log(label);
-            console.log(confidence);
 
-            // TODO: send passive signal to backend
-            // remember to add time check so it doesnt overflow the backend
-            
+            let label = prediction.dataSync()[0] < .5 ? true : false;
+            console.debug(label);
+
+            if (label) {
+                sendPassiveSignal();
+            }
         }
     }
 
     requestAnimationFrame(renderPrediction);
 };
 
+async function sendPassiveSignal() {
+    await GVars.postPassiveQuestionLeakyBucket.maybeThrottle();    
+    let timestamp = GVars.player.getCurrentTime();
+    let videoID = window.localStorage.getItem(CONSTANTS.YOUTUBE_VIDEO_ID);
+    
+    chrome.runtime.sendMessage({
+        type: "AddNewPassiveQuestion",
+        videoID: videoID,
+        timestamp: timestamp
+    });
+
+}
+
 async function settingUpModel() {
     setWasmPaths(WASM_PATH);
     await tf.setBackend("wasm"); 
     GVars.facialDetectionModel = await blazeface.load(); 
     GVars.facialExpressionModel = await tf.loadGraphModel(chrome.runtime.getURL("json/model.json"));
+    GVars.postPassiveQuestionLeakyBucket = new LeakyBucket({
+        capacity: 120,
+        intervalMillis: 60_000,
+        timeoutMillis: 300_000,
+    });
     console.log("Finished loading model");
 }
 
