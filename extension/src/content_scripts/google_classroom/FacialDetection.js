@@ -2,7 +2,7 @@ import { GVars, CONSTANTS } from "./GlobalVariablesAndConstants.js";
 import { setWasmPaths } from "@tensorflow/tfjs-backend-wasm";
 import * as tf from "@tensorflow/tfjs";
 import * as blazeface from "@tensorflow-models/blazeface";
-import { LeakyBucket, LeakyBucketOptions } from "ts-leaky-bucket";
+import { LeakyBucket } from "ts-leaky-bucket";
 
 const WASM_PATH = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/";
 
@@ -49,10 +49,8 @@ async function renderPrediction() {
             
             // expression prediction
             let prediction = await GVars.facialExpressionModel.predict(grayInput);
-            console.log(prediction.dataSync()[0]);
             let confidence = Math.abs(prediction.dataSync()[0] - .5) / .5;
 
-            let confidenceLabel = confidence < .5 ? true : false;
             let label = prediction.dataSync()[0] < .5 ? true : false;
             console.log(label);
 
