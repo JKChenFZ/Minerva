@@ -78,6 +78,106 @@ function renderVideoAccordian(document, videoObjects) {
     document.getElementById("nav-videos").appendChild(accordianDiv);
 }
 
+function handleStudentBreakdownResponse(video, response) {
+    if (Swal.isVisible()) {
+        Swal.close();
+    }
+    let csvOutput = "data:text/csv;charset=utf-8,Student Name,Times Watched,Correct Answers\n"
+
+    Swal.fire({
+        title: `Student Responses for ${video.video_title}`,
+        html: 
+            `<html>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Times Watched</th>
+                            <th scope="col">Correct Answers</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentBreakdown">
+                    </tbody>
+                </table>
+            </html>`,
+        width: "800px",
+        confirmButtonText: "Close",
+        showCancelButton: true,
+        cancelButtonText: "Download CSV"
+    }).then((result) => {
+        console.debug(result);
+        if (result.isDismissed) {
+            let encodedUri = encodeURI(csvOutput);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${video.video_title}_student_breakdown.csv`);
+            document.body.appendChild(link);
+
+            link.click();
+        }
+    });
+
+    let breakdownBody = document.getElementById("studentBreakdown");
+    if (response.status) {
+        response.data.forEach((student) => {
+            let tableRow = document.createElement("TR");
+            let name = tableRow.insertCell(0);
+            name.innerText = student.student_name;
+
+            let timesWatched = tableRow.insertCell(1);
+            timesWatched.innerText = student.watch_times;
+
+            let correctAnswers = tableRow.insertCell(2);
+            correctAnswers.innerText = student.question_correct_time;
+
+            csvOutput += `${student.student_name},${student.watch_times},${student.question_correct_time}\n`
+            breakdownBody.append(tableRow);
+        });
+    } else {
+        breakdownBody.innerText = "No student responses could be found";
+    }
+}
+
+function displayStudentBreakdownForVideo(video) {
+
+    Swal.fire({
+        title: "Student Responses",
+        html: 
+            `<html>
+                <div class="spinner-border text-success" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </html>`,
+        confirmButtonText: "Close"
+    });
+    chrome.runtime.sendMessage({
+        type: "FetchStudentBreakdownVideo",
+        videoID: video.videoID
+    }, (response) => {
+        handleStudentBreakdownResponse(video, response);
+    });
+}
+
+function renderVideoStudentBreakdown(videoObjects) {
+    let videoBreakdownBody = document.getElementById("video-breakdown-list");
+
+    videoObjects["video_info"].forEach(video => {
+        let videoButton = document.createElement("BUTTON");
+        videoButton.type = "button";
+        videoButton.className = "btn btn-dark";
+        videoButton.innerHTML = `${video.video_title}`;
+        videoButton.onclick = function() {
+            displayStudentBreakdownForVideo(video);
+        };
+
+        let containerDiv = document.createElement("LI");
+        containerDiv.className = "list-group-item";
+        containerDiv.appendChild(videoButton);
+
+        videoBreakdownBody.appendChild(containerDiv);
+    });
+}
+
 function renderActiveFeedback(video, response) {
     let color = "#5959e6";
     let activeChart = document.getElementById(`activeFeedback_${video.videoID}`).getContext("2d");
@@ -294,4 +394,4 @@ function processContextKeyWords(result) {
     }
 }
 
-export { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian };
+export { renderActiveFeedback, renderPassiveFeedback, renderVideoAccordian, renderVideoStudentBreakdown };
